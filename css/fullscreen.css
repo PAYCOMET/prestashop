@@ -1,0 +1,128 @@
+.paytpv_jet h4 {
+    display: block;
+    -webkit-margin-before: 1.33em;
+    -webkit-margin-after: 1.33em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    font-weight: bold;
+    margin: 0px;
+}
+
+ .paytpv_jet ol, .paytpv_jet ul {
+    list-style: none;
+}
+
+ .paytpv_jet .vertical{
+    overflow: hidden;
+}
+
+.paytpv_jet .vertical li {
+    float: left;
+    width: 140px;
+}
+
+.paytpv_jet .vertical input {
+    width: 79px;
+}
+
+.paytpv_jet label {
+    color: #555;
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 5px;
+}
+
+.paytpv_jet .carbon-img img, form input, form label, form li .help {
+    display: block;
+}
+
+.paytpv_jet{
+	max-width: 360px;
+}
+
+.paytpv_jet .paytpv_merchant_pan {
+    background-image: url(cards.png), url(cards.png);
+    background-position: 2px -103px,260px -50px;
+    background-size: 120px 361px,120px 361px;
+    background-repeat: no-repeat;
+    padding-left: 54px;
+    width: 290px;
+}
+
+.paytpv_jet .paytpv_cardholdername {
+    width: 290px;
+}
+
+.paytpv_jet .paytpv_merchant_pan.visa {background-position: 2px -139px,260px -50px;}
+.paytpv_jet .paytpv_merchant_pan.visa_electron{background-position:2px -176px,260px -50px}
+.paytpv_jet .paytpv_merchant_pan.mastercard{background-position:2px -212px,260px -50px}
+.paytpv_jet .paytpv_merchant_pan.maestro{background-position:2px -249px,260px -50px}
+.paytpv_jet .paytpv_merchant_pan.discover{background-position:2px -285px,260px -50px}
+.paytpv_jet .paytpv_merchant_pan.amex{background-position:2px -322px,260px -50px}
+
+.paytpv_jet .paytpv_merchant_pan.valid.visa{background-position:2px -139px,260px -73px}
+.paytpv_jet .paytpv_merchant_pan.valid.visa_electron{background-position:2px -176px,260px -73px}
+.paytpv_jet .paytpv_merchant_pan.valid.mastercard{background-position:2px -212px,260px -73px}
+.paytpv_jet .paytpv_merchant_pan.valid.maestro{background-position:2px -249px,260px -73px}
+.paytpv_jet .paytpv_merchant_pan.valid.discover{background-position:2px -285px,260px -73px}
+.paytpv_jet .paytpv_merchant_pan.valid.amex{background-position:2px -322px,260px -73px}
+
+.paytpv_jet li .help {
+    color: #aaa;
+    clear: both;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 14px;
+    padding-top: 14px;
+}
+
+.paytpv_jet>ul>li {
+    padding: 10px 0;
+}
+
+
+.paytpv_jet input{border:1px solid #e5e5e5;color:#333;font-size:18px;height:34px;padding:0 5px;width:100%;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:border-box;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px}
+
+
+footer {
+    padding: 30px 10px;
+    clear: both;
+}
+
+footer .footer_logo {
+    display: inline-block;
+    width: 130px;
+}
+
+footer .paytpv_wrapper{
+    display: block;
+    padding: 10px 0px;
+    border-bottom: 1px dotted #404046;
+}
+
+footer ul {
+    float: left;
+    font-size: 14px;
+    
+    border-right: none;
+    float: none;
+    margin-bottom: 13px;
+    padding-bottom: 11.2px;
+}
+
+.payment_icons {
+    display: inline-block;
+    float: right;
+    width: auto;
+}
+
+.payment_icons li {
+    display: inline-block;
+    margin: 0 5px 10px;
+}
+.payment_icons li img {
+    display: block;
+    height: 22px;
+}
+
+

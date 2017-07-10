@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <module>
+            <name>paytpv</name>
+            <displayName><![CDATA[paytpv.com]]></displayName>
+            <version><![CDATA[6.2.6]]></version>
+            <description><![CDATA[Este m&oacute;dulo le permite aceptar pagos con tarjeta v&iacute;a paytpv.com]]></description>
+            <author><![CDATA[PayTPV]]></author>
+            <tab><![CDATA[payments_gateways]]></tab>
+            <is_configurable>1</is_configurable>
+            <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+        </module>
