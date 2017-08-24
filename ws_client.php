@@ -62,7 +62,8 @@ class WS_Client {
 		$this->client->setUseCurl( $useCURL );
 
 	}
-	function execute_purchase( $DS_IDUSER,$DS_TOKEN_USER,$TERMINAL,$DS_MERCHANT_CURRENCY='EUR',$amount,$ref='' ) {
+	function execute_purchase( $DS_IDUSER,$DS_TOKEN_USER,$TERMINAL,$DS_MERCHANT_CURRENCY='EUR',$amount,$ref='',$MERCHANT_SCORING,$MERCHANT_DATA ) {
+
 
 		$DS_MERCHANT_MERCHANTCODE = $this->config[ 'clientcode' ];
 
@@ -104,6 +105,10 @@ class WS_Client {
 			'DS_MERCHANT_OWNER' => ''
 
 		);
+
+		if ($MERCHANT_SCORING!=null)        $p["MERCHANT_SCORING"] = $MERCHANT_SCORING;
+        if ($MERCHANT_DATA!=null)           $p["MERCHANT_DATA"] = $MERCHANT_DATA;
+
 
 		$this->write_log("Petición execute_purchase:\n".print_r($p,true));
 
@@ -194,7 +199,8 @@ class WS_Client {
 
 	}
 
-	function create_subscription_token( $idUser, $tokeUser, $DS_SUSCRIPTION_CURRENCY='EUR',$amount,$ref='',$stardate,$enddate,$peridicity) {
+	function create_subscription_token( $idUser, $tokeUser, $DS_SUSCRIPTION_CURRENCY='EUR',$amount,$ref='',$stardate,$enddate,$peridicity,$MERCHANT_SCORING,$MERCHANT_DATA) {
+
 
 		$DS_MERCHANT_MERCHANTCODE = $this->config[ 'clientcode' ];
 
@@ -247,6 +253,10 @@ class WS_Client {
 			'DS_ORIGINAL_IP' => $DS_ORIGINAL_IP
 
 		);
+
+		if ($MERCHANT_SCORING!=null)        $p["MERCHANT_SCORING"] = $MERCHANT_SCORING;
+        if ($MERCHANT_DATA!=null)           $p["MERCHANT_DATA"] = $MERCHANT_DATA;
+
 		$this->write_log("Petición create_subscription_token:\n".print_r($p,true));
 
 		$res = $this->client->call( 'create_subscription_token', $p, '', '', false, true );

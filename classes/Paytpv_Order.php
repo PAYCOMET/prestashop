@@ -48,6 +48,18 @@ class Paytpv_Order extends ObjectModel
         return false;
     }
 
+    public static function isFirstPurchaseCustomer($id_customer)
+    {
+        $sql = 'select * from ' . _DB_PREFIX_ .'orders where id_customer='.(int)$id_customer;
+
+		$result = Db::getInstance()->getRow($sql);
+		if (empty($result) === true){
+        	return true;
+        }
+        return false;
+    }
+
+
     public static function add_Order($paytpv_iduser,$paytpv_tokenuser,$id_suscription,$id_customer,$id_order,$price){
 		
 		$sql = 'INSERT INTO '. _DB_PREFIX_ .'paytpv_order (`paytpv_iduser`,`paytpv_tokenuser`,`id_suscription`, `id_customer`, `id_order`,`price`,`date`) VALUES('.pSQL($paytpv_iduser).',"'.pSQL($paytpv_tokenuser).'",'.pSQL($id_suscription).','.pSQL($id_customer).','.pSQL($id_order).',"'.pSQL($price).'","'.pSQL(date('Y-m-d H:i:s')).'")';

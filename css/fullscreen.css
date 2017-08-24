@@ -30,6 +30,7 @@
     font-size: 14px;
     font-weight: 400;
     margin-bottom: 5px;
+    display: table-cell;
 }
 
 .paytpv_jet .carbon-img img, form input, form label, form li .help {

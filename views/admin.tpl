@@ -184,6 +184,179 @@
 
                 
             </fieldset>
+
+                        <fieldset id="paytpv_scoring">
+                <legend>{l s='Scoring' mod='paytpv'}</legend>
+                <div id="merchantdata_container">
+                    <label>{l s='Send Merchant Data' mod='paytpv'}</label>
+                    <div class="margin-form">
+                        <select name="merchantdata" id="merchantdata">
+                            <option value="0" {if $merchantdata==0}selected="1"{/if}>{l s='No' mod='paytpv'}</option>
+                            <option value="1" {if $merchantdata==1}selected="1"{/if}>{l s='Yes' mod='paytpv'}</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="scoring_calculation">{l s='Scoring calculation' mod='paytpv'}</div>
+
+                <div id="merchantdata_container">
+                    <label >{l s='First Purchase' mod='paytpv'}</label>
+                    <div class="margin-form">
+                        <select name="firstpurchase_scoring" id="firstpurchase_scoring" onchange="changeScoring(this);">
+                            <option value="0" {if $firstpurchase_scoring==0}selected="1"{/if}>{l s='No' mod='paytpv'}</option>
+                            <option value="1" {if $firstpurchase_scoring==1}selected="1"{/if}>{l s='Yes' mod='paytpv'}</option>
+                        </select>
+
+                        <div style="padding-left: 15px; {if $firstpurchase_scoring==0}display:none;{/if}" class="firstpurchase_scoring_data inline">
+                            <label style="float:none;">{l s='Score' mod='paytpv'}</label>
+                            <select name="firstpurchase_scoring_score" id="firstpurchase_scoring_score">
+                                {$i=0}
+                                {while $i <= 100}
+                                 <option value="{$i}" {if $firstpurchase_scoring_score==$i}selected="1"{/if}>{$i}</option>
+                                  {$i++}
+                                {/while}
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="merchantdata_container">
+                    <label>{l s='Complete Session Time' mod='paytpv'}</label>
+                    <div class="margin-form">
+                        <select name="sessiontime_scoring" id="sessiontime_scoring" onchange="changeScoring(this);">
+                            <option value="0" {if $sessiontime_scoring==0}selected="1"{/if}>{l s='No' mod='paytpv'}</option>
+                            <option value="1" {if $sessiontime_scoring==1}selected="1"{/if}>{l s='Yes' mod='paytpv'}</option>
+                        </select>
+
+                        <div style="padding-left: 15px;{if $sessiontime_scoring==0}display:none;{/if}" class="sessiontime_scoring_data inline">
+                            <label style="float:none;">{l s='Score' mod='paytpv'}</label>
+                            <select name="sessiontime_scoring_score" id="firstpurchase_scoring_score">
+                                {$i=0}
+                                {while $i <= 100}
+                                 <option value="{$i}" {if $sessiontime_scoring_score==$i}selected="1"{/if}>{$i}</option>
+                                  {$i++}
+                                {/while}
+                            </select>
+                        </div>
+
+                        <div style="padding-left: 15px;{if $sessiontime_scoring==0}display:none;{/if}" class="sessiontime_scoring_data inline">
+                            <label style="float:none;">{l s='Time (hh:mm)' mod='paytpv'}  ></label>
+                            <select name="sessiontime_scoring_val" id="sessiontime_scoring_val">
+                                {assign var=arrTiempos value=['0'=>'00:00','15'=>'00:15','30'=>'00:30','45'=>'00:45','60'=>'01:00','90'=>'01:30','120'=>'02:00','180'=>'03:00','240'=>'04:00','300'=>'05:00','360'=>'06:00']}    
+
+                                {foreach from=$arrTiempos key=key item=tiempo}
+                                    <option value="{$key}" {if $sessiontime_scoring_val==$key}selected="1"{/if}>{$tiempo}</option>
+                                {/foreach}
+                                
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="merchantdata_container">
+                    <label>{l s='Destination Country' mod='paytpv'}</label>
+                    <div class="margin-form">
+                        <select name="dcountry_scoring" style="vertical-align:top;" id="dcountry_scoring" onchange="changeScoring(this);">
+                            <option value="0" {if $dcountry_scoring==0}selected="1"{/if}>{l s='No' mod='paytpv'}</option>
+                            <option value="1" {if $dcountry_scoring==1}selected="1"{/if}>{l s='Yes' mod='paytpv'}</option>
+                        </select>
+
+                        <div style="padding-left: 15px;{if $dcountry_scoring==0}display:none;{/if}" class="dcountry_scoring_data inline">
+                            <label style="vertical-align:top;float:none;">{l s='Score' mod='paytpv'}</label>
+                            <select name="dcountry_scoring_score" style="vertical-align:top;" id="dcountry_scoring_score">
+                                {$i=0}
+                                {while $i <= 100}
+                                 <option value="{$i}" {if $dcountry_scoring_score==$i}selected="1"{/if}>{$i}</option>
+                                  {$i++}
+                                {/while}
+                            </select>
+                        </div>
+
+                        <div style="padding-left: 15px;{if $dcountry_scoring==0}display:none;{/if}" class="dcountry_scoring_data inline">
+                            <label style="float:none;vertical-align:top;">{l s='Countries' mod='paytpv'}</label>
+                            <select name="dcountry_scoring_val[]" id="dcountry_scoring_val" multiple="multiple" size="10">
+                                {foreach from=$countries key=key item=countrie}
+                                    <option value="{$countrie.iso_code}" {if in_array($countrie.iso_code,$arr_dcountry_scoring_val)}selected="1"{/if}>{$countrie.name}</option>
+                                {/foreach}
+                                
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="merchantdata_container">
+                    <label >{l s='IP Change' mod='paytpv'}</label>
+                    <div class="margin-form">
+                        <select name="ip_change_scoring" id="ip_change_scoring" onchange="changeScoring(this);">
+                            <option value="0" {if $ip_change_scoring==0}selected="1"{/if}>{l s='No' mod='paytpv'}</option>
+                            <option value="1" {if $ip_change_scoring==1}selected="1"{/if}>{l s='Yes' mod='paytpv'}</option>
+                        </select>
+
+                        <div style="padding-left: 15px;{if $ip_change_scoring==0}display:none;{/if}" class="ip_change_scoring_data inline">
+                            <label style="float:none;">{l s='Score' mod='paytpv'}</label>
+                            <select name="ip_change_scoring_score" id="ip_change_scoring_score">
+                                {$i=0}
+                                {while $i <= 100}
+                                 <option value="{$i}" {if $ip_change_scoring_score==$i}selected="1"{/if}>{$i}</option>
+                                  {$i++}
+                                {/while}
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div id="merchantdata_container">
+                    <label >{l s='Browser Unidentified' mod='paytpv'}</label>
+                    <div class="margin-form">
+                        <select name="browser_scoring" id="browser_scoring" onchange="changeScoring(this);">
+                            <option value="0" {if $browser_scoring==0}selected="1"{/if}>{l s='No' mod='paytpv'}</option>
+                            <option value="1" {if $browser_scoring==1}selected="1"{/if}>{l s='Yes' mod='paytpv'}</option>
+                        </select>
+
+                        <div style="padding-left: 15px;{if $browser_scoring==0}display:none;{/if}" class="browser_scoring_data inline">
+                            <label style="float:none;">{l s='Score' mod='paytpv'}</label>
+                            <select name="browser_scoring_score" id="browser_scoring_score">
+                                {$i=0}
+                                {while $i <= 100}
+                                 <option value="{$i}" {if $browser_scoring_score==$i}selected="1"{/if}>{$i}</option>
+                                  {$i++}
+                                {/while}
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="merchantdata_container">
+                    <label >{l s='Operating System Unidentified' mod='paytpv'}</label>
+                    <div class="margin-form">
+                        <select name="so_scoring" id="so_scoring" onchange="changeScoring(this);">
+                            <option value="0" {if $so_scoring==0}selected="1"{/if}>{l s='No' mod='paytpv'}</option>
+                            <option value="1" {if $so_scoring==1}selected="1"{/if}>{l s='Yes' mod='paytpv'}</option>
+                        </select>
+
+                        <div style="padding-left: 15px;{if $so_scoring==0}display:none;{/if}" class="so_scoring_data inline">
+                            <label style="float:none;">{l s='Score' mod='paytpv'}</label>
+                            <select name="so_scoring_score" id="ip_change_scoring_score">
+                                {$i=0}
+                                {while $i <= 100}
+                                 <option value="{$i}" {if $so_scoring_score==$i}selected="1"{/if}>{$i}</option>
+                                  {$i++}
+                                {/while}
+                            </select>
+                        </div>
+                    </div>
+
+                </div>               
+                
+            </fieldset>
+
         </fieldset> 
 
         <br/>
@@ -379,6 +552,16 @@
             }
 
         }
+
+        function changeScoring(select){
+           
+            if (select.value==1)
+                jQuery("." + select.id + "_data").show();
+            else
+                jQuery("." + select.id + "_data").hide();
+
+        }
+
 
     </script>
 

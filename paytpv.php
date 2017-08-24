@@ -48,7 +48,7 @@ class Paytpv extends PaymentModule {
 		$this->name = 'paytpv';
 		$this->tab = 'payments_gateways';
 		$this->author = 'PayTPV';
-		$this->version = '7.3.4';
+		$this->version = '7.4.0';
 
 		
         $this->is_eu_compatible = 1;
@@ -81,6 +81,36 @@ class Paytpv extends PaymentModule {
 			$this->reg_estado = $config['PAYTPV_REG_ESTADO'];
 
 		
+		if (isset($config['PAYTPV_MERCHANTDATA']))
+			$this->merchantdata = $config['PAYTPV_MERCHANTDATA'];
+		if (isset($config['PAYTPV_FIRSTPURCHASE_SCORING']))
+			$this->firstpurchase_scoring = $config['PAYTPV_FIRSTPURCHASE_SCORING'];
+		if (isset($config['PAYTPV_FIRSTPURCHASE_SCORING_SCORE']))
+			$this->firstpurchase_scoring_score = $config['PAYTPV_FIRSTPURCHASE_SCORING_SCORE'];
+		if (isset($config['PAYTPV_SESSIONTIME_SCORING']))
+			$this->sessiontime_scoring = $config['PAYTPV_SESSIONTIME_SCORING'];
+		if (isset($config['PAYTPV_SESSIONTIME_SCORING_VAL']))
+			$this->sessiontime_scoring_val = $config['PAYTPV_SESSIONTIME_SCORING_VAL'];
+		if (isset($config['PAYTPV_SESSIONTIME_SCORING_SCORE']))
+			$this->sessiontime_scoring_score = $config['PAYTPV_SESSIONTIME_SCORING_SCORE'];
+		if (isset($config['PAYTPV_DCOUNTRY_SCORING']))
+			$this->dcountry_scoring = $config['PAYTPV_DCOUNTRY_SCORING'];
+		if (isset($config['PAYTPV_DCOUNTRY_SCORING_VAL']))
+			$this->dcountry_scoring_val = $config['PAYTPV_DCOUNTRY_SCORING_VAL'];
+		if (isset($config['PAYTPV_DCOUNTRY_SCORING_SCORE']))
+			$this->dcountry_scoring_score = $config['PAYTPV_DCOUNTRY_SCORING_SCORE'];
+		if (isset($config['PAYTPV_IPCHANGE_SCORING']))
+			$this->ip_change_scoring = $config['PAYTPV_IPCHANGE_SCORING'];
+		if (isset($config['PAYTPV_IPCHANGE_SCORING_SCORE']))
+			$this->ip_change_scoring_score = $config['PAYTPV_IPCHANGE_SCORING_SCORE'];
+		if (isset($config['PAYTPV_BROWSER_SCORING']))
+			$this->browser_scoring = $config['PAYTPV_BROWSER_SCORING'];
+		if (isset($config['PAYTPV_BROWSER_SCORING_SCORE']))
+			$this->browser_scoring_score = $config['PAYTPV_BROWSER_SCORING_SCORE'];
+		if (isset($config['PAYTPV_SO_SCORING']))
+			$this->so_scoring = $config['PAYTPV_SO_SCORING'];
+		if (isset($config['PAYTPV_SO_SCORING_SCORE']))
+			$this->so_scoring_score = $config['PAYTPV_SO_SCORING_SCORE'];
 
 		parent::__construct();
 		$this->page = basename(__FILE__, '.php');
@@ -257,10 +287,197 @@ class Paytpv extends PaymentModule {
 				
 			}
 
+			// Datos Scoring
+        
+	        Configuration::updateValue('PAYTPV_MERCHANTDATA', $_POST['merchantdata']); 
+			Configuration::updateValue('PAYTPV_FIRSTPURCHASE_SCORING', $_POST['firstpurchase_scoring']); 
+			Configuration::updateValue('PAYTPV_FIRSTPURCHASE_SCORING_SCORE', $_POST['firstpurchase_scoring_score']); 
+			Configuration::updateValue('PAYTPV_SESSIONTIME_SCORING', $_POST['sessiontime_scoring']); 
+			Configuration::updateValue('PAYTPV_SESSIONTIME_SCORING_VAL', $_POST['sessiontime_scoring_val']); 
+			Configuration::updateValue('PAYTPV_SESSIONTIME_SCORING_SCORE', $_POST['sessiontime_scoring_score']); 
+			Configuration::updateValue('PAYTPV_DCOUNTRY_SCORING', $_POST['dcountry_scoring']); 
+			Configuration::updateValue('PAYTPV_DCOUNTRY_SCORING_VAL', isset($_POST['dcountry_scoring_val'])?implode(",",$_POST['dcountry_scoring_val']):''); 
+			Configuration::updateValue('PAYTPV_DCOUNTRY_SCORING_SCORE', $_POST['dcountry_scoring_score']); 
+			Configuration::updateValue('PAYTPV_IPCHANGE_SCORING', $_POST['ip_change_scoring']); 
+			Configuration::updateValue('PAYTPV_IPCHANGE_SCORING_SCORE', $_POST['ip_change_scoring_score']); 
+			Configuration::updateValue('PAYTPV_BROWSER_SCORING', $_POST['browser_scoring']); 
+			Configuration::updateValue('PAYTPV_BROWSER_SCORING_SCORE', $_POST['browser_scoring_score']); 
+			Configuration::updateValue('PAYTPV_SO_SCORING', $_POST['so_scoring']); 
+			Configuration::updateValue('PAYTPV_SO_SCORING_SCORE', $_POST['so_scoring_score']); 
+
+
 			return '<div class="bootstrap"><div class="alert alert-success">'.$this->l('Configuration updated').'</div></div>';          
 		}
 
 	}
+
+
+		public function transactionScore($cart){
+
+		include_once(_PS_MODULE_DIR_.'/paytpv/paytpv_api.php');
+
+		$api = new Paytpv_Api();
+
+        $config = $this->getConfigValues();
+
+       
+        // Initialize array Score
+        $arrScore = array();
+        $arrScore["score"] = null;
+        $arrScore["merchantdata"] = null;
+
+        if ($config["PAYTPV_MERCHANTDATA"]){
+            $merchantData = $this->getMerchantData($cart);
+            $arrScore["merchantdata"] = json_encode($merchantData);
+        }
+
+        $shipping_address_country = "";
+
+        $shippingAddressData = new Address($cart->id_address_delivery);
+        if ($shippingAddressData){
+        	$address_country = new Country($shippingAddressData->id_country);
+        	$shipping_address_country = $address_country->iso_code;
+        }
+
+        // First Purchase 
+        if ($config["PAYTPV_FIRSTPURCHASE_SCORING"]){
+            $firstpurchase_scoring_score = $config["PAYTPV_FIRSTPURCHASE_SCORING_SCORE"];
+            if (Paytpv_Order::isFirstPurchaseCustomer($this->context->customer->id)){
+                $arrScore["scoreCalc"]["firstpurchase"] = $firstpurchase_scoring_score;
+            }
+        }
+
+        // Complete Session Time
+        if ($config["PAYTPV_SESSIONTIME_SCORING"]){
+            $sessiontime_scoring_val = $config["PAYTPV_SESSIONTIME_SCORING_VAL"];
+            $sessiontime_scoring_score = $config["PAYTPV_SESSIONTIME_SCORING_SCORE"];
+
+            $cookie = $this->context->cookie;
+            if ($cookie && $cookie->id_connections){
+            	$connection = new Connection($cookie->id_connections);
+                $first_visit_at = $connection->date_add;               
+
+                $now = date('Y-m-d H:i:s');
+
+                $time_ss = strtotime($now) - strtotime($first_visit_at);
+                $time_mm = floor($time_ss / 60);
+
+                if ($time_mm>$sessiontime_scoring_val){
+                    $arrScore["scoreCalc"]["completesessiontime"] = $sessiontime_scoring_score;
+                }
+            }
+        }
+
+
+        // Destination 
+        if ($config["PAYTPV_DCOUNTRY_SCORING"]){
+            $dcountry_scoring_val = explode(",",$config["PAYTPV_DCOUNTRY_SCORING_VAL"]);
+            $dcountry_scoring_score = $config["PAYTPV_DCOUNTRY_SCORING_SCORE"];
+
+            if (in_array($shipping_address_country,$dcountry_scoring_val))
+                $arrScore["scoreCalc"]["destination"] = $dcountry_scoring_score;
+        }
+
+        // Ip Change 
+        if ($config["PAYTPV_IPCHANGE_SCORING"]){
+        	$connection = new Connection($cookie->id_connections);
+            $ip_change_scoring = $config["PAYTPV_IPCHANGE_SCORING_SCORE"];
+            $ip = Tools::getRemoteAddr() ? (int)ip2long(Tools::getRemoteAddr()) : '';
+            $ip_session = $connection->ip_address ? (int)ip2long($connection->ip_address) : '';
+
+            if ($ip!=$ip_session)
+                $arrScore["scoreCalc"]["ipchange"] = $ip_change_scoring;
+        }
+
+        // Browser Unidentified 
+        if ($config["PAYTPV_BROWSER_SCORING"]){
+            $browser_scoring_score = $config["PAYTPV_BROWSER_SCORING_SCORE"];
+            if ($api->browser_detection('browser_name')=="")
+                $arrScore["scoreCalc"]["browser_unidentified"] = $browser_scoring_score;
+
+        }
+
+        // Operating System Unidentified 
+        if ($config["PAYTPV_SO_SCORING"]){
+            $so_scoring_score = $config["PAYTPV_SO_SCORING_SCORE"];
+            if ($api->browser_detection('os')=="")
+                $arrScore["scoreCalc"]["operating_system_unidentified"] = $so_scoring_score;
+        }
+
+        // CALC ORDER SCORE
+        if (sizeof($arrScore["scoreCalc"])>0){
+            //$score = floor(array_sum($arrScore["scoreCalc"]) / sizeof($arrScore["scoreCalc"]));   // Media
+            $score = floor(array_sum($arrScore["scoreCalc"])); // Suma de valores. Si es superior a 100 asignamos 100
+            if ($score>100) $score = 100;
+            $arrScore["score"] = $score;
+        }
+        
+        return $arrScore;
+
+    }
+
+
+	public function getMerchantData($cart){
+        /*Datos Scoring*/
+       
+        $Merchant_Data["scoring"]["customer"]["id"] = $this->context->customer->id;
+        $Merchant_Data["scoring"]["customer"]["name"] = $this->context->customer->firstname;
+        $Merchant_Data["scoring"]["customer"]["surname"] = $this->context->customer->lastname;
+        $Merchant_Data["scoring"]["customer"]["email"] = $this->context->customer->email;
+
+        $phone = "";
+
+        $billing = new Address(intval($cart->id_address_invoice));
+        if (!empty($billing))   $phone = $billing->phone;
+
+        $Merchant_Data["scoring"]["customer"]["phone"] = $phone;
+        $Merchant_Data["scoring"]["customer"]["mobile"] = "";
+        $Merchant_Data["scoring"]["customer"]["firstBuy"] = Paytpv_Order::isFirstPurchaseCustomer($this->context->customer->id);
+        
+        // Shipping
+        // Address
+        $shippingAddressData = new Address($cart->id_address_delivery);
+        if ($shippingAddressData){
+            $street0 = $shippingAddressData->address1;
+            $street1 = $shippingAddressData->address2;
+            $shipping_address_country = new Country($shippingAddressData->id_country);
+            $shipping_address_state = new State($shippingAddressData->id_state);
+        }
+
+        $Merchant_Data["scoring"]["shipping"]["address"]["streetAddress"] = ($shippingAddressData)?$street0:"";
+        $Merchant_Data["scoring"]["shipping"]["address"]["extraAddress"] = ($shippingAddressData)?$street1:"";
+        $Merchant_Data["scoring"]["shipping"]["address"]["city"] = ($shippingAddressData)?$shippingAddressData->city:"";
+        $Merchant_Data["scoring"]["shipping"]["address"]["postalCode"] = ($shippingAddressData)?$shippingAddressData->postcode:"";
+        $Merchant_Data["scoring"]["shipping"]["address"]["state"] = ($shippingAddressData)?$shipping_address_state->name:"";
+        $Merchant_Data["scoring"]["shipping"]["address"]["country"] = ($shippingAddressData)?$shipping_address_country->iso_code:"";
+
+       
+        // Time
+        $Merchant_Data["scoring"]["shipping"]["time"] = "";
+
+        // Billing
+        $billingAddressData = $billing;
+        if ($billingAddressData){
+            $street0 = $billingAddressData->address1;
+            $street1 = $billingAddressData->address2;
+            $billing_address_country = new Country($shippingAddressData->id_country);
+            $billing_address_state = new State($shippingAddressData->id_state);
+        }
+
+        $Merchant_Data["scoring"]["billing"]["address"]["streetAddress"] = ($billingAddressData)?$street0:"";
+        $Merchant_Data["scoring"]["billing"]["address"]["extraAddress"] = ($billingAddressData)?$street1:"";
+        $Merchant_Data["scoring"]["billing"]["address"]["city"] = ($billingAddressData)?$billingAddressData->city:"";
+        $Merchant_Data["scoring"]["billing"]["address"]["postalCode"] = ($billingAddressData)?$billingAddressData->postcode:"";
+        $Merchant_Data["scoring"]["billing"]["address"]["state"] = ($billingAddressData)?$billing_address_state->name:"";
+        $Merchant_Data["scoring"]["billing"]["address"]["country"] = ($billingAddressData)?$billing_address_country->iso_code:"";
+
+        $Merchant_Data["futureData"] = "";
+
+        return $Merchant_Data;
+    }
+
+
+
 	public function getContent() {
 
 		$errorMessage = '';
@@ -290,6 +507,42 @@ class Paytpv extends PaymentModule {
 		$id_currency = intval(Configuration::get('PS_CURRENCY_DEFAULT'));
 		$currency_array =   Currency::getCurrenciesByIdShop(Context::getContext()->shop->id);
 
+		if (Configuration::get('PS_RESTRICT_DELIVERED_COUNTRIES')) {
+            $countries = Carrier::getDeliveredCountries($this->context->language->id, true, true);
+        } else {
+            $countries = Country::getCountries($this->context->language->id, true);
+        }
+
+        // Datos Scoring
+        $merchantdata = isset($_POST["merchantdata"])?$_POST["merchantdata"]:$conf_values['PAYTPV_MERCHANTDATA'];
+
+        $firstpurchase_scoring = isset($_POST["firstpurchase_scoring"])?$_POST["firstpurchase_scoring"]:$conf_values['PAYTPV_FIRSTPURCHASE_SCORING'];
+        $firstpurchase_scoring_score = isset($_POST["firstpurchase_scoring_score"])?$_POST["firstpurchase_scoring_score"]:$conf_values['PAYTPV_FIRSTPURCHASE_SCORING_SCORE'];
+
+        $sessiontime_scoring = isset($_POST["sessiontime_scoring"])?$_POST["sessiontime_scoring"]:$conf_values['PAYTPV_SESSIONTIME_SCORING'];
+        $sessiontime_scoring_val = isset($_POST["sessiontime_scoring_val"])?$_POST["sessiontime_scoring_val"]:$conf_values['PAYTPV_SESSIONTIME_SCORING_VAL'];
+        $sessiontime_scoring_score = isset($_POST["sessiontime_scoring_score"])?$_POST["sessiontime_scoring_score"]:$conf_values['PAYTPV_SESSIONTIME_SCORING_SCORE'];
+
+
+        $dcountry_scoring = isset($_POST["dcountry_scoring"])?$_POST["dcountry_scoring"]:$conf_values['PAYTPV_DCOUNTRY_SCORING'];
+        $dcountry_scoring_val = isset($_POST["dcountry_scoring_val"])?implode(",",$_POST["dcountry_scoring_val"]):$conf_values['PAYTPV_DCOUNTRY_SCORING_VAL'];
+        $arr_dcountry_scoring_val = explode(",",$dcountry_scoring_val);
+
+        $dcountry_scoring_score = isset($_POST["dcountry_scoring_score"])?$_POST["dcountry_scoring_score"]:$conf_values['PAYTPV_DCOUNTRY_SCORING_SCORE'];
+
+        $ip_change_scoring = isset($_POST["ip_change_scoring"])?$_POST["ip_change_scoring"]:$conf_values['PAYTPV_IPCHANGE_SCORING'];
+        $ip_change_scoring_score = isset($_POST["ip_change_scoring_score"])?$_POST["ip_change_scoring_score"]:$conf_values['PAYTPV_IPCHANGE_SCORING_SCORE'];
+
+        $browser_scoring = isset($_POST["browser_scoring"])?$_POST["browser_scoring"]:$conf_values['PAYTPV_BROWSER_SCORING'];
+        $browser_scoring_score = isset($_POST["browser_scoring_score"])?$_POST["browser_scoring_score"]:$conf_values['PAYTPV_BROWSER_SCORING_SCORE'];
+
+        $so_scoring = isset($_POST["so_scoring"])?$_POST["so_scoring"]:$conf_values['PAYTPV_SO_SCORING'];
+        $so_scoring_score = isset($_POST["so_scoring_score"])?$_POST["so_scoring_score"]:$conf_values['PAYTPV_SO_SCORING_SCORE'];
+		
+
+        //print_r($countries);
+
+
 
 		$ssl = Configuration::get('PS_SSL_ENABLED');
 		// Set the smarty env
@@ -318,6 +571,27 @@ class Paytpv extends PaymentModule {
 		$this->context->smarty->assign('KO',Context::getContext()->link->getModuleLink($this->name, 'urlko',array(),$ssl));
 		$this->context->smarty->assign('NOTIFICACION',Context::getContext()->link->getModuleLink($this->name, 'url',array(),$ssl));
 		$this->context->smarty->assign('base_dir', __PS_BASE_URI__);
+
+		// Scoring Data.
+
+		$this->context->smarty->assign('countries', $countries);
+
+		$this->context->smarty->assign('merchantdata', $merchantdata);
+		$this->context->smarty->assign('firstpurchase_scoring', $firstpurchase_scoring);
+		$this->context->smarty->assign('firstpurchase_scoring_score', $firstpurchase_scoring_score);
+		$this->context->smarty->assign('sessiontime_scoring', $sessiontime_scoring);
+		$this->context->smarty->assign('sessiontime_scoring_val', $sessiontime_scoring_val);
+		$this->context->smarty->assign('sessiontime_scoring_score', $sessiontime_scoring_score);
+		$this->context->smarty->assign('dcountry_scoring', $dcountry_scoring);
+		$this->context->smarty->assign('arr_dcountry_scoring_val', $arr_dcountry_scoring_val);
+		$this->context->smarty->assign('dcountry_scoring_score', $dcountry_scoring_score);
+		$this->context->smarty->assign('ip_change_scoring', $ip_change_scoring);
+		$this->context->smarty->assign('ip_change_scoring_score', $ip_change_scoring_score);
+		$this->context->smarty->assign('browser_scoring', $browser_scoring);
+		$this->context->smarty->assign('browser_scoring_score', $browser_scoring_score);
+		$this->context->smarty->assign('so_scoring', $so_scoring);
+		$this->context->smarty->assign('so_scoring_score', $so_scoring_score);
+
 
 		$this->context->controller->addCSS( $this->_path . 'css/admin.css' , 'all' );
 		return $this->display(__FILE__, 'views/admin.tpl');
@@ -366,7 +640,7 @@ class Paytpv extends PaymentModule {
     	// call your media file like this
     	$this->context->controller->addJqueryPlugin('fancybox');
 		$this->context->controller->registerStylesheet('paytpv-payment', 'modules/paytpv/css/payment.css');
-		$this->context->controller->registerStylesheet('paytpv-fullscreen', 'modules/paytpv/css/fullscreen.css');$this->context->controller->addJqueryPlugin('fancybox');
+		$this->context->controller->registerStylesheet('paytpv-fullscreen', 'modules/paytpv/css/fullscreen.css');
 		$this->context->controller->registerJavascript('paytpv-js', 'modules/paytpv/js/paytpv.js');
 
         $paytpv_integration = intval(Configuration::get('PAYTPV_INTEGRATION'));
@@ -867,6 +1141,11 @@ class Paytpv extends PaymentModule {
 	public function paytpv_iframe_URL(){	
 		$cart = Context::getContext()->cart;
 
+		// if not exist Cart -> Redirect to home
+		if (!isset($cart->id)){
+			 Tools::redirect('index');
+		}
+
 		$total_pedido = $cart->getOrderTotal(true, Cart::BOTH);
 
 		$datos_pedido = $this->TerminalCurrency($cart);
@@ -906,6 +1185,10 @@ class Paytpv extends PaymentModule {
 
 		$language_data = explode("-",$this->context->language->language_code);
 		$language = $language_data[0];
+		
+		$score = $this->transactionScore($cart);
+        $MERCHANT_SCORING = $score["score"];
+        $MERCHANT_DATA = $score["merchantdata"];
 	
 
 		$OPERATION = "1";
@@ -926,9 +1209,17 @@ class Paytpv extends PaymentModule {
 			'3DSECURE' => $secure_pay
 		);
 
+		if ($MERCHANT_SCORING!=null)        $fields["MERCHANT_SCORING"] = $MERCHANT_SCORING;
+        if ($MERCHANT_DATA!=null)           $fields["MERCHANT_DATA"] = $MERCHANT_DATA;
+
+
 		$query = http_build_query($fields);
 
 		$url_paytpv = $this->url_paytpv . "?".$query;
+
+		$vhash = hash('sha512', md5($query.md5($pass_sel))); 
+
+		$url_paytpv = $this->url_paytpv . "?".$query . "&VHASH=".$vhash;
 		
 		return $url_paytpv;
 	}
@@ -1075,7 +1366,8 @@ class Paytpv extends PaymentModule {
 
 	}
 	private function getConfigValues(){
-		return Configuration::getMultiple(array('PAYTPV_CLIENTCODE', 'PAYTPV_INTEGRATION', 'PAYTPV_COMMERCEPASSWORD', 'PAYTPV_NEWPAGEPAYMENT', 'PAYTPV_SUSCRIPTIONS','PAYTPV_REG_ESTADO'));
+		return Configuration::getMultiple(array('PAYTPV_CLIENTCODE', 'PAYTPV_INTEGRATION', 'PAYTPV_COMMERCEPASSWORD', 'PAYTPV_NEWPAGEPAYMENT', 'PAYTPV_SUSCRIPTIONS','PAYTPV_REG_ESTADO','PAYTPV_MERCHANTDATA','PAYTPV_FIRSTPURCHASE_SCORING','PAYTPV_FIRSTPURCHASE_SCORING_SCORE','PAYTPV_SESSIONTIME_SCORING','PAYTPV_SESSIONTIME_SCORING_VAL','PAYTPV_SESSIONTIME_SCORING_SCORE','PAYTPV_DCOUNTRY_SCORING','PAYTPV_DCOUNTRY_SCORING_VAL','PAYTPV_DCOUNTRY_SCORING_SCORE','PAYTPV_IPCHANGE_SCORING','PAYTPV_IPCHANGE_SCORING_SCORE','PAYTPV_BROWSER_SCORING','PAYTPV_BROWSER_SCORING_SCORE','PAYTPV_SO_SCORING','PAYTPV_SO_SCORING_SCORE'));
+
 	}
 	
 	public function saveCard($id_customer,$paytpv_iduser,$paytpv_tokenuser,$paytpv_cc,$paytpv_brand){

@@ -129,12 +129,11 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
 		);
 		$this->context->smarty->assign($tmpl_vars);
 		
-	 	
-	 	$this->context->controller->addJqueryPlugin('fancybox');
-	 	$this->context->controller->addCSS( $this->module->getPath() . 'css/payment.css' , 'all' );
-	 	$this->context->controller->addCSS( $this->module->getPath() . 'css/fullscreen.css' , 'all' );
-		$this->context->controller->addJS( $this->module->getPath() . 'js/paytpv.js');
-
+		// call your media file like this
+    	$this->context->controller->addJqueryPlugin('fancybox');
+		$this->context->controller->registerStylesheet('paytpv-payment', 'modules/paytpv/css/payment.css');
+		$this->context->controller->registerStylesheet('paytpv-fullscreen', 'modules/paytpv/css/fullscreen.css');
+		$this->context->controller->registerJavascript('paytpv-js', 'modules/paytpv/js/paytpv.js');
 
 		$this->context->smarty->assign('total_amount',$importe_tienda);
 		$this->context->smarty->assign('currency_symbol',$currency->sign);
