@@ -185,8 +185,9 @@
                 
             </fieldset>
 
-                        <fieldset id="paytpv_scoring">
+            <fieldset id="paytpv_scoring">
                 <legend>{l s='Scoring' mod='paytpv'}</legend>
+                <lablel><strong>{l s='IMPORTANT: If you want to activate the Scoring you should contact PAYTPV' mod='paytpv'} </strong></label><br/><br/>
                 <div id="merchantdata_container">
                     <label>{l s='Send Merchant Data' mod='paytpv'}</label>
                     <div class="margin-form">
@@ -194,6 +195,7 @@
                             <option value="0" {if $merchantdata==0}selected="1"{/if}>{l s='No' mod='paytpv'}</option>
                             <option value="1" {if $merchantdata==1}selected="1"{/if}>{l s='Yes' mod='paytpv'}</option>
                         </select>
+                         {l s='If you activate this option, you must contact PAYTPV to enable the Advanced Signature VHASH' mod='paytpv'}
                     </div>
                 </div>
 
