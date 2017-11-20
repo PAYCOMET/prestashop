@@ -156,8 +156,6 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
 
 			$query = http_build_query($fields);
 
-			$url_paytpv = $paytpv->url_paytpv . "?".$query;
-
 			$vhash = hash('sha512', md5($query.md5($pass_sel))); 
 
 			$url_paytpv = $paytpv->url_paytpv . "?".$query . "&VHASH=".$vhash;

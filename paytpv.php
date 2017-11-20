@@ -48,7 +48,7 @@ class Paytpv extends PaymentModule {
 		$this->name = 'paytpv';
 		$this->tab = 'payments_gateways';
 		$this->author = 'PayTPV';
-		$this->version = '7.4.1';
+		$this->version = '7.4.2';
 
 		
         $this->is_eu_compatible = 1;
@@ -111,6 +111,12 @@ class Paytpv extends PaymentModule {
 			$this->so_scoring = $config['PAYTPV_SO_SCORING'];
 		if (isset($config['PAYTPV_SO_SCORING_SCORE']))
 			$this->so_scoring_score = $config['PAYTPV_SO_SCORING_SCORE'];
+
+		if (isset($config['PAYTPV_DISABLEOFFERSAVECARD']))
+			$this->disableoffersavecard = $config['PAYTPV_DISABLEOFFERSAVECARD'];
+		
+		if (isset($config['PAYTPV_REMEMBERCARDUNSELECTED']))
+			$this->remembercardunselected = $config['PAYTPV_REMEMBERCARDUNSELECTED'];
 
 		parent::__construct();
 		$this->page = basename(__FILE__, '.php');
@@ -304,6 +310,9 @@ class Paytpv extends PaymentModule {
 			Configuration::updateValue('PAYTPV_BROWSER_SCORING_SCORE', $_POST['browser_scoring_score']); 
 			Configuration::updateValue('PAYTPV_SO_SCORING', $_POST['so_scoring']); 
 			Configuration::updateValue('PAYTPV_SO_SCORING_SCORE', $_POST['so_scoring_score']); 
+
+			Configuration::updateValue('PAYTPV_DISABLEOFFERSAVECARD', $_POST['disableoffersavecard']);
+			Configuration::updateValue('PAYTPV_REMEMBERCARDUNSELECTED', $_POST['remembercardunselected']); 
 
 
 			return '<div class="bootstrap"><div class="alert alert-success">'.$this->l('Configuration updated').'</div></div>';          
@@ -538,6 +547,9 @@ class Paytpv extends PaymentModule {
 
         $so_scoring = isset($_POST["so_scoring"])?$_POST["so_scoring"]:$conf_values['PAYTPV_SO_SCORING'];
         $so_scoring_score = isset($_POST["so_scoring_score"])?$_POST["so_scoring_score"]:$conf_values['PAYTPV_SO_SCORING_SCORE'];
+
+        $disableoffersavecard = isset($_POST["disableoffersavecard"])?$_POST["disableoffersavecard"]:$conf_values['PAYTPV_DISABLEOFFERSAVECARD'];
+        $remembercardunselected = isset($_POST["remembercardunselected"])?$_POST["remembercardunselected"]:$conf_values['PAYTPV_REMEMBERCARDUNSELECTED'];
 		
 
         //print_r($countries);
@@ -592,6 +604,8 @@ class Paytpv extends PaymentModule {
 		$this->context->smarty->assign('so_scoring', $so_scoring);
 		$this->context->smarty->assign('so_scoring_score', $so_scoring_score);
 
+		$this->context->smarty->assign('disableoffersavecard', $disableoffersavecard);
+		$this->context->smarty->assign('remembercardunselected', $remembercardunselected);
 
 		$this->context->controller->addCSS( $this->_path . 'css/admin.css' , 'all' );
 		return $this->display(__FILE__, 'views/admin.tpl');
@@ -729,6 +743,9 @@ class Paytpv extends PaymentModule {
 		$paytpv_integration = intval(Configuration::get('PAYTPV_INTEGRATION'));
 		$newpage_payment = intval(Configuration::get('PAYTPV_NEWPAGEPAYMENT'));
 
+		$disableoffersavecard = Configuration::get('PAYTPV_DISABLEOFFERSAVECARD');
+		$remembercardunselected = Configuration::get('PAYTPV_REMEMBERCARDUNSELECTED');
+
 	
 		$language_data = explode("-",$this->context->language->language_code);
 		$language = $language_data[0];
@@ -748,7 +765,9 @@ class Paytpv extends PaymentModule {
             'capture_url' => Context::getContext()->link->getModuleLink($this->name, 'capture',$values,$ssl),
             'this_path' => $this->_path,
             'hookpayment' => 1,
-            'newpage_payment' => $newpage_payment
+            'newpage_payment' => $newpage_payment,
+            'disableoffersavecard' => $disableoffersavecard,
+            'remembercardunselected'=> $remembercardunselected
         );
 
     }
@@ -803,6 +822,10 @@ class Paytpv extends PaymentModule {
 		// Check New Page payment
 		$newpage_payment = intval(Configuration::get('PAYTPV_NEWPAGEPAYMENT'));
 		$paytpv_integration = intval(Configuration::get('PAYTPV_INTEGRATION'));
+
+		$disableoffersavecard = Configuration::get('PAYTPV_DISABLEOFFERSAVECARD');
+		$remembercardunselected = Configuration::get('PAYTPV_REMEMBERCARDUNSELECTED');
+
 		if ($newpage_payment==1){
 			$this->context->smarty->assign('this_path',$this->_path);
 			return $this->display(__FILE__, 'payment_newpage.tpl');
@@ -882,7 +905,9 @@ class Paytpv extends PaymentModule {
 
 			$this->context->smarty->assign('paytpv_jetid_url',Context::getContext()->link->getModuleLink($this->name, 'capture',array(),$ssl));
 
-			
+			$this->context->smarty->assign('disableoffersavecard',$disableoffersavecard);
+			$this->context->smarty->assign('remembercardunselected',$remembercardunselected);
+
 
 			$this->context->smarty->assign('base_dir', __PS_BASE_URI__);
 
@@ -1370,8 +1395,7 @@ class Paytpv extends PaymentModule {
 
 	}
 	private function getConfigValues(){
-		return Configuration::getMultiple(array('PAYTPV_CLIENTCODE', 'PAYTPV_INTEGRATION', 'PAYTPV_COMMERCEPASSWORD', 'PAYTPV_NEWPAGEPAYMENT', 'PAYTPV_SUSCRIPTIONS','PAYTPV_REG_ESTADO','PAYTPV_MERCHANTDATA','PAYTPV_FIRSTPURCHASE_SCORING','PAYTPV_FIRSTPURCHASE_SCORING_SCORE','PAYTPV_SESSIONTIME_SCORING','PAYTPV_SESSIONTIME_SCORING_VAL','PAYTPV_SESSIONTIME_SCORING_SCORE','PAYTPV_DCOUNTRY_SCORING','PAYTPV_DCOUNTRY_SCORING_VAL','PAYTPV_DCOUNTRY_SCORING_SCORE','PAYTPV_IPCHANGE_SCORING','PAYTPV_IPCHANGE_SCORING_SCORE','PAYTPV_BROWSER_SCORING','PAYTPV_BROWSER_SCORING_SCORE','PAYTPV_SO_SCORING','PAYTPV_SO_SCORING_SCORE'));
-
+		return Configuration::getMultiple(array('PAYTPV_CLIENTCODE', 'PAYTPV_INTEGRATION', 'PAYTPV_COMMERCEPASSWORD', 'PAYTPV_NEWPAGEPAYMENT', 'PAYTPV_SUSCRIPTIONS','PAYTPV_REG_ESTADO','PAYTPV_MERCHANTDATA','PAYTPV_FIRSTPURCHASE_SCORING','PAYTPV_FIRSTPURCHASE_SCORING_SCORE','PAYTPV_SESSIONTIME_SCORING','PAYTPV_SESSIONTIME_SCORING_VAL','PAYTPV_SESSIONTIME_SCORING_SCORE','PAYTPV_DCOUNTRY_SCORING','PAYTPV_DCOUNTRY_SCORING_VAL','PAYTPV_DCOUNTRY_SCORING_SCORE','PAYTPV_IPCHANGE_SCORING','PAYTPV_IPCHANGE_SCORING_SCORE','PAYTPV_BROWSER_SCORING','PAYTPV_BROWSER_SCORING_SCORE','PAYTPV_SO_SCORING','PAYTPV_SO_SCORING_SCORE','PAYTPV_DISABLEOFFERSAVECARD','PAYTPV_REMEMBERCARDUNSELECTED'));
 	}
 	
 	public function saveCard($id_customer,$paytpv_iduser,$paytpv_tokenuser,$paytpv_cc,$paytpv_brand){
@@ -1677,8 +1701,11 @@ class Paytpv extends PaymentModule {
 
 	public function hookDisplayCustomerAccount($params)
 	{
-		
-		return $this->display(__FILE__, 'my-account.tpl');
+		// If not disableoffersavecard
+		if (!$this->disableoffersavecard==1){
+			$this->smarty->assign('in_footer', false);
+			return $this->display(__FILE__, 'my-account.tpl');
+		}
 	}
 
 

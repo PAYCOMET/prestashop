@@ -172,6 +172,30 @@
 
                 <br/>
 
+                <div id="disableoffersavecard">
+                    <label>{l s='Disable Offer to save card' mod='paytpv'}</label>
+                    <div class="margin-form">
+                        <select name="disableoffersavecard" id="disableoffersavecard">
+                            <option value="0" {if $disableoffersavecard==0}selected="1"{/if}>{l s='No' mod='paytpv'}</option>
+                            <option value="1" {if $disableoffersavecard==1}selected="1"{/if}>{l s='Yes' mod='paytpv'}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <br/>
+
+                <div id="remembercardunselected">
+                    <label>{l s='Remember Card (Unselect)' mod='paytpv'}</label>
+                    <div class="margin-form">
+                        <select name="remembercardunselected" id="remembercardunselected">
+                            <option value="0" {if $remembercardunselected==0}selected="1"{/if}>{l s='No' mod='paytpv'}</option>
+                            <option value="1" {if $remembercardunselected==1}selected="1"{/if}>{l s='Yes' mod='paytpv'}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <br/>
+
                 <div id="suscriptions_container">
                     <label>{l s='Activate Subscriptions' mod='paytpv'}</label>
                     <div class="margin-form">

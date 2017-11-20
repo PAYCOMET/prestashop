@@ -49,14 +49,14 @@ class Paytpv_Order_Info extends ObjectModel
 	}
 
 
-	public static function get_Order_Info($id_customer,$id_cart){
+	public static function get_Order_Info($id_customer,$id_cart,$defaultsavecard){
 		$sql = 'select * from ' . _DB_PREFIX_ .'paytpv_order_info where id_customer = '.pSQL($id_customer) . ' and id_cart="'.pSQL($id_cart).'"';
 		$result = Db::getInstance()->getRow($sql);
 
-		// Si no hay datos los almacenamos. Por defecto se guarda la tarjeta.
+		// Si no hay datos los almacenamos segun la configuración: Disable Offer Card != SI y Remember Card (Unselected) != SI Por defecto se guarda la tarjeta si está por defecto seleccionado.
 		if (empty($result) === true){
-			self::save_Order_info($id_customer,$id_cart,1,0,0,0,0,0);
-			$result = self::get_Order_Info($id_customer,$id_cart);
+			self::save_Order_info($id_customer,$id_cart,$defaultsavecard,0,0,0,0,0);
+			$result = self::get_Order_Info($id_customer,$id_cart,$defaultsavecard);
 		}
 
 		return $result;
