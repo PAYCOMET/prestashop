@@ -248,29 +248,30 @@
 
 
                         {if ($newpage_payment==1)}
-                        <footer>
-                        <div class="paytpv_wrapper mobile">
-                            <div class="footer_line">
-                              <div class="footer_logo">
-                                <a href="https://secure.paytpv.com/" target="_blank">
-                                  <img src="{$this_path}views/img/paytpv_logo.svg">
-                                </a>
-                              </div>
-                              <ul class="payment_icons">
-                                <li><img src="{$this_path}views/img/visa.png" alt="Visa"></li>
-                                <li><img src="{$this_path}views/img/visa_electron.png" alt="Visa Electron"></li>
-                                <li><img src="{$this_path}views/img/mastercard.png" alt="Mastercard"></li>
-                                <li><img src="{$this_path}views/img/maestro.png" alt="Maestro"></li>
-                                <li><img src="{$this_path}views/img/amex.png" alt="American Express"></li>
-                                <li><img src="{$this_path}views/img/jcb.png" alt="JCB card"></li>
-                                <li><img src="{$this_path}views/img/veryfied_by_visa.png" alt="Veryfied by Visa"></li>
-                                <li><img src="{$this_path}views/img/mastercard_secure_code.png" alt="Mastercard Secure code"></li>
-                                <li><img src="{$this_path}views/img/pci.png" alt="PCI"></li>
-                                <li><img src="{$this_path}views/img/thawte.png" alt="Thawte"></li>
-                              </ul>
+                        <div class="paytpv_footer">
+
+                            <div class="paytpv_wrapper mobile">
+                                <div class="footer_line">
+                                  <div class="footer_logo">
+                                    <a href="https://secure.paytpv.com/" target="_blank">
+                                      <img src="{$this_path}views/img/paytpv_logo.svg">
+                                    </a>
+                                  </div>
+                                  <ul class="payment_icons">
+                                    <li><img src="{$this_path}views/img/visa.png" alt="Visa"></li>
+                                    <li><img src="{$this_path}views/img/visa_electron.png" alt="Visa Electron"></li>
+                                    <li><img src="{$this_path}views/img/mastercard.png" alt="Mastercard"></li>
+                                    <li><img src="{$this_path}views/img/maestro.png" alt="Maestro"></li>
+                                    <li><img src="{$this_path}views/img/amex.png" alt="American Express"></li>
+                                    <li><img src="{$this_path}views/img/jcb.png" alt="JCB card"></li>
+                                    <li><img src="{$this_path}views/img/veryfied_by_visa.png" alt="Veryfied by Visa"></li>
+                                    <li><img src="{$this_path}views/img/mastercard_secure_code.png" alt="Mastercard Secure code"></li>
+                                    <li><img src="{$this_path}views/img/pci.png" alt="PCI"></li>
+                                    <li><img src="{$this_path}views/img/thawte.png" alt="Thawte"></li>
+                                  </ul>
+                                </div>
                             </div>
                         </div>
-                        </footer>
                         {/if}
                     {/if}
                 </div>

@@ -179,6 +179,9 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 			$context = Context::getContext();
 			$context->cart = $cart;
 			$context->customer = $customer;
+			$_GET['id_shop'] = $cart->id_shop;
+            Shop::initialize();
+
 		
 			$id_order = Order::getOrderByCartId(intval($id_cart));
 			

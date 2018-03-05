@@ -143,7 +143,6 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
 	        	$this->setTemplate('module:paytpv/views/templates/front/payment_fail.tpl');
 	        	return;
         	}
-        	Paytpv_Order_Info::save_Order_Info((int)$this->context->customer->id,$this->context->cart->id,0,0,0,0,$data["IDUSER"]);
 
         	if ($idterminal>0)
 				$secure_pay = $paytpv->isSecureTransaction($idterminal,$total_pedido,$data["IDUSER"])?1:0;
@@ -159,6 +158,8 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
 				$pass_sel = $pass_ns;
 			}		
         }
+
+        Paytpv_Order_Info::save_Order_Info((int)$this->context->customer->id,$this->context->cart->id,0,0,0,0,$data["IDUSER"]);
 		
 		// Si el cliente solo tiene un terminal seguro, el segundo pago va siempre por seguro.
 		// Si tiene un terminal NO Seguro ó ambos, el segundo pago siempre lo mandamos por NO Seguro
@@ -288,14 +289,23 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
 		
 		if ( (isset($charge[ 'DS_RESPONSE' ]) && ( int )$charge[ 'DS_RESPONSE' ] == 1) || $charge[ 'DS_ERROR_ID' ] == 0) {
 
-			if ($jetPayment && $savecard_jet==1){
-				$result = $client->info_user( $data['IDUSER'],$data['TOKEN_USER']);
-				$result = $paytpv->saveCard($this->context->cart->id_customer,$data['IDUSER'],$data['TOKEN_USER'],$result['DS_MERCHANT_PAN'],$result['DS_CARD_BRAND']);
-				
-			}
 			//Esperamos a que la notificación genere el pedido
 			sleep ( 3 );
 			$id_order = Order::getOrderByCartId(intval($this->context->cart->id));
+
+			if ($jetPayment){
+				$importe_ps  = number_format($importe / 100, 2, ".","");
+
+				// Save paytpv order
+				Paytpv_Order::add_Order($data['IDUSER'],$data['TOKEN_USER'],0,$this->context->cart->id_customer,$id_order,$importe_ps);
+
+				if ($savecard_jet==1){
+					$result = $client->info_user( $data['IDUSER'],$data['TOKEN_USER']);
+					$result = $paytpv->saveCard($this->context->cart->id_customer,$data['IDUSER'],$data['TOKEN_USER'],$result['DS_MERCHANT_PAN'],$result['DS_CARD_BRAND']);
+				}
+			}
+
+
 			$values = array(
 				'id_cart' => $this->context->cart->id,
 				'id_module' => (int)$this->module->id,

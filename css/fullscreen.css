@@ -85,23 +85,23 @@
 .paytpv_jet input{border:1px solid #e5e5e5;color:#333;font-size:18px;height:34px;padding:0 5px;width:100%;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:border-box;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px}
 
 
-footer {
+.paytpv_footer {
     padding: 30px 10px;
     clear: both;
 }
 
-footer .footer_logo {
+.footer_logo {
     display: inline-block;
     width: 130px;
 }
 
-footer .paytpv_wrapper{
+.footer_logo .paytpv_wrapper{
     display: block;
     padding: 10px 0px;
     border-bottom: 1px dotted #404046;
 }
 
-footer ul {
+.footer_logo ul {
     float: left;
     font-size: 14px;
     
