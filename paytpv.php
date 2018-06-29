@@ -48,7 +48,7 @@ class Paytpv extends PaymentModule {
 		$this->name = 'paytpv';
 		$this->tab = 'payments_gateways';
 		$this->author = 'PayTPV';
-		$this->version = '7.4.4';
+		$this->version = '7.4.5';
 
 		
         $this->is_eu_compatible = 1;
@@ -723,7 +723,6 @@ class Paytpv extends PaymentModule {
 
 		$importe = number_format($cart->getOrderTotal(true, Cart::BOTH)*100, 0, '.', '');		
 
-		$paytpv_order_ref = str_pad($params['cart']->id, 8, "0", STR_PAD_LEFT);
 		$ssl = Configuration::get('PS_SSL_ENABLED');
 		$values = array(
 			'id_cart' => (int)$cart->id,
@@ -756,7 +755,7 @@ class Paytpv extends PaymentModule {
             'active_suscriptions'=>$active_suscriptions,
             'saved_card'=>$saved_card,
             'commerce_password'=>$this->commerce_password,
-            'id_cart' => $params['cart']->id,
+            'id_cart' => $cart->id,
             'paytpv_iframe' => $this->paytpv_iframe_URL(),
             'paytpv_integration' => $paytpv_integration,
             'jet_id' => $jetid_sel,
