@@ -32,22 +32,7 @@
             <div class="">
         {/if}
             <div class="paytpv">
-                {if ($newpage_payment==2)}
-                <div class="row">
-                    <div class="col-xs-12 col-md-12">
-                        <p style="padding-top: 10px;">
-                            <input type="radio" title="{l s='Pay with Card' mod='paytpv'}" 
-                            name="payment_mode" 
-                            class="payment_mode" 
-                            id="payment_mode_paytpv" 
-                            data-payment="paytpv"
-                            data-payment-link="{$paytpv_iframe}">
-                            <label class="upletter" style="padding-left: 20px;" for="payment_mode_paytpv">{l s='Pay with Card' mod='paytpv'}</label>
-                        </p>
-                        <form action="{$link->getModuleLink('paytpv', 'validation')}" method="post" id="paytpv_form" class="hidden"></form>
-                    </div>
-                </div>
-                {/if}
+                
                 <a href="http://www.paytpv.com" target="_blank"><img src="{$base_dir}modules/paytpv/views/img/paytpv_logo.svg" width="135"></a>
                 <img src="{$base_dir}modules/paytpv/views/img/tarjetas.png">
                 {if ($msg_paytpv!="")}
@@ -127,7 +112,7 @@
             
 
                 <div id="saved_cards" style="display:none">
-                    <form class="form-inline">
+                    <form class="form-inline" id="cards_paytpv">
                         <div class="form-group">
                             <label for="card" style="text-align:left">{l s='Card' mod='paytpv'}:</label>
                             <select name="card" id="card" onChange="checkCard()" class="form-control">
@@ -146,7 +131,7 @@
                         </div>
                     </form>
 
-                    {if (sizeof($saved_card)>1)}
+                    {if (sizeof($saved_card)>1) || ($newpage_payment==2)}
                     <div id="button_directpay" style="margin-top:10px;">
                         {if ($commerce_password)}
                         <button id="open_directpay" href="#directpay" class="btn btn-primary center-block  paytpv_pay">          
@@ -365,6 +350,7 @@
 
 
     <input type="hidden" name="paytpv_module" id="paytpv_module" value="{$link->getModuleLink('paytpv', 'actions',[], true)|escape:'htmlall':'UTF-8'}">
+    <input type="hidden" name="newpage_payment" id="newpage_payment" value="{$newpage_payment}">
 
     <form id="form_paytpv" action="{$base_dir}index.php?controller=order" method="post">
         <input type="hidden" name="step" value="3">

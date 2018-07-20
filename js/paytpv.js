@@ -31,8 +31,6 @@ $(document).ready(function() {
         });
 
 
-    
-
     $("#open_directpay").fancybox({
             'beforeShow': onOpenDirectPay
         });
@@ -118,18 +116,17 @@ function checkConditions(){
 
 function checkCard(){
 
-    // Show Cards only if exists saved cards
-    if ($("#card option").length>1){
+    // Show Cards only if exists saved cards 
+    if ($("#card option").length>1 || $("#newpage_payment").val()==2){
         $("#saved_cards").show();
+        if ($("#newpage_payment").val()==2 && $("#card option").length==1) $("#cards_paytpv").hide();
         if ($("#payment_mode_paytpv")==2){
-            $("#button_directpay").hide();
+            $("#button_directpay").show();
             $("#payment_mode_paytpv").attr("data-payment-link",$("#card").val());
         }
     }
     
     cond_paytpv = checkConditions();  
-    
-    
 
 }
 
