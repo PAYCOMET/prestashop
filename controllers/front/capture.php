@@ -187,7 +187,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
 			$language_data = explode("-",$this->context->language->language_code);
 			$language = $language_data[0];
 
-			if ($jetPayment && $_POST["suscription"]==1){
+			if ($jetPayment && (isset($_POST["suscription"]) && $_POST["suscription"]==1)){
 				$subscription_startdate = date("Ymd");
 				$susc_periodicity = $_POST["periodicity"];
 				$subs_cycles = $_POST["cycles"];

@@ -59,6 +59,7 @@ class WS_Client {
 
 		}
 
+		$useCURL = $useFsaveOrderAfterSubmit;
 		$this->client->setUseCurl( $useCURL );
 
 	}
