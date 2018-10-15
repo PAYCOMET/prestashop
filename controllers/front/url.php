@@ -38,7 +38,6 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 	public function initContent()
 	{
 
-		parent::initContent();
 		$this->context->smarty->assign(array(
 			'this_path' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->module->name.'/'
 		));
@@ -173,14 +172,20 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
 
 		if($result == 0){
+			$context = Context::getContext();
 			$id_cart = (int)substr($ref,0,8);
 			$cart = new Cart($id_cart);
 			$customer = new Customer((int) $cart->id_customer);
-			$context = Context::getContext();
+
+			$address = new Address((int)$cart->id_address_invoice);
 			$context->cart = $cart;
-			$context->customer = $customer;
+			$context->customer = new Customer((int)$cart->id_customer);
+			$context->country = new Country((int)$address->id_country);
+			$context->language = new Language((int)$cart->id_lang);
+			$context->currency = new Currency((int)$cart->id_currency);
+
 			$_GET['id_shop'] = $cart->id_shop;
-            Shop::initialize();
+			Shop::initialize();
 
 		
 			$id_order = Order::getOrderByCartId(intval($id_cart));
