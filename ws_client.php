@@ -34,7 +34,7 @@ class WS_Client {
 	var $config = null;
 	private function write_log($log){
 
-	  Logger::addLog($log, 1);
+	  PrestaShopLogger::addLog($log, 1);
 
 	}
 	public function __construct( array $config = array( ), $proxyhost = '', $proxyport = '', $proxyusername = '', $proxypassword = '' ) {
