@@ -113,7 +113,7 @@ function buildED() {
           })();
           for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
             card_type = _ref1[_j];
-            if (number.match(card_type.pattern)) {
+            if (typeof(number) !== 'undefined' && number.match(card_type.pattern)) {
               return card_type;
             }
           }
@@ -169,7 +169,9 @@ function buildED() {
           };
         })(this);
         normalize = function(number) {
-          return number.replace(/[ -]/g, '');
+          if (typeof(number) !== 'undefined') {
+            return number.replace(/[ -]/g, '');
+          }
         };
         if (!bind) {
           return validate();

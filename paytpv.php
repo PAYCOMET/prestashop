@@ -48,7 +48,7 @@ class Paytpv extends PaymentModule {
 		$this->name = 'paytpv';
 		$this->tab = 'payments_gateways';
 		$this->author = 'PayTPV';
-		$this->version = '7.4.9';
+		$this->version = '7.4.10';
 
 		
         $this->is_eu_compatible = 1;
