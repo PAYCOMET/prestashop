@@ -14,7 +14,7 @@ Pulsamos en Añadir nuevo modulo y seleccionamos el zip descargado.
 
 ## Configuración del Módulo
 
-Rellenaremos los datos según la configuracion disponible en PAYCOMET. https://paycomet.com/ → Mis productos → configurar productos y seleccionamos el producto que vayamos a configurar en nuestra tienda Prestashop.
+Rellenaremos los datos según la configuracion disponible en PAYCOMET. https://www.paycomet.com/ → Mis productos → configurar productos y seleccionamos el producto que vayamos a configurar en nuestra tienda Prestashop.
 
 ### Entorno: 
 
@@ -42,7 +42,7 @@ IMPORTANTE: En la configuración del modulo se indican las URL OK, URL OK y URL 
 
 ## Configuración del producto en PAYCOMET
 
-Accedemos a nuestro area de clientes en https://paycomet.com/ → Mis productos → configurar productos Y seleccionamos el producto que vayamos a configurar en nuestra tienda Prestashop.
+Accedemos a nuestro area de clientes en https://www.paycomet.com/ → Mis productos → configurar productos Y seleccionamos el producto que vayamos a configurar en nuestra tienda Prestashop.
 En URL OK (cobro con éxito) indicaremos la Url OK que se muestra en la configuración del producto
 En URL KO (error en el cobro) indicaremos la Url KO que se muestra en la configuración del producto
 
