@@ -1,11 +1,11 @@
-# Módulo de pago de PayTpv para Prestashop 1.7+
+# Módulo de pago de PAYCOMET para Prestashop 1.7+
 
 
 Ofrece la posibilidad de cobrar a tus clientes con tarjeta en tiendas Prestashop 1.7+.
 
 ## Documentación del Módulo.
 
-En el siguiente enlace [Modulo Prestashop PAYTPV](http://developers.paytpv.com/es/modulos-de-pago/prestashop17)
+En el siguiente enlace [Modulo Prestashop PAYCOMET](https://docs.paycomet.com/es/modulos-de-pago/prestashop)
 
 ## Instalación
 
@@ -14,13 +14,13 @@ Pulsamos en Añadir nuevo modulo y seleccionamos el zip descargado.
 
 ## Configuración del Módulo
 
-Rellenaremos los datos según la configuracion disponible en PayTPV. https://paytpv.com/ → Mis productos → configurar productos y seleccionamos el producto que vayamos a configurar en nuestra tienda Prestashop.
+Rellenaremos los datos según la configuracion disponible en PAYCOMET. https://paycomet.com/ → Mis productos → configurar productos y seleccionamos el producto que vayamos a configurar en nuestra tienda Prestashop.
 
 ### Entorno: 
 
 
 #### Modo Real: Para el uso normal del módulo con pagos reales.
-#### Modo Test: Para probar el funcionamiento del módulo sin necesidad de tener una cuenta en PayTPV.
+#### Modo Test: Para probar el funcionamiento del módulo sin necesidad de tener una cuenta en PAYCOMET.
 
 ### Integración: 
 
@@ -30,19 +30,19 @@ Rellenaremos los datos según la configuracion disponible en PayTPV. https://pay
 - 3D Secure en la primera compra: Si la primera compra se realiza por terminal seguro. La opción NO sólo está disponible cuando el cliente tiene contratado un terminal no seguro. En el resto de casos la primera compra siempres se hará por 3D Secure.
 - Usar 3D Secure en compras superiores a: Para solicitar la verificación 3DSecure en compras que superen el importe indicado.
 - Solicitar contraseña del comercio en compras con tarjetas almacenadas: Se pide la contraseña del usuario en el comercio.
-- Contraseña: La contraseña asignada al producto en PayTPV.
-- Numero de terminal: El terminal asignado al producto en PayTPV.
-- Codigo cliente: El codigo cliente asignado al producto en PayTPV.
+- Contraseña: La contraseña asignada al producto en PAYCOMET.
+- Numero de terminal: El terminal asignado al producto en PAYCOMET.
+- Codigo cliente: El codigo cliente asignado al producto en PAYCOMET.
 - Activar suscripciones: Si se desea que se muestre o no la opción de suscribirse en los carros de compra.
 
-IMPORTANTE: En la configuración del modulo se indican las URL OK, URL OK y URL de NOTIFICACION que deberán definirse en la configuración de PayTPV.
+IMPORTANTE: En la configuración del modulo se indican las URL OK, URL OK y URL de NOTIFICACION que deberán definirse en la configuración de PAYCOMET.
 
-#### Bankstore JET/XML: Igual que la operativa Bankstore IFRAME, salvo que la captación de datos de tarjeta no se realiza mediante iframe. Es necesario generar el JET ID en la configuración del Producto dentro de PAYTPV. ¡¡El entorno sólo trabajará sobre protocolo seguro SSL!!
+#### Bankstore JET/XML: Igual que la operativa Bankstore IFRAME, salvo que la captación de datos de tarjeta no se realiza mediante iframe. Es necesario generar el JET ID en la configuración del Producto dentro de PAYCOMET. ¡¡El entorno sólo trabajará sobre protocolo seguro SSL!!
 
 
-## Configuración del producto en PayTPV
+## Configuración del producto en PAYCOMET
 
-Accedemos a nuestro area de clientes en https://paytpv.com/ → Mis productos → configurar productos Y seleccionamos el producto que vayamos a configurar en nuestra tienda Prestashop.
+Accedemos a nuestro area de clientes en https://paycomet.com/ → Mis productos → configurar productos Y seleccionamos el producto que vayamos a configurar en nuestra tienda Prestashop.
 En URL OK (cobro con éxito) indicaremos la Url OK que se muestra en la configuración del producto
 En URL KO (error en el cobro) indicaremos la Url KO que se muestra en la configuración del producto
 
