@@ -18,9 +18,8 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author     Mikel Martin <mmartin@paytpv.com>
-*  @author     Jose Ramon Garcia <jrgarcia@paytpv.com>
-*  @copyright  2015 PAYTPV ON LINE S.L.
+*  @author     PAYCOMET <info@paycomet.com>
+*  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 */
 
@@ -47,21 +46,22 @@ class Paytpv extends PaymentModule {
 
 		$this->name = 'paytpv';
 		$this->tab = 'payments_gateways';
-		$this->author = 'PayTPV';
-		$this->version = '7.4.10';
+		$this->author = 'Paycomet';
+		$this->version = '7.5.0';
 
 		
         $this->is_eu_compatible = 1;
         $this->ps_versions_compliancy = array('min' => '1.7');
         $this->controllers = array('payment', 'validation');
-        
-
-		$this->url_paytpv = "https://secure.paytpv.com/gateway/bnkgateway.php";
 		
 		//$this->bootstrap = true;
 		// Array config:  configuration values
 		$config = $this->getConfigValues();
-		
+
+		$this->url_paytpv = "https://api.paycomet.com/gateway/ifr-bankstore";
+		$this->endpoint_paytpv = "https://api.paycomet.com/gateway/xml-bankstore";
+		$this->jet_paytpv = "https://api.paycomet.com/gateway/jet-paytpv.js";
+				
 		
 		if (isset($config['PAYTPV_INTEGRATION']))
 			$this->integration = $config['PAYTPV_INTEGRATION'];
@@ -81,8 +81,7 @@ class Paytpv extends PaymentModule {
 			$this->reg_estado = $config['PAYTPV_REG_ESTADO'];
 
 		
-		if (isset($config['PAYTPV_MERCHANTDATA']))
-			$this->merchantdata = $config['PAYTPV_MERCHANTDATA'];
+
 		if (isset($config['PAYTPV_FIRSTPURCHASE_SCORING']))
 			$this->firstpurchase_scoring = $config['PAYTPV_FIRSTPURCHASE_SCORING'];
 		if (isset($config['PAYTPV_FIRSTPURCHASE_SCORING_SCORE']))
@@ -121,37 +120,17 @@ class Paytpv extends PaymentModule {
 		parent::__construct();
 		$this->page = basename(__FILE__, '.php');
 
-		$this->displayName = $this->l('paytpv.com');
-		$this->description = $this->l('This module allows you to accept card payments via paytpv.com');
+		$this->displayName = $this->l('Paycomet');
+		$this->description = $this->l('This module allows you to accept card payments via www.paycomet.com');
 		
 		try{
 			
 			if (!isset($this->clientcode) OR !Paytpv_Terminal::exist_Terminal())
-				$this->warning = $this->l('Missing data when configuring the module Paytpv');
+				$this->warning = $this->l('Missing data when configuring the module PAYCOMET');
 		
 		}catch (exception $e){}
 
 	}
-
-	protected function write_log(){
-
-		if (Tools::usingSecureMode())
- 			$domain = Tools::getShopDomainSsl(true);
- 		else
- 			$domain = Tools::getShopDomain(true);
-		try{
-			$url_log = "http://prestashop.paytpv.com/log_paytpv.php?dominio=".$domain."&version_modulo=".$this->version."&tienda=Prestashop&version_tienda="._PS_VERSION_;
-			@file_get_contents($url_log);
-		}catch (exception $e){}
-	}
-
-	
-	public function runUpgradeModule(){
-		$this->write_log();
-		parent::runUpgradeModule();
-	}
-
-
 
 	public function install() {
 
@@ -159,7 +138,7 @@ class Paytpv extends PaymentModule {
 		$paypal_install = new PayTpvInstall();
 		$res = $paypal_install->createTables();
 		if (!$res){
-			$this->error = $this->l('Missing data when configuring the module Paytpv');
+			$this->error = $this->l('Missing data when configuring the module PAYCOMET');
 			return false;
 		}
 
@@ -205,8 +184,7 @@ class Paytpv extends PaymentModule {
 	    // Show error when required fields.
 		if (isset($_POST['btnSubmit']))
 		{
-
-			
+						
 			if (empty($_POST['clientcode']))
 				$this->_postErrors[] = $this->l('Client Code required');
 			if (empty($_POST['pass']))
@@ -295,7 +273,6 @@ class Paytpv extends PaymentModule {
 
 			// Datos Scoring
         
-	        Configuration::updateValue('PAYTPV_MERCHANTDATA', $_POST['merchantdata']); 
 			Configuration::updateValue('PAYTPV_FIRSTPURCHASE_SCORING', $_POST['firstpurchase_scoring']); 
 			Configuration::updateValue('PAYTPV_FIRSTPURCHASE_SCORING_SCORE', $_POST['firstpurchase_scoring_score']); 
 			Configuration::updateValue('PAYTPV_SESSIONTIME_SCORING', $_POST['sessiontime_scoring']); 
@@ -332,14 +309,8 @@ class Paytpv extends PaymentModule {
        
         // Initialize array Score
         $arrScore = array();
-        $arrScore["score"] = null;
-        $arrScore["merchantdata"] = null;
+        $arrScore["score"] = null;        
         $arrScore["scoreCalc"] = null;
-
-        if ($config["PAYTPV_MERCHANTDATA"]){
-            $merchantData = $this->getMerchantData($cart);
-            $arrScore["merchantdata"] =  urlencode(base64_encode(json_encode($merchantData)));
-        }
 
         $shipping_address_country = "";
 
@@ -426,66 +397,234 @@ class Paytpv extends PaymentModule {
 
     }
 
+	public function threeDSRequestorAuthenticationInfo() {
 
-	public function getMerchantData($cart){
-        /*Datos Scoring*/
-       
-        $Merchant_Data["scoring"]["customer"]["id"] = $this->context->customer->id;
-        $Merchant_Data["scoring"]["customer"]["name"] = $this->context->customer->firstname;
-        $Merchant_Data["scoring"]["customer"]["surname"] = $this->context->customer->lastname;
-        $Merchant_Data["scoring"]["customer"]["email"] = $this->context->customer->email;
+		$customerStats = $this->context->customer->getStats();
 
-        $phone = "";
+		$threeDSReqAuthTimestamp = strftime('%Y%m%d%H%M', strtotime($customerStats['last_visit']));
 
-        $billing = new Address(intval($cart->id_address_invoice));
-        if (!empty($billing))   $phone = $billing->phone;
+		$threeDSRequestorAuthenticationInfo = array();
+		$threeDSRequestorAuthenticationInfo["threeDSReqAuthData"] = "";
+		$logged = $this->context->customer->isLogged();
+		$threeDSRequestorAuthenticationInfo["threeDSReqAuthMethod"] = ($logged)?"02":"01";
+		$threeDSRequestorAuthenticationInfo["threeDSReqAuthTimestamp"] = $threeDSReqAuthTimestamp;
 
-        $Merchant_Data["scoring"]["customer"]["phone"] = $phone;
-        $Merchant_Data["scoring"]["customer"]["mobile"] = "";
-        $Merchant_Data["scoring"]["customer"]["firstBuy"] = Paytpv_Order::isFirstPurchaseCustomer($this->context->customer->id);
-        
-        // Shipping
-        // Address
-        $shippingAddressData = new Address($cart->id_address_delivery);
-        if ($shippingAddressData){
-            $street0 = $shippingAddressData->address1;
-            $street1 = $shippingAddressData->address2;
-            $shipping_address_country = new Country($shippingAddressData->id_country);
-            $shipping_address_state = new State($shippingAddressData->id_state);
-        }
+		return $threeDSRequestorAuthenticationInfo;
+	}
 
-        $Merchant_Data["scoring"]["shipping"]["address"]["streetAddress"] = ($shippingAddressData)?$street0:"";
-        $Merchant_Data["scoring"]["shipping"]["address"]["extraAddress"] = ($shippingAddressData)?$street1:"";
-        $Merchant_Data["scoring"]["shipping"]["address"]["city"] = ($shippingAddressData)?$shippingAddressData->city:"";
-        $Merchant_Data["scoring"]["shipping"]["address"]["postalCode"] = ($shippingAddressData)?$shippingAddressData->postcode:"";
-        $Merchant_Data["scoring"]["shipping"]["address"]["state"] = ($shippingAddressData)?$shipping_address_state->name:"";
-        $Merchant_Data["scoring"]["shipping"]["address"]["country"] = ($shippingAddressData)?$shipping_address_country->iso_code:"";
 
-       
-        // Time
-        $Merchant_Data["scoring"]["shipping"]["time"] = "";
+	public function acctInfo($cart) {
 
-        // Billing
-        $billingAddressData = $billing;
-        if ($billingAddressData){
-            $street0 = $billingAddressData->address1;
-            $street1 = $billingAddressData->address2;
-            $billing_address_country = new Country($shippingAddressData->id_country);
-            $billing_address_state = new State($shippingAddressData->id_state);
-        }
+		$acctInfoData = array();
+		$date_now = new DateTime("now");
 
-        $Merchant_Data["scoring"]["billing"]["address"]["streetAddress"] = ($billingAddressData)?$street0:"";
-        $Merchant_Data["scoring"]["billing"]["address"]["extraAddress"] = ($billingAddressData)?$street1:"";
-        $Merchant_Data["scoring"]["billing"]["address"]["city"] = ($billingAddressData)?$billingAddressData->city:"";
-        $Merchant_Data["scoring"]["billing"]["address"]["postalCode"] = ($billingAddressData)?$billingAddressData->postcode:"";
-        $Merchant_Data["scoring"]["billing"]["address"]["state"] = ($billingAddressData)?$billing_address_state->name:"";
-        $Merchant_Data["scoring"]["billing"]["address"]["country"] = ($billingAddressData)?$billing_address_country->iso_code:"";
+		$isGuest = $this->context->customer->isGuest();
+		if ($isGuest){
+			$acctInfoData["chAccAgeInd"] = "01";
+		} else {
+		
+			$date_customer = new DateTime(strftime('%Y%m%d', strtotime($this->context->customer->date_add)));
+			
+			$diff = $date_now->diff($date_customer);
+			$dias = $diff->days;
+			
+			if ($dias==0) {
+				$acctInfoData["chAccAgeInd"] = "02";
+			} else if ($dias < 30) {
+				$acctInfoData["chAccAgeInd"] = "03";
+			} else if ($dias < 60) {
+				$acctInfoData["chAccAgeInd"] = "04";
+			} else {
+				$acctInfoData["chAccAgeInd"] = "05";
+			}
+		}
+			$acctInfoData["chAccChange"] = strftime('%Y%m%d', strtotime($this->context->customer->date_upd));
 
-        $Merchant_Data["futureData"] = "";
+			$date_customer_upd = new DateTime(strftime('%Y%m%d', strtotime($this->context->customer->date_upd)));
+			$diff = $date_now->diff($date_customer_upd);
+			$dias_upd = $diff->days;
 
-        return $Merchant_Data;
+			if ($dias_upd==0) {
+				$acctInfoData["chAccChangeInd"] = "01";
+			} else if ($dias_upd < 30) {
+				$acctInfoData["chAccChangeInd"] = "02";
+			} else if ($dias_upd < 60) {
+				$acctInfoData["chAccChangeInd"] = "03";
+			} else {
+				$acctInfoData["chAccChangeInd"] = "04";
+			}
+
+			$acctInfoData["chAccDate"] = strftime('%Y%m%d', strtotime($this->context->customer->date_upd));
+			//$acctInfoData["chAccPwChange"] = ""; 
+			//$acctInfoData["chAccPwChangeInd"] = ""; 
+
+			$acctInfoData["nbPurchaseAccount"] = Paytpv_Order::numPurchaseCustomer($this->context->customer->id,1,6,"MONTH");
+			//$acctInfoData["provisionAttemptsDay"] = "";
+
+			$acctInfoData["txnActivityDay"] = Paytpv_Order::numPurchaseCustomer($this->context->customer->id,0,1,"DAY");
+			$acctInfoData["txnActivityYear"] = Paytpv_Order::numPurchaseCustomer($this->context->customer->id,0,1,"YEAR");
+
+			//$acctInfoData["paymentAccAge"] = "";
+			//$acctInfoData["paymentAccInd"] = "";
+			
+			$firstAddressDelivery = Paytpv_Order::firstAddressDelivery($this->context->customer->id,$cart->id_address_delivery);
+			if ($firstAddressDelivery!="") {
+				$acctInfoData["shipAddressUsage"] = date("Ymd",strtotime($firstAddressDelivery));
+
+				$date_firstAddressDelivery = new DateTime(strftime('%Y%m%d', strtotime($firstAddressDelivery)));
+				$diff = $date_now->diff($date_firstAddressDelivery);
+				$dias_firstAddressDelivery = $diff->days;
+				if ($dias_firstAddressDelivery==0) {
+					$acctInfoData["shipAddressUsageInd"] = "01";
+				} else if ($dias_upd < 30) {
+					$acctInfoData["shipAddressUsageInd"] = "02";
+				} else if ($dias_upd < 60) {
+					$acctInfoData["shipAddressUsageInd"] = "03";
+				} else {
+					$acctInfoData["shipAddressUsageInd"] = "04";
+				}
+			}
+
+			// Shiping info
+			$shipping = new Address($cart->id_address_delivery);
+			
+			if ( ($this->context->customer->firstname != $shipping->firstname) ||
+			($this->context->customer->lastname != $shipping->lastname)) { 
+				$acctInfoData["shipNameIndicator"] = "02";
+			} else {
+				$acctInfoData["shipNameIndicator"] = "01";
+			}
+			
+			$acctInfoData["suspiciousAccActivity"] = "01";
+				
+
+		return $acctInfoData;
+	}
+
+	public function getShoppingCart($cart) {
+
+		$shoppingCartData = array();
+
+		foreach ($cart->getProducts() as $key=>$product) {
+			$shoppingCartData[$key]["sku"] = $product["reference"];
+			$shoppingCartData[$key]["quantity"] = $product["cart_quantity"];
+			$shoppingCartData[$key]["unitPrice"] = number_format($product["price"]*100, 0, '.', '');
+			$shoppingCartData[$key]["name"] = $product["name"];
+			$shoppingCartData[$key]["category"] = $product["category"];
+		}
+
+		return array("shoppingCart"=>array_values($shoppingCartData));		
+	}
+
+	
+	public function isoCodeToNumber($code) {
+		
+		$arrCode = array("AF" => "004", "AX" => "248", "AL" => "008", "DE" => "276", "AD" => "020", "AO" => "024", "AI" => "660", "AQ" => "010", "AG" => "028", "SA" => "682", "DZ" => "012", "AR" => "032", "AM" => "051", "AW" => "533", "AU" => "036", "AT" => "040", "AZ" => "031", "BS" => "044", "BD" => "050", "BB" => "052", "BH" => "048", "BE" => "056", "BZ" => "084", "BJ" => "204", "BM" => "060", "BY" => "112", "BO" => "068", "BQ" => "535", "BA" => "070", "BW" => "072", "BR" => "076", "BN" => "096", "BG" => "100", "BF" => "854", "BI" => "108", "BT" => "064", "CV" => "132", "KH" => "116", "CM" => "120", "CA" => "124", "QA" => "634", "TD" => "148", "CL" => "52", "CN" => "156", "CY" => "196", "CO" => "170", "KM" => "174", "KP" => "408", "KR" => "410", "CI" => "384", "CR" => "188", "HR" => "191", "CU" => "192", "CW" => "531", "DK" => "208", "DM" => "212", "EC" => "218", "EG" => "818", "SV" => "222", "AE" => "784", "ER" => "232", "SK" => "703", "SI" => "705", "ES" => "724", "US" => "840", "EE" => "233", "ET" => "231", "PH" => "608", "FI" => "246", "FJ" => "242", "FR" => "250", "GA" => "266", "GM" => "270", "GE" => "268", "GH" => "288", "GI" => "292", "GD" => "308", "GR" => "300", "GL" => "304", "GP" => "312", "GU" => "316", "GT" => "320", "GF" => "254", "GG" => "831", "GN" => "324", "GW" => "624", "GQ" => "226", "GY" => "328", "HT" => "332", "HN" => "340", "HK" => "344", "HU" => "348", "IN" => "356", "ID" => "360", "IQ" => "368", "IR" => "364", "IE" => "372", "BV" => "074", "IM" => "833", "CX" => "162", "IS" => "352", "KY" => "136", "CC" => "166", "CK" => "184", "FO" => "234", "GS" => "239", "HM" => "334", "FK" => "238", "MP" => "580", "MH" => "584", "PN" => "612", "SB" => "090", "TC" => "796", "UM" => "581", "VG" => "092", "VI" => "850", "IL" => "376", "IT" => "380", "JM" => "388", "JP" => "392", "JE" => "832", "JO" => "400", "KZ" => "398", "KE" => "404", "KG" => "417", "KI" => "296", "KW" => "414", "LA" => "418", "LS" => "426", "LV" => "428", "LB" => "422", "LR" => "430", "LY" => "434", "LI" => "438", "LT" => "440", "LU" => "442", "MO" => "446", "MK" => "807", "MG" => "450", "MY" => "458", "MW" => "454", "MV" => "462", "ML" => "466", "MT" => "470", "MA" => "504", "MQ" => "474", "MU" => "480", "MR" => "478", "YT" => "175", "MX" => "484", "FM" => "583", "MD" => "498", "MC" => "492", "MN" => "496", "ME" => "499", "MS" => "500", "MZ" => "508", "MM" => "104", "NA" => "516", "NR" => "520", "NP" => "524", "NI" => "558", "NE" => "562", "NG" => "566", "NU" => "570", "NF" => "574", "NO" => "578", "NC" => "540", "NZ" => "554", "OM" => "512", "NL" => "528", "PK" => "586", "PW" => "585", "PS" => "275", "PA" => "591", "PG" => "598", "PY" => "600", "PE" => "604", "PF" => "258", "PL" => "616", "PT" => "620", "PR" => "630", "GB" => "826", "EH" => "732", "CF" => "140", "CZ" => "203", "CG" => "178", "CD" => "180", "DO" => "214", "RE" => "638", "RW" => "646", "RO" => "642", "RU" => "643", "WS" => "882", "AS" => "016", "BL" => "652", "KN" => "659", "SM" => "674", "MF" => "663", "PM" => "666", "VC" => "670", "SH" => "654", "LC" => "662", "ST" => "678", "SN" => "686", "RS" => "688", "SC" => "690", "SL" => "694", "SG" => "702", "SX" => "534", "SY" => "760", "SO" => "706", "LK" => "144", "SZ" => "748", "ZA" => "710", "SD" => "729", "SS" => "728", "SE" => "752", "CH" => "756", "SR" => "740", "SJ" => "744", "TH" => "764", "TW" => "158", "TZ" => "834", "TJ" => "762", "IO" => "086", "TF" => "260", "TL" => "626", "TG" => "768", "TK" => "772", "TO" => "776", "TT" => "780", "TN" => "788", "TM" => "795", "TR" => "792", "TV" => "798", "UA" => "804", "UG" => "800", "UY" => "858", "UZ" => "860", "VU" => "548", "VA" => "336", "VE" => "862", "VN" => "704", "WF" => "876", "YE" => "887", "DJ" => "262", "ZM" => "894", "ZW" => "716");
+
+		return $arrCode[$code];
+		
+	}
+
+
+	public function getEMV3DS($cart) {
+		
+		$Merchant_EMV3DS = array();
+
+		$Merchant_EMV3DS["customer"]["name"] = $this->context->customer->firstname;
+		$Merchant_EMV3DS["customer"]["surname"] = $this->context->customer->lastname;
+		$Merchant_EMV3DS["customer"]["email"] = $this->context->customer->email;
+ 
+		
+		// Billing info
+		$billing = new Address(intval($cart->id_address_invoice));
+
+		if ($billing) {
+	
+			$billing_address_country = new Country($billing->id_country);
+			$billing_address_state = new State($billing->id_state);
+			
+		
+			$Merchant_EMV3DS["billing"]["billAddrCity"] = ($billing)?$billing->city:"";								
+			$Merchant_EMV3DS["billing"]["billAddrCountry"] = ($billing)?$billing_address_country->iso_code:"";		
+			if ($Merchant_EMV3DS["billing"]["billAddrCountry"]!="") {
+				$Merchant_EMV3DS["billing"]["billAddrCountry"] = $this->isoCodeToNumber($Merchant_EMV3DS["billing"]["billAddrCountry"]);
+			}
+			$Merchant_EMV3DS["billing"]["billAddrLine1"] = ($billing)?$billing->address1:"";						
+			$Merchant_EMV3DS["billing"]["billAddrLine2"] = ($billing)?$billing->address2:"";						
+			//$Merchant_EMV3DS["billing"]["billAddrLine3"] = "";													
+			$Merchant_EMV3DS["billing"]["billAddrPostCode"] = ($billing)?$billing->postcode:"";						
+
+			if ($billing_address_state->iso_code!="") {
+				$billAddState = explode("-",$billing_address_state->iso_code);
+				$billAddState = end($billAddState);
+				$Merchant_EMV3DS["billing"]["billAddrState"] = $billAddState;
+			}
+			
+			
+
+			if ($billing->phone) {
+				$arrDatosHomePhone["cc"] = $billing_address_country->call_prefix;
+				$arrDatosHomePhone["subscriber"] = $billing->phone;
+				
+				$Merchant_EMV3DS["customer"]["homePhone"] = $arrDatosHomePhone;	
+			}
+
+			if ($billing->phone_mobile) {
+				$arrDatosMobilePhone["cc"] = $billing_address_country->call_prefix;
+				$arrDatosMobilePhone["subscriber"] = $billing->phone_mobile;
+				
+				$Merchant_EMV3DS["customer"]["mobilePhone"] = $arrDatosMobilePhone;
+			}
+		}
+		
+
+		// Shiping info
+		$shipping = new Address($cart->id_address_delivery);
+
+		if ($shipping) {
+		
+			$shipping_address_country = new Country($shipping->id_country);
+			$shipping_address_state = new State($shipping->id_state);
+			
+			$Merchant_EMV3DS["shipping"]["shipAddrCity"] = ($shipping)?$shipping->city:"";								
+			$Merchant_EMV3DS["shipping"]["shipAddrCountry"] = ($shipping)?$shipping_address_country->iso_code:"";
+			if ($Merchant_EMV3DS["shipping"]["shipAddrCountry"]!="") {
+				$Merchant_EMV3DS["shipping"]["shipAddrCountry"] = $this->isoCodeToNumber($Merchant_EMV3DS["shipping"]["shipAddrCountry"]);
+			}
+			$Merchant_EMV3DS["shipping"]["shipAddrLine1"] = ($shipping)?$shipping->address1:"";							
+			$Merchant_EMV3DS["shipping"]["shipAddrLine2"] = ($shipping)?$shipping->address2:"";							
+			//$Merchant_EMV3DS["shipping"]["shipAddrLine3"] = "";															
+			$Merchant_EMV3DS["shipping"]["shipAddrPostCode"] = ($shipping)?$shipping->postcode:"";						
+
+			if ($shipping_address_state->iso_code!="") {
+				$shipAddrState = explode("-",$shipping_address_state->iso_code);
+				$shipAddrState = end($shipAddrState);
+				$Merchant_EMV3DS["shipping"]["shipAddrState"] = $shipAddrState;											
+			}
+			
+			if ($shipping->phone) {
+				$arrDatosWorkPhone["cc"] = $billing_address_country->call_prefix;
+				$arrDatosWorkPhone["subscriber"] = $shipping->phone;
+				
+				$Merchant_EMV3DS["customer"]["workPhone"] = $arrDatosWorkPhone;
+			}
+		}
+
+		// acctInfo
+		$Merchant_EMV3DS["acctInfo"] = $this->acctInfo($cart);
+
+		// threeDSRequestorAuthenticationInfo
+		$Merchant_EMV3DS["threeDSRequestorAuthenticationInfo"] = $this->threeDSRequestorAuthenticationInfo(); 
+
+		// AddrMatch	
+		$Merchant_EMV3DS["addrMatch"] = ($cart->id_address_invoice == $cart->id_address_delivery)?"Y":"N";
+
+		$Merchant_EMV3DS["challengeWindowSize"] = 05;
+		       
+        return $Merchant_EMV3DS;
     }
 
+	
 
 
 	public function getContent() {
@@ -523,8 +662,6 @@ class Paytpv extends PaymentModule {
             $countries = Country::getCountries($this->context->language->id, true);
         }
 
-        // Datos Scoring
-        $merchantdata = isset($_POST["merchantdata"])?$_POST["merchantdata"]:$conf_values['PAYTPV_MERCHANTDATA'];
 
         $firstpurchase_scoring = isset($_POST["firstpurchase_scoring"])?$_POST["firstpurchase_scoring"]:$conf_values['PAYTPV_FIRSTPURCHASE_SCORING'];
         $firstpurchase_scoring_score = isset($_POST["firstpurchase_scoring_score"])?$_POST["firstpurchase_scoring_score"]:$conf_values['PAYTPV_FIRSTPURCHASE_SCORING_SCORE'];
@@ -552,11 +689,6 @@ class Paytpv extends PaymentModule {
         $disableoffersavecard = isset($_POST["disableoffersavecard"])?$_POST["disableoffersavecard"]:$conf_values['PAYTPV_DISABLEOFFERSAVECARD'];
         $remembercardunselected = isset($_POST["remembercardunselected"])?$_POST["remembercardunselected"]:$conf_values['PAYTPV_REMEMBERCARDUNSELECTED'];
 		
-
-        //print_r($countries);
-
-
-
 		$ssl = Configuration::get('PS_SSL_ENABLED');
 		// Set the smarty env
 		$this->context->smarty->assign('serverRequestUri', Tools::safeOutput($_SERVER['REQUEST_URI']));
@@ -568,7 +700,6 @@ class Paytpv extends PaymentModule {
 		$this->context->smarty->assign('reg_estado', $conf_values['PAYTPV_REG_ESTADO']);
 		$this->context->smarty->assign('carritos', $carritos);
 		$this->context->smarty->assign('errorMessage',$errorMessage);
-
 		
 		$this->context->smarty->assign('integration', (isset($_POST["integration"]))?$_POST["integration"]:$conf_values['PAYTPV_INTEGRATION']);
 		$this->context->smarty->assign('clientcode', (isset($_POST["clientcode"]))?$_POST["clientcode"]:$conf_values['PAYTPV_CLIENTCODE']);
@@ -589,7 +720,6 @@ class Paytpv extends PaymentModule {
 
 		$this->context->smarty->assign('countries', $countries);
 
-		$this->context->smarty->assign('merchantdata', $merchantdata);
 		$this->context->smarty->assign('firstpurchase_scoring', $firstpurchase_scoring);
 		$this->context->smarty->assign('firstpurchase_scoring_score', $firstpurchase_scoring_score);
 		$this->context->smarty->assign('sessiontime_scoring', $sessiontime_scoring);
@@ -901,6 +1031,7 @@ class Paytpv extends PaymentModule {
 			$language_data = explode("-",$this->context->language->language_code);
 			$language = $language_data[0];
 
+			$this->context->smarty->assign('jet_paytpv',$this->jet_paytpv);
 			$this->context->smarty->assign('jet_lang',$language);
 
 			$this->context->smarty->assign('paytpv_jetid_url',Context::getContext()->link->getModuleLink($this->name, 'capture',array(),$ssl));
@@ -1166,7 +1297,18 @@ class Paytpv extends PaymentModule {
 		}
 	}
 
+	public function getMerchantData($cart) {
+		return null; 
+		
+		$MERCHANT_EMV3DS = $this->getEMV3DS($cart);
+		$SHOPPING_CART = $this->getShoppingCart($cart);
 
+		$datos = array_merge($MERCHANT_EMV3DS,$SHOPPING_CART);		
+
+		return urlencode(base64_encode(json_encode($datos)));
+	}
+
+	
 	public function paytpv_iframe_URL(){	
 		$cart = Context::getContext()->cart;
 
@@ -1217,12 +1359,15 @@ class Paytpv extends PaymentModule {
 		
 		$score = $this->transactionScore($cart);
         $MERCHANT_SCORING = $score["score"];
-        $MERCHANT_DATA = $score["merchantdata"];
+   		$MERCHANT_DATA = $this->getMerchantData($cart);
+
 	
 
 		$OPERATION = "1";
 		// Cálculo Firma
-		$signature = md5($this->clientcode.$idterminal_sel.$OPERATION.$paytpv_order_ref.$importe.$currency_iso_code.md5($pass_sel));
+		$signature = hash('sha512',$this->clientcode.$idterminal_sel.$OPERATION.$paytpv_order_ref.$importe.$currency_iso_code.md5($pass_sel));
+
+
 		$fields = array
 		(
 			'MERCHANT_MERCHANTCODE' => $this->clientcode,
@@ -1239,8 +1384,7 @@ class Paytpv extends PaymentModule {
 		);
 
 		if ($MERCHANT_SCORING!=null)        $fields["MERCHANT_SCORING"] = $MERCHANT_SCORING;
-        if ($MERCHANT_DATA!=null)           $fields["MERCHANT_DATA"] = $MERCHANT_DATA;
-
+		if ($MERCHANT_DATA!=null)           $fields["MERCHANT_DATA"] = $MERCHANT_DATA;
 
 		$query = http_build_query($fields);
 
@@ -1259,13 +1403,13 @@ class Paytpv extends PaymentModule {
 	public function TerminalCurrency($cart){
 
 		// Si hay un terminal definido para la moneda del usuario devolvemos ese.
-		$result = Paytpv_Terminal::get_Terminal_Currency($this->context->currency->iso_code);
+		$result = Paytpv_Terminal::get_Terminal_Currency($this->context->currency->iso_code,$cart->id_shop);
 		// Not exists terminal in user currency
 		if (empty($result) === true){
 			// Search for terminal in merchant default currency
 			$id_currency = intval(Configuration::get('PS_CURRENCY_DEFAULT'));
 			$currency = new Currency($id_currency);
-			$result = Paytpv_Terminal::get_Terminal_Currency($currency->iso_code);
+			$result = Paytpv_Terminal::get_Terminal_Currency($currency->iso_code,$cart->id_shop);
 
 			// If not exists terminal in default currency. Select first terminal defined
 			if (empty($result) === true){
@@ -1395,7 +1539,7 @@ class Paytpv extends PaymentModule {
 
 	}
 	private function getConfigValues(){
-		return Configuration::getMultiple(array('PAYTPV_CLIENTCODE', 'PAYTPV_INTEGRATION', 'PAYTPV_COMMERCEPASSWORD', 'PAYTPV_NEWPAGEPAYMENT', 'PAYTPV_SUSCRIPTIONS','PAYTPV_REG_ESTADO','PAYTPV_MERCHANTDATA','PAYTPV_FIRSTPURCHASE_SCORING','PAYTPV_FIRSTPURCHASE_SCORING_SCORE','PAYTPV_SESSIONTIME_SCORING','PAYTPV_SESSIONTIME_SCORING_VAL','PAYTPV_SESSIONTIME_SCORING_SCORE','PAYTPV_DCOUNTRY_SCORING','PAYTPV_DCOUNTRY_SCORING_VAL','PAYTPV_DCOUNTRY_SCORING_SCORE','PAYTPV_IPCHANGE_SCORING','PAYTPV_IPCHANGE_SCORING_SCORE','PAYTPV_BROWSER_SCORING','PAYTPV_BROWSER_SCORING_SCORE','PAYTPV_SO_SCORING','PAYTPV_SO_SCORING_SCORE','PAYTPV_DISABLEOFFERSAVECARD','PAYTPV_REMEMBERCARDUNSELECTED'));
+		return Configuration::getMultiple(array('PAYTPV_CLIENTCODE', 'PAYTPV_INTEGRATION', 'PAYTPV_COMMERCEPASSWORD', 'PAYTPV_NEWPAGEPAYMENT', 'PAYTPV_SUSCRIPTIONS','PAYTPV_REG_ESTADO','PAYTPV_FIRSTPURCHASE_SCORING','PAYTPV_FIRSTPURCHASE_SCORING_SCORE','PAYTPV_SESSIONTIME_SCORING','PAYTPV_SESSIONTIME_SCORING_VAL','PAYTPV_SESSIONTIME_SCORING_SCORE','PAYTPV_DCOUNTRY_SCORING','PAYTPV_DCOUNTRY_SCORING_VAL','PAYTPV_DCOUNTRY_SCORING_SCORE','PAYTPV_IPCHANGE_SCORING','PAYTPV_IPCHANGE_SCORING_SCORE','PAYTPV_BROWSER_SCORING','PAYTPV_BROWSER_SCORING_SCORE','PAYTPV_SO_SCORING','PAYTPV_SO_SCORING_SCORE','PAYTPV_DISABLEOFFERSAVECARD','PAYTPV_REMEMBERCARDUNSELECTED'));
 	}
 	
 	public function saveCard($id_customer,$paytpv_iduser,$paytpv_tokenuser,$paytpv_cc,$paytpv_brand){
@@ -1412,7 +1556,7 @@ class Paytpv extends PaymentModule {
 
 	
 	public function remove_user($paytpv_iduser,$paytpv_tokenuser){
-		$arrTerminal = Paytpv_Terminal::getTerminalByCurrency($this->context->currency->iso_code);
+		$arrTerminal = Paytpv_Terminal::getTerminalByCurrency($this->context->currency->iso_code,$this->context->shop->id);
 		$idterminal = $arrTerminal["idterminal"];
 		$idterminal_ns = $arrTerminal["idterminal_ns"];
 		$pass = $arrTerminal["password"];
@@ -1427,6 +1571,7 @@ class Paytpv extends PaymentModule {
 		
 		$client = new WS_Client(
 			array(
+				'endpoint_paytpv' => $this->endpoint_paytpv,
 				'clientcode' => $this->clientcode,
 				'term' => $idterminal_sel,
 				'pass' => $pass_sel
@@ -1439,7 +1584,7 @@ class Paytpv extends PaymentModule {
 
 
 	public function removeCard($paytpv_iduser){
-		$arrTerminal = Paytpv_Terminal::getTerminalByCurrency($this->context->currency->iso_code);
+		$arrTerminal = Paytpv_Terminal::getTerminalByCurrency($this->context->currency->iso_code,$this->context->shop->id);
 		$idterminal = $arrTerminal["idterminal"];
 		$idterminal_ns = $arrTerminal["idterminal_ns"];
 		$pass = $arrTerminal["password"];
@@ -1456,6 +1601,7 @@ class Paytpv extends PaymentModule {
 
 		$client = new WS_Client(
 			array(
+				'endpoint_paytpv' => $this->endpoint_paytpv,
 				'clientcode' => $this->clientcode,
 				'term' => $idterminal_sel,
 				'pass' => $pass_sel
@@ -1481,8 +1627,7 @@ class Paytpv extends PaymentModule {
 
 	
 	public function removeSuscription($id_suscription){
-
-		$arrTerminal = Paytpv_Terminal::getTerminalByCurrency($this->context->currency->iso_code);
+		$arrTerminal = Paytpv_Terminal::getTerminalByCurrency($this->context->currency->iso_code,$this->context->shop->id);
 		$idterminal = $arrTerminal["idterminal"];
 		$idterminal_ns = $arrTerminal["idterminal_ns"];
 		$pass = $arrTerminal["password"];
@@ -1499,6 +1644,7 @@ class Paytpv extends PaymentModule {
 
 		$client = new WS_Client(
 			array(
+				'endpoint_paytpv' => $this->endpoint_paytpv,
 				'clientcode' => $this->clientcode,
 				'term' => $idterminal_sel,
 				'pass' => $pass_sel
@@ -1527,7 +1673,7 @@ class Paytpv extends PaymentModule {
 	}
 
 	public function cancelSuscription($id_suscription){
-		$arrTerminal = Paytpv_Terminal::getTerminalByCurrency($this->context->currency->iso_code);
+		$arrTerminal = Paytpv_Terminal::getTerminalByCurrency($this->context->currency->iso_code,$this->context->shop->id);
 		$idterminal = $arrTerminal["idterminal"];
 		$idterminal_ns = $arrTerminal["idterminal_ns"];
 		$pass = $arrTerminal["password"];
@@ -1544,6 +1690,7 @@ class Paytpv extends PaymentModule {
 
 		$client = new WS_Client(
 			array(
+				'endpoint_paytpv' => $this->endpoint_paytpv,
 				'clientcode' => $this->clientcode,
 				'term' => $idterminal_sel,
 				'pass' => $pass_sel
@@ -1626,23 +1773,26 @@ class Paytpv extends PaymentModule {
 
 		$paytpv_order_ref = str_pad((int)$order->id_cart, 8, "0", STR_PAD_LEFT);
 
-		$response = $this->_makeRefund($paytpv_iduser,$paytpv_tokenuser,$order->id,$paytpv_order_ref,$paytpv_date,$currency->iso_code,$authcode,$amount,1);
+		$response = $this->_makeRefund($params['order'],$paytpv_iduser,$paytpv_tokenuser,$order->id,$paytpv_order_ref,$paytpv_date,$currency->iso_code,$authcode,$amount,1);
+
 		$refund_txt = $response["txt"];
 
-		$message = $this->l('PayTPV Refund ').  ", " . $amt . " " . $currency->sign . " [" . $refund_txt . "]" .  '<br>';
+		$message = $this->l('PAYCOMET Refund ').  ", " . $amt . " " . $currency->sign . " [" . $refund_txt . "]" .  '<br>';
+
 		$this->_addNewPrivateMessage((int)$order->id, $message);
 
 	}
 
-	private function _makeRefund($paytpv_iduser,$paytpv_tokenuser,$order_id,$paytpv_order_ref,$paytpv_date,$currency_iso_code,$authcode,$amount,$type){
+	private function _makeRefund($order,$paytpv_iduser,$paytpv_tokenuser,$order_id,$paytpv_order_ref,$paytpv_date,$currency_iso_code,$authcode,$amount,$type){
 		
-		$arrTerminal = Paytpv_Terminal::getTerminalByCurrency($currency_iso_code);
+		$arrTerminal = Paytpv_Terminal::getTerminalByCurrency($currency_iso_code,$order->id_shop);
 
 		// Refund amount
 		include_once(_PS_MODULE_DIR_.'/paytpv/ws_client.php');
 		$client = new WS_Client(
 			array(
-				'clientcode' => $this->clientcode,
+				'endpoint_paytpv' => $this->endpoint_paytpv,
+				'clientcode' => Configuration::get('PAYTPV_CLIENTCODE',null,null,$order->id_shop),
 				'term' => $arrTerminal["idterminal"],
 				'pass' => $arrTerminal["password"]
 			)
@@ -1883,10 +2033,10 @@ class Paytpv extends PaymentModule {
 
 			$paytpv_order_ref = str_pad((int)$order->id_cart, 8, "0", STR_PAD_LEFT);
 
-			$response = $this->_makeRefund($paytpv_iduser,$paytpv_tokenuser,$order->id,$paytpv_order_ref,$paytpv_date,$currency->iso_code,$authcode,$amount,1);
+			$response = $this->_makeRefund($order,$paytpv_iduser,$paytpv_tokenuser,$order->id,$paytpv_order_ref,$paytpv_date,$currency->iso_code,$authcode,$amount,1);
 			$refund_txt = $response["txt"];
-			$message = $this->l('PayTPV Refund ').  ", " . $amt . " " . $currency->sign . " [" . $refund_txt . "]" .  '<br>';
-			
+			$message = $this->l('PAYCOMET Refund ').  ", " . $amt . " " . $currency->sign . " [" . $refund_txt . "]" .  '<br>';
+
 			$this->_addNewPrivateMessage((int)$id_order, $message);
 
 			Tools::redirect($_SERVER['HTTP_REFERER']);
@@ -1937,13 +2087,15 @@ class Paytpv extends PaymentModule {
 
 		$paytpv_order_ref = str_pad((int)$order->id_cart, 8, "0", STR_PAD_LEFT);
 
-		$response = $this->_makeRefund($paytpv_iduser,$paytpv_tokenuser,$order->id,$paytpv_order_ref,$paytpv_date,$currency->iso_code,$authcode,$amount,0);
+		$response = $this->_makeRefund($order,$paytpv_iduser,$paytpv_tokenuser,$order->id,$paytpv_order_ref,$paytpv_date,$currency->iso_code,$authcode,$amount,0);
 		$refund_txt = $response["txt"];
-		$message = $this->l('PayTPV Total Refund ').  ", " . $total_pending . " " . $currency->sign . " [" . $refund_txt . "]" .  '<br>';
+		$message = $this->l('PAYCOMET Total Refund ').  ", " . $total_pending . " " . $currency->sign . " [" . $refund_txt . "]" .  '<br>';
+
 		if ($response['error'] == 0)
 		{
 			if (!Paytpv_Order::set_Order_Refunded($id_order))
-				die(Tools::displayError('Error when updating PayTPV database'));
+				die(Tools::displayError('Error when updating PAYCOMET database'));
+
 
 			$history = new OrderHistory();
 			$history->id_order = (int)$id_order;

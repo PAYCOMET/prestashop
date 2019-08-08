@@ -18,8 +18,8 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author     Jose Ramon Garcia <jrgarcia@paytpv.com>
-*  @copyright  2015 PAYTPV ON LINE S.L.
+*  @author     PAYCOMET <info@paycomet.com>
+*  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 */
 
@@ -59,6 +59,52 @@ class Paytpv_Order extends ObjectModel
         return false;
     }
 
+	/**
+	 * Obtiene transacciones realizadas
+	 * @param int $id_customer codigo cliente
+	 * @param int $valid completadas o no
+	 * @param int $interval intervalo
+	 * @return string $intervalType tipo de intervalo (DAY,MONTH)
+	 **/
+	public static function numPurchaseCustomer($id_customer,$valid=1,$interval=1,$intervalType="DAY")
+    {
+		$sql = 'SELECT COUNT(`id_order`) AS nb_orders
+		FROM `'._DB_PREFIX_.'orders` o
+		WHERE o.`id_customer` = '.(int)$id_customer;
+
+		if ($valid==1) {
+			$sql .= ' AND o.valid = 1';
+		}
+
+		$sql .= ' AND o.date_add > DATE(NOW() - INTERVAL ' . $interval . ' ' . $intervalType . ')';
+
+		$result = Db::getInstance()->getRow($sql);
+
+		return $result['nb_orders'];
+		
+	}
+	
+
+	/**
+	 * Obtiene Fecha del primer envio a una direccion
+	 * @param int $id_customer codigo cliente
+	 * @param int $id_address_delivery direccion de envio
+	 * @param int $interval intervalo
+	 * @return string $intervalType tipo de intervalo (DAY,MONTH)
+	 **/
+
+	public static function firstAddressDelivery($id_customer,$id_address_delivery)
+    {
+		$sql = 'SELECT min(`date_add`) AS min_date
+		FROM `'._DB_PREFIX_.'orders` o
+		WHERE o.`id_customer` = '.(int)$id_customer;
+		$sql .= ' AND o.valid = 1';
+		$sql .= ' AND o.id_address_delivery = '.(int)$id_address_delivery;
+		
+		$result = Db::getInstance()->getRow($sql);
+
+		return $result['min_date'];
+    }
 
     public static function add_Order($paytpv_iduser,$paytpv_tokenuser,$id_suscription,$id_customer,$id_order,$price){
 		

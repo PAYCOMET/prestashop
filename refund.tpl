@@ -17,8 +17,8 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author     Jose Ramon Garcia <jrgarcia@paytpv.com>
-*  @copyright  2015 PAYTPV ON LINE S.L.
+*  @author     PAYCOMET <info@paycomet.com>
+*  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
@@ -27,7 +27,7 @@
 	<div class="col-lg-12">
 		<div class="panel">
 
-			<div class="panel-heading"><img src="{$base_url}modules/{$module_name}/logo.gif" alt="" /> {l s='PayTPV Refund' mod='paytpv'}</div>
+			<div class="panel-heading"><img src="{$base_url}modules/{$module_name}/logo.gif" alt="" /> {l s='PAYCOMET Refund' mod='paytpv'}</div>
 			<form method="post"  class="form-inline" action="{$smarty.server.REQUEST_URI|escape:htmlall}">
 				<input type="hidden" name="id_order" value="{$params.id_order|intval}" />
 				<p><b>{l s='Information:' mod='paytpv'}</b> {l s='Payment accepted' mod='paytpv'}</p>
@@ -80,7 +80,7 @@
 {else}
 <br />
 <fieldset {if isset($ps_version) && ($ps_version < '1.5')}style="width: 400px"{/if}>
-	<legend><img src="{$base_url}modules/{$module_name}/logo.gif" alt="" />{l s='PayTPV Refund' mod='paytpv'}</legend>
+	<legend><img src="{$base_url}modules/{$module_name}/logo.gif" alt="" />{l s='PAYCOMET Refund' mod='paytpv'}</legend>
 	<form method="post"  class="form-inline" action="{$smarty.server.REQUEST_URI|escape:htmlall}">
 	<p><b>{l s='Information:' mod='paytpv'}</b> {l s='Payment accepted' mod='paytpv'}</p>
 	<ul>

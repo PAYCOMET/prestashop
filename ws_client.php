@@ -18,8 +18,8 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author     Jose Ramon Garcia <jrgarcia@paytpv.com>
-*  @copyright  2015 PAYTPV ON LINE S.L.
+*  @author     PAYCOMET <info@paycomet.com>
+*  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 */
 
@@ -43,7 +43,7 @@ class WS_Client {
 
 		$this->config = $config;
 
-		$this->client = new nusoap_client( 'https://secure.paytpv.com/gateway/xml_bankstore.php', false,
+		$this->client = new nusoap_client( $this->config[ 'endpoint_paytpv' ], false,
 
 						$proxyhost, $proxyport, $proxyusername, $proxypassword );
 
@@ -74,7 +74,8 @@ class WS_Client {
 
 		$DS_MERCHANT_ORDER = $ref;
 
-		$DS_MERCHANT_MERCHANTSIGNATURE = sha1( $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AMOUNT . $DS_MERCHANT_ORDER . $this->config[ 'pass' ] );
+		$DS_MERCHANT_MERCHANTSIGNATURE = hash('sha512',$DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AMOUNT . $DS_MERCHANT_ORDER . $this->config[ 'pass' ] );
+
 
 		$DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
 		if ($DS_ORIGINAL_IP=="::1")	$DS_ORIGINAL_IP = "127.0.0.1";
@@ -130,7 +131,7 @@ class WS_Client {
 
 		$DS_TOKEN_USER = $tokeUser;
 
-		$DS_MERCHANT_MERCHANTSIGNATURE = sha1( $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $this->config[ 'pass' ] );
+		$DS_MERCHANT_MERCHANTSIGNATURE = hash('sha512', $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $this->config[ 'pass' ] );
 
 		$DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
 		if ($DS_ORIGINAL_IP=="::1")	$DS_ORIGINAL_IP = "127.0.0.1";
@@ -170,7 +171,7 @@ class WS_Client {
 
 		$DS_TOKEN_USER = $tokeUser;
 
-		$DS_MERCHANT_MERCHANTSIGNATURE = sha1( $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $this->config[ 'pass' ] );
+		$DS_MERCHANT_MERCHANTSIGNATURE = hash('sha512', $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $this->config[ 'pass' ] );
 
 		$DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
 		if ($DS_ORIGINAL_IP=="::1")	$DS_ORIGINAL_IP = "127.0.0.1";
@@ -223,7 +224,8 @@ class WS_Client {
 
 		$DS_SUSCRIPTION_AMOUNT = $amount;
 		
-		$DS_MERCHANT_MERCHANTSIGNATURE = sha1( $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_SUSCRIPTION_AMOUNT .  $DS_SUSCRIPTION_CURRENCY . $this->config[ 'pass' ] );
+		$DS_MERCHANT_MERCHANTSIGNATURE = hash('sha512',$DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_SUSCRIPTION_AMOUNT .  $DS_SUSCRIPTION_CURRENCY . $this->config[ 'pass' ] );
+
 
 		$DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
 		if ($DS_ORIGINAL_IP=="::1")	$DS_ORIGINAL_IP = "127.0.0.1";
@@ -280,7 +282,7 @@ class WS_Client {
 
 		$DS_TOKEN_USER = $tokeUser;
 
-		$DS_MERCHANT_MERCHANTSIGNATURE = sha1( $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $this->config[ 'pass' ] );
+		$DS_MERCHANT_MERCHANTSIGNATURE = hash('sha512', $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $this->config[ 'pass' ] );
 
 		$DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
 		if ($DS_ORIGINAL_IP=="::1")	$DS_ORIGINAL_IP = "127.0.0.1";
@@ -322,7 +324,7 @@ class WS_Client {
 		$DS_MERCHANT_AUTHCODE = $authcode;
 		$DS_MERCHANT_CURRENCY = $currency;
 		$DS_MERCHANT_AMOUNT = $amount;
-		$DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AUTHCODE . $DS_MERCHANT_ORDER . $this->config[ 'pass' ]);
+		$DS_MERCHANT_MERCHANTSIGNATURE = hash('sha512', $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AUTHCODE . $DS_MERCHANT_ORDER . $this->config[ 'pass' ]);
 
 		$DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
 		if ($DS_ORIGINAL_IP=="::1")	$DS_ORIGINAL_IP = "127.0.0.1";
@@ -359,7 +361,7 @@ class WS_Client {
 		$DS_MERCHANT_MERCHANTCODE = $this->config[ 'clientcode' ];
 		$DS_MERCHANT_TERMINAL = $this->config[ 'term' ];
 		$DS_JETID = $this->config[ 'jetid' ];
-		$DS_MERCHANT_MERCHANTSIGNATURE = sha1($DS_MERCHANT_MERCHANTCODE.$token.$DS_JETID.$DS_MERCHANT_TERMINAL.$this->config[ 'pass' ]);
+		$DS_MERCHANT_MERCHANTSIGNATURE = hash('sha512',$DS_MERCHANT_MERCHANTCODE.$token.$DS_JETID.$DS_MERCHANT_TERMINAL.$this->config[ 'pass' ]);
 
 		$DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
 		if ($DS_ORIGINAL_IP=="::1")	$DS_ORIGINAL_IP = "127.0.0.1";

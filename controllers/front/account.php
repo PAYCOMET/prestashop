@@ -18,8 +18,8 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author     Jose Ramon Garcia <jrgarcia@paytpv.com>
-*  @copyright  2015 PAYTPV ON LINE S.L.
+*  @author     PAYCOMET <info@paycomet.com>
+*  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 */
 
@@ -101,6 +101,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
 
 		    	$client = new WS_Client(
 					array(
+						'endpoint_paytpv' => $paytpv->endpoint_paytpv,
 						'clientcode' => $paytpv->clientcode,
 						'term' => $idterminal_sel,
 						'pass' => $pass_sel,
@@ -140,7 +141,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
 			$language = $language_data[0];
 
 			// Cálculo Firma
-			$signature = md5($paytpv->clientcode.$idterminal_sel.$operation.$order.md5($pass_sel));
+			$signature = hash('sha512',$paytpv->clientcode.$idterminal_sel.$operation.$order.md5($pass_sel));
 			$fields = array
 			(
 				'MERCHANT_MERCHANTCODE' => $paytpv->clientcode,
@@ -185,6 +186,8 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
 			$language = $language_data[0];
 
 			$this->context->smarty->assign('jet_lang',$language);
+
+			$this->context->smarty->assign('jet_paytpv',$paytpv->jet_paytpv);
 
 			$this->context->smarty->assign('paytpv_jetid_url',Context::getContext()->link->getModuleLink('paytpv', 'account',array(),$ssl));
 

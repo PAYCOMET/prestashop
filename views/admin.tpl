@@ -17,14 +17,14 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author     Jose Ramon Garcia <jrgarcia@paytpv.com>
-*  @copyright  2015 PAYTPV ON LINE S.L.
+*  @author     PAYCOMET <info@paycomet.com>
+*  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
     
 
-    <img src="{$base_dir}modules/paytpv/views/img/paytpv.png" style="float:left; margin-right:15px;"><b>{l s='This module allows you to accept card payments via paytpv.com.' mod='paytpv'}</b><br /><br />
+    <img width="200" src="{$base_dir}modules/paytpv/views/img/paytpv.png" style="float:left; margin-right:15px;"><b>{l s='This module allows you to accept card payments via www.paycomet.com.' mod='paytpv'}</b><br /><br />
             {l s='If the customer chooses this payment method, they will be able to make payments automatically.' mod='paytpv'}<br /><br />
 
     {$errorMessage}
@@ -33,19 +33,19 @@
         <p><H1>{l s='PRERREQUISTES' mod='paytpv'}</H1></p>
             <ul>
                 <li>{l s='The store must be installed on-line, NOT in Local in order to use this module' mod='paytpv'}</li>
-                <li>{l s='The PayTPV server must be accessible. (check that there are no problems when there is a firewall)' mod='paytpv'}</li>
+                <li>{l s='The PAYCOMET server must be accessible. (check that there are no problems when there is a firewall)' mod='paytpv'}</li>
             </ul>
         </p>
     </div>
     <form action="{$serverRequestUri|strip_tags}" method="post">
         <fieldset>
-            <legend>{l s='Paytpv.com Product Configuration' mod='paytpv'}</legend>
-            <p><strong>{l s='If you need to test the Module and do not have a PAYTPV test account, please contact us at ' mod='paytpv'}<a href="mailto:info@paytpv.com">info@paytpv.com</a></strong></p>
-            <p>{l s='Please complete the information requested. You can obtain information on the PayTPV product.' mod='paytpv'}</p>
+            <legend>{l s='PAYCOMET Product Configuration' mod='paytpv'}</legend>
+            <p><strong>{l s='If you need to test the Module and do not have a PAYCOMET test account, please contact us at ' mod='paytpv'}<a href="mailto:info@paycomet.com">info@paycomet.com</a></strong></p>
+            <p>{l s='Please complete the information requested. You can obtain information on the PAYCOMET product.' mod='paytpv'}</p>
 
             
             <fieldset id="">
-                <legend>{l s='PayTPV' mod='paytpv'}</legend>                             
+                <legend>{l s='PAYCOMET' mod='paytpv'}</legend>                           
                     
                 <label>{l s='Integration' mod='paytpv'}</label>
                 <div class="margin-form">
@@ -53,7 +53,7 @@
                         <option value="0" {if $integration==0}selected="1"{/if}>Bankstore IFRAME/XML</option>
                         <option value="1" {if $integration==1}selected="1"{/if}>Bankstore JET/XML</option>
                     </select>
-                    <br/>Bankstore IFRAME/XML: {l s='PayTPV payment iframe' mod='paytpv'}
+                    <br/>Bankstore IFRAME/XML: {l s='PAYCOMET payment iframe' mod='paytpv'}
                     <br/>Bankstore JET/XML: {l s='SSL mandatory' mod='paytpv'}<br/>
                 </div>
 
@@ -211,19 +211,9 @@
 
             <fieldset id="paytpv_scoring">
                 <legend>{l s='Scoring' mod='paytpv'}</legend>
-                <lablel><strong>{l s='IMPORTANT: If you want to activate the Scoring you should contact PAYTPV' mod='paytpv'} </strong></label><br/><br/>
-                <div id="merchantdata_container">
-                    <label>{l s='Send Merchant Data' mod='paytpv'}</label>
-                    <div class="margin-form">
-                        <select name="merchantdata" id="merchantdata">
-                            <option value="0" {if $merchantdata==0}selected="1"{/if}>{l s='No' mod='paytpv'}</option>
-                            <option value="1" {if $merchantdata==1}selected="1"{/if}>{l s='Yes' mod='paytpv'}</option>
-                        </select>
-                         {l s='If you activate this option, you must contact PAYTPV to enable the Advanced Signature VHASH' mod='paytpv'}
-                    </div>
-                </div>
 
-
+                <strong>{l s='IMPORTANT: If you want to activate the Scoring you should contact PAYCOMET' mod='paytpv'} </strong><br/><br/>
+               
                 <div class="scoring_calculation">{l s='Scoring calculation' mod='paytpv'}</div>
 
                 <div id="merchantdata_container">
@@ -258,7 +248,7 @@
 
                         <div style="padding-left: 15px;{if $sessiontime_scoring==0}display:none;{/if}" class="sessiontime_scoring_data inline">
                             <label style="float:none;">{l s='Score' mod='paytpv'}</label>
-                            <select name="sessiontime_scoring_score" id="firstpurchase_scoring_score">
+                            <select name="sessiontime_scoring_score" id="sessiontime_scoring_score">
                                 {$i=0}
                                 {while $i <= 100}
                                  <option value="{$i}" {if $sessiontime_scoring_score==$i}selected="1"{/if}>{$i}</option>
@@ -369,7 +359,7 @@
 
                         <div style="padding-left: 15px;{if $so_scoring==0}display:none;{/if}" class="so_scoring_data inline">
                             <label style="float:none;">{l s='Score' mod='paytpv'}</label>
-                            <select name="so_scoring_score" id="ip_change_scoring_score">
+                            <select name="so_scoring_score" id="so_scoring_score">
                                 {$i=0}
                                 {while $i <= 100}
                                  <option value="{$i}" {if $so_scoring_score==$i}selected="1"{/if}>{$i}</option>
@@ -407,7 +397,7 @@
 
         <div>
             <p class="important">{l s='IMPORTANT' mod='paytpv'}</p>
-            <p><strong>{l s='Finally you need to configure in your account' mod='paytpv'} <a class='link' target="_blank" href="https://www.paytpv.com/clientes.php"> PayTPV </a>{l s='the following URLs for the payment module to work properly' mod='paytpv'}:</strong>
+       		<p><strong>{l s='Finally you need to configure in your account' mod='paytpv'} <a class='link' target="_blank" href="https://dashboard.paycomet.com/cp_control"> PAYCOMET </a>{l s='the following URLs for the payment module to work properly' mod='paytpv'}:</strong>
             </p>
             <ul class="paytpv">
                 <li><strong>URL OK:</strong> {$OK}</li>
@@ -423,7 +413,7 @@
 
         <div>
             <p class="important">{l s='USER DOCUMENTATION' mod='paytpv'}</p>
-            <p><strong>{l s='Link to documentation by clicking the following link' mod='paytpv'} <a class='link' target="_blank"  href="http://developers.paytpv.com/es/modulos-de-pago/prestashop">{l s='USER DOCUMENTATION'  mod='paytpv'}</a></strong>
+            <p><strong>{l s='Link to documentation by clicking the following link' mod='paytpv'} <a class='link' target="_blank"  href="https://docs.paycomet.com/es/modulos-de-pago/prestashop">{l s='USER DOCUMENTATION'  mod='paytpv'}</a></strong>
         </div>
 
     </form>

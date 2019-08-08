@@ -18,8 +18,8 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author     Jose Ramon Garcia <jrgarcia@paytpv.com>
-*  @copyright  2015 PAYTPV ON LINE S.L.
+*  @author     PAYCOMET <info@paycomet.com>
+*  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 */
 /**
@@ -56,12 +56,12 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 		if (Tools::getValue('TransactionType')==="1"
 			AND Tools::getValue('Order')
 			AND Tools::getValue('Response')
-			AND Tools::getValue('ExtendedSignature'))
+			AND Tools::getValue('HashNotification'))
 		{
 			$importe  = number_format(Tools::getValue('Amount')/ 100, 2, ".","");
 			$ref = Tools::getValue('Order');
 			$result = Tools::getValue('Response')=='OK'?0:-1;
-			$sign = Tools::getValue('ExtendedSignature');
+			$sign = Tools::getValue('HashNotification');
 			$esURLOK = false;
 
 			$arrTerminal = Paytpv_Terminal::getTerminalByIdTerminal(Tools::getValue('TpvID'));
@@ -79,15 +79,15 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 				$pass_sel = $pass_ns;
 			}
 
-			$local_sign = md5($paytpv->clientcode.$idterminal_sel.Tools::getValue('TransactionType').$ref.Tools::getValue('Amount').Tools::getValue('Currency').md5($pass_sel).Tools::getValue('BankDateTime').Tools::getValue('Response'));
-			
+			$local_sign = hash('sha512',$paytpv->clientcode.$idterminal_sel.Tools::getValue('TransactionType').$ref.Tools::getValue('Amount').Tools::getValue('Currency').md5($pass_sel).Tools::getValue('BankDateTime').Tools::getValue('Response'));
+
 			// Check Signature
 			if ($sign!=$local_sign)	die('Error 1');
 			
 		// (add_user)
 		}else if (Tools::getValue('TransactionType')==="107"){
 			$ref = Tools::getValue('Order');
-			$sign = Tools::getValue('Signature');
+			$sign = Tools::getValue('HashNotification');
 			$esURLOK = false;
 
 			$arrTerminal = Paytpv_Terminal::getTerminalByIdTerminal(Tools::getValue('TpvID'));
@@ -104,7 +104,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 				$idterminal_sel = $idterminal_ns;
 				$pass_sel = $pass_ns;
 			}
-			$local_sign = md5($paytpv->clientcode.$idterminal_sel.Tools::getValue('TransactionType').$ref.Tools::getValue('DateTime').md5($pass_sel));
+			$local_sign = hash('sha512',$paytpv->clientcode.$idterminal_sel.Tools::getValue('TransactionType').$ref.Tools::getValue('DateTime').md5($pass_sel));
 
 			// Check Signature
 			if ($sign!=$local_sign)	die('Error 2');
@@ -112,6 +112,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 			include_once(_PS_MODULE_DIR_.'/paytpv/ws_client.php');
 			$client = new WS_Client(
 				array(
+					'endpoint_paytpv' => $paytpv->endpoint_paytpv,
 					'clientcode' => $paytpv->clientcode,
 					'term' => $idterminal_sel,
 					'pass' => $pass_sel,
@@ -128,7 +129,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 		}else if (Tools::getValue('TransactionType')==="9"){
 
 			$result = Tools::getValue('Response')=='OK'?0:-1;
-			$sign = Tools::getValue('ExtendedSignature');
+			$sign = Tools::getValue('HashNotification');
 			$esURLOK = false;
 
 			$arrTerminal = Paytpv_Terminal::getTerminalByIdTerminal(Tools::getValue('TpvID'));
@@ -147,8 +148,8 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 			}
 
 
-			$local_sign = md5($paytpv->clientcode.$idterminal_sel.Tools::getValue('TransactionType').Tools::getValue('Order').Tools::getValue('Amount').Tools::getValue('Currency').md5($pass_sel).Tools::getValue('BankDateTime').Tools::getValue('Response'));
-			
+			$local_sign = hash('sha512',$paytpv->clientcode.$idterminal_sel.Tools::getValue('TransactionType').Tools::getValue('Order').Tools::getValue('Amount').Tools::getValue('Currency').md5($pass_sel).Tools::getValue('BankDateTime').Tools::getValue('Response'));
+
 			// Check Signature
 			if ($sign!=$local_sign)	die('Error 3');
 
@@ -226,6 +227,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 						include_once(_PS_MODULE_DIR_.'/paytpv/ws_client.php');
 						$client = new WS_Client(
 							array(
+								'endpoint_paytpv' => $paytpv->endpoint_paytpv,
 								'clientcode' => $paytpv->clientcode,
 								'term' => $idterminal_sel,
 								'pass' => $pass_sel,
@@ -273,7 +275,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 							'{email}' => $this->context->customer->email,
 							'{id_order}' => (int)($order->id),
 							'{order_name}' => $order->getUniqReference(),
-							'{message}' => sprintf(Mail::l('Subscription payment error to order %s', (int)$order->id_lang), $order->reference) . " -- Referencia PayTPV: " . Tools::getValue('Order')
+							'{message}' => sprintf(Mail::l('Subscription payment error to order %s', (int)$order->id_lang), $order->reference) . " -- Referencia PAYCOMET: " . Tools::getValue('Order')
 						);
 
 						if (!Configuration::get('PS_MAIL_EMAIL_MESSAGE'))
@@ -329,6 +331,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 						include_once(_PS_MODULE_DIR_.'/paytpv/ws_client.php');
 						$client = new WS_Client(
 							array(
+								'endpoint_paytpv' => $paytpv->endpoint_paytpv,
 								'clientcode' => $paytpv->clientcode,
 								'term' => Tools::getValue('TpvID'),
 								'pass' => $pass,

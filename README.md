@@ -5,7 +5,8 @@ Ofrece la posibilidad de cobrar a tus clientes con tarjeta en tiendas Prestashop
 
 ## Documentación del Módulo.
 
-En el siguiente enlace [Modulo Prestashop PAYCOMET](https://docs.paycomet.com/es/modulos-de-pago/prestashop)
+En el siguiente enlace [Modulo Prestashop PAYCOMET](https://docs.paycomet.com/es/modulos-de-pago/prestashop17)
+
 
 ## Instalación
 
@@ -16,8 +17,8 @@ Pulsamos en Añadir nuevo modulo y seleccionamos el zip descargado.
 
 Rellenaremos los datos según la configuracion disponible en PAYCOMET. https://www.paycomet.com/ → Mis productos → configurar productos y seleccionamos el producto que vayamos a configurar en nuestra tienda Prestashop.
 
-### Entorno: 
 
+### Entorno: 
 
 #### Modo Real: Para el uso normal del módulo con pagos reales.
 #### Modo Test: Para probar el funcionamiento del módulo sin necesidad de tener una cuenta en PAYCOMET.

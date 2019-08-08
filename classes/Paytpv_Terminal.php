@@ -18,8 +18,8 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author     Jose Ramon Garcia <jrgarcia@paytpv.com>
-*  @copyright  2015 PAYTPV ON LINE S.L.
+*  @author     PAYCOMET <info@paycomet.com>
+*  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 */
 
@@ -69,8 +69,10 @@ class Paytpv_Terminal extends ObjectModel
 		return Db::getInstance()->executeS("SELECT idterminal, idterminal_ns, password, password_ns, jetid, jetid_ns, currency_iso_code, terminales, tdfirst, tdmin FROM " . _DB_PREFIX_ . "paytpv_terminal where id_shop=" . $id_shop);
 	}
 
-	public static function get_Terminal_Currency($currency_iso_code){
-		$id_shop = Context::getContext()->shop->id;
+	public static function get_Terminal_Currency($currency_iso_code,$id_shop=0){
+		if ($id_shop == 0) {
+			$id_shop = Context::getContext()->shop->id;
+		}
 		$sql = 'select * from ' . _DB_PREFIX_ .'paytpv_terminal where currency_iso_code="'.$currency_iso_code. '" and id_shop='.$id_shop;
 		$result = Db::getInstance()->getRow($sql);
 		return $result;
@@ -91,8 +93,10 @@ class Paytpv_Terminal extends ObjectModel
 	}
 
 
-	public static function getTerminalByCurrency($currency_iso_code){
-		$id_shop = Context::getContext()->shop->id;
+	public static function getTerminalByCurrency($currency_iso_code,$id_shop=0){
+		if ($id_shop==0) {
+			$id_shop = Context::getContext()->shop->id;
+		}
 		$result2 = self::get_Terminal_Currency($currency_iso_code,$id_shop);
 
 		// Select first termnial defined
