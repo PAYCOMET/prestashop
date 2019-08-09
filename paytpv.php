@@ -132,6 +132,11 @@ class Paytpv extends PaymentModule {
 
 	}
 
+	public function runUpgradeModule(){
+		parent::runUpgradeModule();
+	}
+
+
 	public function install() {
 
 		include_once(_PS_MODULE_DIR_.'/'.$this->name.'/paytpv_install.php');
@@ -160,8 +165,6 @@ class Paytpv extends PaymentModule {
 			|| !$this->registerHook('displayOrderConfirmation')
 			) 
 			return false;
-		$this->write_log();
-
 		
 		return true;
 	}
