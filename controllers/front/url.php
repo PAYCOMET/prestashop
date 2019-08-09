@@ -50,18 +50,18 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 		$reg_estado = $paytpv->reg_estado;
 
 		$suscripcion = 0;
-	
+		
 		// Notify response
 		// (execute_purchase)
 		if (Tools::getValue('TransactionType')==="1"
 			AND Tools::getValue('Order')
 			AND Tools::getValue('Response')
-			AND Tools::getValue('HashNotification'))
+			AND Tools::getValue('NotificationHash'))
 		{
 			$importe  = number_format(Tools::getValue('Amount')/ 100, 2, ".","");
 			$ref = Tools::getValue('Order');
 			$result = Tools::getValue('Response')=='OK'?0:-1;
-			$sign = Tools::getValue('HashNotification');
+			$sign = Tools::getValue('NotificationHash');
 			$esURLOK = false;
 
 			$arrTerminal = Paytpv_Terminal::getTerminalByIdTerminal(Tools::getValue('TpvID'));
@@ -79,6 +79,8 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 				$pass_sel = $pass_ns;
 			}
 
+			
+
 			$local_sign = hash('sha512',$paytpv->clientcode.$idterminal_sel.Tools::getValue('TransactionType').$ref.Tools::getValue('Amount').Tools::getValue('Currency').md5($pass_sel).Tools::getValue('BankDateTime').Tools::getValue('Response'));
 
 			// Check Signature
@@ -87,7 +89,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 		// (add_user)
 		}else if (Tools::getValue('TransactionType')==="107"){
 			$ref = Tools::getValue('Order');
-			$sign = Tools::getValue('HashNotification');
+			$sign = Tools::getValue('NotificationHash');
 			$esURLOK = false;
 
 			$arrTerminal = Paytpv_Terminal::getTerminalByIdTerminal(Tools::getValue('TpvID'));
@@ -129,7 +131,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 		}else if (Tools::getValue('TransactionType')==="9"){
 
 			$result = Tools::getValue('Response')=='OK'?0:-1;
-			$sign = Tools::getValue('HashNotification');
+			$sign = Tools::getValue('NotificationHash');
 			$esURLOK = false;
 
 			$arrTerminal = Paytpv_Terminal::getTerminalByIdTerminal(Tools::getValue('TpvID'));
