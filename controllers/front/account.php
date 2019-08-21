@@ -128,8 +128,9 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
 			$language = $language_data[0];
 
 			$suscriptions = Paytpv_Suscription::get_Suscriptions_Customer($language,(int)$this->context->customer->id);
+			
+			$order = Context::getContext()->customer->id . "_" . Context::getContext()->shop->id;
 
-			$order = Context::getContext()->customer->id;
 			$operation = 107;
 			$ssl = Configuration::get('PS_SSL_ENABLED');
 			$paytpv_integration = intval(Configuration::get('PAYTPV_INTEGRATION'));
