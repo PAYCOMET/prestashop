@@ -32,7 +32,7 @@
 	{if ($password_fail)}
 	<img src="{$this_path}views/img/icon-cancel.png"/> &nbsp;&nbsp; {l s='Incorrect Password'  mod='paytpv'}  
 	
-	{else if ($error_msg)}
+	{elseif ($error_msg)}
 	<img src="{$this_path}views/img/icon-cancel.png"/> &nbsp;&nbsp; {$error_msg}
 	{else}
 	<img src="{$this_path}views/img/icon-cancel.png"/>&nbsp;&nbsp;   

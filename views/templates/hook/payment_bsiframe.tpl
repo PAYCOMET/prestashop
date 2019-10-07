@@ -51,7 +51,6 @@
                     </p>
 
                     <div id="div_periodicity" class="suscription_period" style="display:none">
-                        col-xs-12 col-md-6
                         <div class="nota">{l s='The first purchase will be made when placing the order and the following as defined as the frequency of the subscription' mod='paytpv'}.
                             {l s='By subscribing you agree to the ' mod='paytpv'} <a id="open_conditions" href="#conditions">{l s='terms and conditions of the service' mod='paytpv'}</a>.
                         </div>

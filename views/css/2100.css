@@ -27,7 +27,7 @@ a.info {
 	display:inline-block;
 	overflow:hidden;
 	cursor: pointer;
-	background: url('../views/img/2100info.png') no-repeat scroll top left; 
+	background: url('../img/2100info.png') no-repeat scroll top left; 
 }
 
 .tooltip {
@@ -45,14 +45,14 @@ H4.uno {
 	height: 18px;
 	display: block;
 	padding: 0 3px 5px 25px;
-	background: url('../views/img/2100uno.png') no-repeat scroll top left; 
+	background: url('../img/2100uno.png') no-repeat scroll top left; 
 }
 H4.dos {
 	line-height: 18px;
 	height: 18px;
 	display: block;
 	padding: 0 3px 5px 25px;
-	background: url('../views/img/2100dos.png') no-repeat scroll top left; 
+	background: url('../img/2100dos.png') no-repeat scroll top left; 
 }
 
 a.boton {
@@ -62,7 +62,7 @@ font-size:13px;
 font-weight:bold;
 }
 a.aceptar {
-background: url('../views/img/2100Aceptard.png') no-repeat scroll top right; 
+background: url('../img/2100Aceptard.png') no-repeat scroll top right; 
 height: 31px;
 margin-right: 6px;
 padding-right: 33px;
@@ -76,7 +76,7 @@ margin: 0 auto;
 }
 
 a.simple {
-background: url('../views/img/2100Botond.png') no-repeat scroll top right; 
+background: url('../img/2100Botond.png') no-repeat scroll top right; 
 height: 30px;
 margin-right: 6px;
 padding-right: 11px;
@@ -85,7 +85,7 @@ color: #FFFFFF;
 
 a.aceptar span, 
 a.simple span {
-background: url('../views/img/2100Aceptarl.png') no-repeat; 
+background: url('../img/2100Aceptarl.png') no-repeat; 
 display: block;
 line-height: 27px;
 padding: 0 3px 5px 15px;
@@ -141,7 +141,7 @@ color:#000000;
 }
 
 .textoinformacion a {
-	background: url('../views/img/2100info.png') no-repeat left; 
+	background: url('../img/2100info.png') no-repeat left; 
 	font-family: Arial;
 	font-weight: normal;
 	height: 16px;
@@ -178,7 +178,7 @@ div.alerta #titulo {
 div.alerta {
 	margin:10px 0 0 0;
 	padding:10px 10px 0px 50px;
-	background: #fffed7 url(../views/img/2100aviso.png) no-repeat;
+	background: #fffed7 url(../img/2100aviso.png) no-repeat;
 	background-position: 14px 6px;
 	border: 1px solid #ffdd4e;
 	color: #000000;
@@ -190,7 +190,7 @@ div.alerta {
 div.alertablanca {
 	margin:10px 0 0 0;
 	padding:10px 10px 0px 50px;
-	background: #ffffff url(../views/img/2100aviso.png) no-repeat;
+	background: #ffffff url(../img/2100aviso.png) no-repeat;
 	background-position: 14px 6px;
 	color: #FF0000;
 	font-family: Arial;
@@ -211,7 +211,7 @@ div.alertatransparente #titulo {
 }
 
 a.cancelar{
-background: url('../views/img/2100cancelar.png') no-repeat; 
+background: url('../img/2100cancelar.png') no-repeat; 
 background-position: 0 6px;
 color: #074b9e;
 margin: 1px 6px;

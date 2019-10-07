@@ -37,7 +37,7 @@
             </ul>
         </p>
     </div>
-    <form action="{$serverRequestUri|strip_tags}" method="post">
+    <form action="{$serverRequestUri}" method="post">
         <fieldset>
             <legend>{l s='PAYCOMET Product Configuration' mod='paytpv'}</legend>
             <p><strong>{l s='If you need to test the Module and do not have a PAYCOMET test account, please contact us at ' mod='paytpv'}<a href="mailto:info@paycomet.com">info@paycomet.com</a></strong></p>
@@ -51,10 +51,8 @@
                 <div class="margin-form">
                     <select name="integration" id="integration" onchange="checkmode();">
                         <option value="0" {if $integration==0}selected="1"{/if}>Bankstore IFRAME/XML</option>
-                        <option value="1" {if $integration==1}selected="1"{/if}>Bankstore JET/XML</option>
-                    </select>
-                    <br/>Bankstore IFRAME/XML: {l s='PAYCOMET payment iframe' mod='paytpv'}
-                    <br/>Bankstore JET/XML: {l s='SSL mandatory' mod='paytpv'}<br/>
+                        <!--<option value="1" {if $integration==1}selected="1"{/if}>Bankstore JET/XML</option>-->
+                    </select>                    
                 </div>
 
                 <label>{l s='Client Code' mod='paytpv'}</label>

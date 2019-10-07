@@ -28,7 +28,7 @@
 		<div class="panel">
 
 			<div class="panel-heading"><img src="{$base_url}modules/{$module_name}/logo.gif" alt="" /> {l s='PAYCOMET Refund' mod='paytpv'}</div>
-			<form method="post"  class="form-inline" action="{$smarty.server.REQUEST_URI|escape:htmlall}">
+			<form method="post"  class="form-inline" action="{$smarty.server.REQUEST_URI}">
 				<input type="hidden" name="id_order" value="{$params.id_order|intval}" />
 				<p><b>{l s='Information:' mod='paytpv'}</b> {l s='Payment accepted' mod='paytpv'}</p>
 				<ul>
@@ -45,7 +45,7 @@
 					{foreach from=$arrRefunds item=refund}
 
 					    <li>
-					    	{$refund["date"]|date_format:"%d-%m-%Y %H:%M"} - {$refund["amount"]} {$sign}
+					    	{$refund["date"]} - {$refund["amount"]} {$sign}
 					    </li>
 
 					{/foreach}
@@ -81,7 +81,7 @@
 <br />
 <fieldset {if isset($ps_version) && ($ps_version < '1.5')}style="width: 400px"{/if}>
 	<legend><img src="{$base_url}modules/{$module_name}/logo.gif" alt="" />{l s='PAYCOMET Refund' mod='paytpv'}</legend>
-	<form method="post"  class="form-inline" action="{$smarty.server.REQUEST_URI|escape:htmlall}">
+	<form method="post"  class="form-inline" action="{$smarty.server.REQUEST_URI}">
 	<p><b>{l s='Information:' mod='paytpv'}</b> {l s='Payment accepted' mod='paytpv'}</p>
 	<ul>
 		<li>
@@ -97,7 +97,7 @@
 		{foreach from=$arrRefunds item=refund}
 
 		    <li>
-		    	{$refund["date"]|date_format:"%d-%m-%Y %H:%M"} - {$refund["amount"]} {$sign}
+		    	{$refund["date"]} - {$refund["amount"]} {$sign}
 		    </li>
 
 		{/foreach}

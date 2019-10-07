@@ -2,8 +2,8 @@
         <module>
             <name>paytpv</name>
             <displayName><![CDATA[Paycomet]]></displayName>
-            <version><![CDATA[7.5.1]]></version>
-            <description><![CDATA[Este m&oacute;dulo le permite aceptar pagos con tarjeta v&iacute;a www.paycomet.com]]></description>
+            <version><![CDATA[7.5.2]]></version>
+            <description><![CDATA[This module allows you to accept card payments via www.paycomet.com]]></description>
             <author><![CDATA[Paycomet]]></author>
             <tab><![CDATA[payments_gateways]]></tab>
             <is_configurable>1</is_configurable>

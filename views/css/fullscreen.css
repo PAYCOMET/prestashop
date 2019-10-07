@@ -42,7 +42,7 @@
 }
 
 .paytpv_jet .paytpv_merchant_pan {
-    background-image: url(cards.png), url(cards.png);
+    background-image: url(../img/cards.png), url(../img/cards.png);
     background-position: 2px -103px,260px -50px;
     background-size: 120px 361px,120px 361px;
     background-repeat: no-repeat;
