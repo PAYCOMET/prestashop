@@ -18,11 +18,6 @@ Pulsamos en Añadir nuevo modulo y seleccionamos el zip descargado.
 Rellenaremos los datos según la configuracion disponible en PAYCOMET. https://www.paycomet.com/ → Mis productos → configurar productos y seleccionamos el producto que vayamos a configurar en nuestra tienda Prestashop.
 
 
-### Entorno: 
-
-#### Modo Real: Para el uso normal del módulo con pagos reales.
-#### Modo Test: Para probar el funcionamiento del módulo sin necesidad de tener una cuenta en PAYCOMET.
-
 ### Integración: 
 
 #### Bankstore IFRAME/XML: La mejor opción para integrar el módulo y poder almacenar datos de tarjetas para futuras compras, además de ofrecer la posibilidad de suscribirse a productos.
@@ -37,8 +32,6 @@ Rellenaremos los datos según la configuracion disponible en PAYCOMET. https://w
 - Activar suscripciones: Si se desea que se muestre o no la opción de suscribirse en los carros de compra.
 
 IMPORTANTE: En la configuración del modulo se indican las URL OK, URL OK y URL de NOTIFICACION que deberán definirse en la configuración de PAYCOMET.
-
-#### Bankstore JET/XML: Igual que la operativa Bankstore IFRAME, salvo que la captación de datos de tarjeta no se realiza mediante iframe. Es necesario generar el JET ID en la configuración del Producto dentro de PAYCOMET. ¡¡El entorno sólo trabajará sobre protocolo seguro SSL!!
 
 
 ## Configuración del producto en PAYCOMET

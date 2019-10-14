@@ -74,6 +74,18 @@ class PaytpvTerminal extends ObjectModel
     ) {
         $idterminal = ($idterminal == "") ? "null" : $idterminal;
         $idterminal_ns = ($idterminal_ns == "") ? "null" : $idterminal_ns;
+
+        // Si solo opera por Seguro limpiamos los datos del No Seguro
+        if ($terminales==0) {
+            $idterminal_ns = "null";
+            $password_ns = $jetid_ns = "";
+        }
+        // Si solo opera No Seguro limpiamos los datos del Seguro
+        if ($terminales==1) {
+            $idterminal = "null";
+            $password = $jetid = "";
+        }
+        
         $id_shop = Context::getContext()->shop->id;
         $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'paytpv_terminal (id,id_shop,idterminal,idterminal_ns,password,
         password_ns,jetid,jetid_ns,currency_iso_code,terminales,tdfirst,tdmin) VALUES(' . $id . ',' . $id_shop . ',' .

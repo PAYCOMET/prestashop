@@ -32,17 +32,15 @@
     <div>
         <p><H1>{l s='PRERREQUISTES' mod='paytpv'}</H1></p>
             <ul>
+                <li>{l s='PAYCOMET Account.' mod='paytpv'} {l s='You can request a Test account at: ' mod='paytpv'} <a href="mailto:info@paycomet.com">info@paycomet.com</a></li>
                 <li>{l s='The store must be installed on-line, NOT in Local in order to use this module' mod='paytpv'}</li>
                 <li>{l s='The PAYCOMET server must be accessible. (check that there are no problems when there is a firewall)' mod='paytpv'}</li>
             </ul>
         </p>
     </div>
     <form action="{$serverRequestUri}" method="post">
-        <fieldset>
-            <legend>{l s='PAYCOMET Product Configuration' mod='paytpv'}</legend>
-            <p><strong>{l s='If you need to test the Module and do not have a PAYCOMET test account, please contact us at ' mod='paytpv'}<a href="mailto:info@paycomet.com">info@paycomet.com</a></strong></p>
+        <fieldset>            
             <p>{l s='Please complete the information requested. You can obtain information on the PAYCOMET product.' mod='paytpv'}</p>
-
             
             <fieldset id="">
                 <legend>{l s='PAYCOMET' mod='paytpv'}</legend>                           
@@ -397,9 +395,7 @@
             <p class="important">{l s='IMPORTANT' mod='paytpv'}</p>
        		<p><strong>{l s='Finally you need to configure in your account' mod='paytpv'} <a class='link' target="_blank" href="https://dashboard.paycomet.com/cp_control"> PAYCOMET </a>{l s='the following URLs for the payment module to work properly' mod='paytpv'}:</strong>
             </p>
-            <ul class="paytpv">
-                <li><strong>URL OK:</strong> {$OK}</li>
-                <li><strong>URL KO:</strong> {$KO}</li>
+            <ul class="paytpv">                
                 <li><strong>{l s='Type of Notification (IMPORTANT)' mod='paytpv'}:</strong> {l s='Notification via URL or Notification via URL and email' mod='paytpv'}
                     <ul class="paytpv">
                         <li><strong>URL NOTIFICACION:</strong> {$NOTIFICACION}</li>
@@ -525,8 +521,8 @@
                     .find("#terminales_0").attr("id","terminales_"+cont).end()
                     .find("#tdfirst_0").attr("id","tdfirst_"+cont).end()
                     .find("#tdmin_container_0").attr("id","tdmin_container_"+cont).end()
-                    .find("#term_s_container_0").attr("id","tdmin_container_"+cont).end()
-                    .find("#term_ns_container_0").attr("id","tdmin_container_"+cont).end()
+                    .find("#term_s_container_0").attr("id","term_s_container_"+cont).end()
+                    .find("#term_ns_container_0").attr("id","term_ns_container_"+cont).end()
                     .find("#tdmin_0").attr("id","tdmin_"+cont).end()
                     .find("a").show().end()
                     .appendTo("#terminales_disponibles");

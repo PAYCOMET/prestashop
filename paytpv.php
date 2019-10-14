@@ -50,7 +50,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.5.2';
+        $this->version = '7.5.3';
 
 
         $this->is_eu_compatible = 1;
@@ -279,8 +279,90 @@ class Paytpv extends PaymentModule
             if (sizeof($arrMonedas) != sizeof(Tools::getValue('moneda'))) {
                 $this->postErrors[] = $this->l('Duplicate Currency. Specify a different currency for each terminal');
             }
+
+            $arrValidatePaycomet = $this->validatePaycomet();
+            if ($arrValidatePaycomet["error"] != 0) {
+                $this->postErrors[] = $arrValidatePaycomet["error_txt"];
+            }
         }
     }
+
+    private function validatePaycomet()
+    {
+        include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaytpvApi.php');
+
+        $api = new PaytpvApi();
+
+        $arrDatos = array();
+        $arrDatos["error"] = 0;
+        
+
+        // Validación de los datos en Paycomet
+        foreach (array_keys(Tools::getValue("term")) as $key) {
+            $term = (Tools::getValue('term')[$key] == '') ? "" : Tools::getValue('term')[$key];
+            $term_ns = (Tools::getValue('term_ns')[$key] == '') ? "" : Tools::getValue('term_ns')[$key];
+
+            switch (Tools::getValue("terminales")[$key]) {
+                case 0:  // Seguro
+                    $terminales_txt = $this->l('Secure');
+                    $resp = $api->validatePaycomet(
+                        Tools::getValue('clientcode'),
+                        $term,
+                        Tools::getValue("pass")[$key],
+                        "CES"
+                    );
+                    
+                    break;
+                case 1: // No Seguro
+                    $terminales_txt = $this->l('Non-Secure');
+                    $resp = $api->validatePaycomet(
+                        Tools::getValue('clientcode'),
+                        $term_ns,
+                        Tools::getValue("pass_ns")[$key],
+                        "NO-CES"
+                    );
+                    break;
+                case 2: // Ambos
+                    $terminales_txt = $this->l('Both');
+                    $resp = $api->validatePaycomet(
+                        Tools::getValue('clientcode'),
+                        $term,
+                        Tools::getValue("pass")[$key],
+                        "BOTH"
+                    );
+                    break;
+            }
+
+            
+            if ($resp["DS_RESPONSE"] != 1) {
+                $arrDatos["error"] = 1;
+                switch ($resp["DS_ERROR_ID"]) {
+                    case 1121:  // No se encuentra el cliente
+                    case 1130:  // No se encuentra el producto
+                    case 1003:  // Credenciales inválidas
+                    case 127:   // Parámetro no válido.
+                        $arrDatos["error_txt"] = $this->l('Check that the Client Code, Terminal and Password are correct.');
+                        break;
+                    case 1337:  // Ruta de notificación no configurada
+                        $arrDatos["error_txt"] = $this->l('Notification URL is not defined in the product configuration of your account PAYCOMET account.');
+                        break;
+                    case 28:    // Curl
+                    case 1338:  // Ruta de notificación no responde correctamente
+                        $ssl = Configuration::get('PS_SSL_ENABLED');
+                        $arrDatos["error_txt"] = $this->l('The notification URL defined in the product configuration of your PAYCOMET account does not respond correctly. Verify that it has been defined as: ')
+                         . Context::getContext()->link->getModuleLink($this->name, 'url', array(), $ssl);
+                        break;
+                    case 1339:  // Configuración de terminales incorrecta
+                        $arrDatos["error_txt"] = $this->l('Your Product in PAYCOMET account is not set up with the Available Terminals option: ') . $terminales_txt;
+                        break;
+                }
+                return $arrDatos;
+            }
+        }
+
+        return $arrDatos;
+    }
+
 
 
     private function postProcess()

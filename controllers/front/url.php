@@ -49,6 +49,18 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
         $suscripcion = 0;
 
+        // Check Notification
+        if (Tools::getValue('ping') == "1") {
+            die('PING OK');
+        }
+
+        // Obtencion de datos
+        if (Tools::getValue('paycomet_data') == "1") {
+            $arrDatos = array("module_v" => $paytpv->version, "ps_v" => _PS_VERSION_);
+            exit(json_encode($arrDatos));
+        }
+        
+
         // Notify response
         // (execute_purchase)
         if (Tools::getValue('TransactionType') === "1"
