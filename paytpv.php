@@ -50,7 +50,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.5.3';
+        $this->version = '7.5.4';
 
 
         $this->is_eu_compatible = 1;
@@ -1153,7 +1153,7 @@ class Paytpv extends PaymentModule
 
             $this->context->smarty->assign('this_path', $this->_path);
             $newOption = new PaymentOption();
-            $newOption->setCallToActionText($this->trans('Paga con Tarjeta', array(), 'Modules.Paytpv.Shop'))
+            $newOption->setCallToActionText($this->trans($this->l('Pay with card'), array(), 'Modules.Paytpv.Shop'))
             ->setLogo(_MODULE_DIR_ . 'paytpv/views/img/paytpv_logo.svg')
             //->setAdditionalInformation($this->fetch('module:paytpv/views/templates/hook/payment_newpage.tpl'))
             ->setForm($form_paytpv);
@@ -1170,7 +1170,7 @@ class Paytpv extends PaymentModule
 
             $newOption = new PaymentOption();
             $newOption->setBinary(true);
-            $newOption->setCallToActionText($this->trans('Paga con Tarjeta', array(), 'Modules.Paytpv.Shop'))
+            $newOption->setCallToActionText($this->trans($this->l('Pay with card'), array(), 'Modules.Paytpv.Shop'))
             ->setAdditionalInformation($this->fetch('module:paytpv/views/templates/hook/payment_bsiframe_hook.tpl'));
             $payment_options = [
                 $newOption,

@@ -24,6 +24,7 @@ $_MODULE['<{paytpv}prestashop>paytpv_bcec7dcb8b1e60b5eeae840f064f69dc'] = 'La UR
 $_MODULE['<{paytpv}prestashop>paytpv_88fda051c94ab573aa9f27629ef23808'] = 'Su Producto en PAYCOMET no está configurado con la opción Terminales Disponibles: ';
 $_MODULE['<{paytpv}prestashop>paytpv_20015706a8cbd457cbb6ea3e7d5dc9b3'] = 'Configuración actualizada';
 $_MODULE['<{paytpv}prestashop>paytpv_902b0d55fddef6f8d651fe1035b7d4bd'] = 'Error';
+$_MODULE['<{paytpv}prestashop>paytpv_6a408e5941b4ed7630edd7c211aed267'] = 'Paga con tarjeta';
 $_MODULE['<{paytpv}prestashop>paytpv_7b113a5281df7239c3d3f6be4662d64a'] = 'Tarjeta no válida';
 $_MODULE['<{paytpv}prestashop>paytpv_1d036a5610c1bb53870b58e5dc1d4560'] = 'Este pedido es una Suscripción';
 $_MODULE['<{paytpv}prestashop>paytpv_8d9c307cb7f3c4a32822a51922d1ceaa'] = 'N';
