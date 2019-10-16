@@ -280,9 +280,12 @@ class Paytpv extends PaymentModule
                 $this->postErrors[] = $this->l('Duplicate Currency. Specify a different currency for each terminal');
             }
 
-            $arrValidatePaycomet = $this->validatePaycomet();
-            if ($arrValidatePaycomet["error"] != 0) {
-                $this->postErrors[] = $arrValidatePaycomet["error_txt"];
+            // Si no hay errores previos se contrastan los datos
+            if (!sizeof($this->postErrors)) {
+                $arrValidatePaycomet = $this->validatePaycomet();
+                if ($arrValidatePaycomet["error"] != 0) {
+                    $this->postErrors[] = $arrValidatePaycomet["error_txt"];
+                }
             }
         }
     }
@@ -826,7 +829,7 @@ class Paytpv extends PaymentModule
             if (!sizeof($this->postErrors)) {
                 $errorMessage = $this->postProcess();
             } else {
-                $errorMessage .= '<div class="bootstrap"><div class="alert alert-warning"><strong>' .
+                $errorMessage .= '<div class="bootstrap"><div class="alert alert-danger"><strong>' .
                     $this->l('Error') . '</strong><ol>';
                 foreach ($this->postErrors as $err) {
                     $errorMessage .= '<li>' . $err . '</li>';
