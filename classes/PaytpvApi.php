@@ -1651,25 +1651,13 @@ class PaytpvApi
 
         $endpoint = "https://api.paycomet.com/gateway/json_product_url_check.php";
         //$endpoint = "https://192.168.1.36:2443/gateway/json_product_url_check.php";
-        $signature = hash('sha512', $merchantCode . $idterminal . $password);
-
-        switch ($terminales) {
-            case 0:
-                $terminales_txt = "CES";
-                break;
-            case 1:
-                $terminales_txt = "NO-CES";
-                break;
-            case 2:
-                $terminales_txt = "BOTH";
-                break;
-        }
+        $signature = hash('sha512', $merchantCode . $idterminal . $password);        
 
         $arrParams = array(
             'DS_MERCHANT_MERCHANTCODE' => $merchantCode,
             'DS_MERCHANT_TERMINAL' => $idterminal,
             'DS_MERCHANT_MERCHANTSIGNATURE' => $signature,
-            'DS_MERCHANT_TERMINALES' => $terminales_txt
+            'DS_MERCHANT_TERMINALES' => $terminales
         );
 
         $json = json_encode($arrParams);
