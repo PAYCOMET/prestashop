@@ -90,7 +90,7 @@ class PaytpvCustomer extends ObjectModel
 
     public static function getCustomerIduser($paytpv_iduser)
     {
-        $sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'paytpv_customer WHERE paytpv_iduser="' . pSQL($paytpv_iduser) . '"';
+        $sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'paytpv_customer WHERE paytpv_iduser="' . (int)$paytpv_iduser . '"';
         $result = Db::getInstance()->getRow($sql);
         return $result;
     }
@@ -113,8 +113,8 @@ class PaytpvCustomer extends ObjectModel
     public static function addCustomer($paytpv_iduser, $paytpv_tokenuser, $paytpv_cc, $paytpv_brand, $id_customer)
     {
         $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'paytpv_customer (`paytpv_iduser`, `paytpv_tokenuser`, `paytpv_cc`,
-        `paytpv_brand`,`id_customer`,`date`) VALUES(' . pSQL($paytpv_iduser) . ',"' . pSQL($paytpv_tokenuser) . '","' .
-        pSQL($paytpv_cc) . '","' . pSQL($paytpv_brand) . '",' . pSQL($id_customer) . ',"' . pSQL(date('Y-m-d H:i:s')) .
+        `paytpv_brand`,`id_customer`,`date`) VALUES(' . (int)$paytpv_iduser . ',"' . pSQL($paytpv_tokenuser) . '","' .
+        pSQL($paytpv_cc) . '","' . pSQL($paytpv_brand) . '",' . (int)$id_customer . ',"' . pSQL(date('Y-m-d H:i:s')) .
         '")';
         Db::getInstance()->Execute($sql);
     }
@@ -131,7 +131,7 @@ class PaytpvCustomer extends ObjectModel
     public static function saveCustomerCarDesc($customer_id, $paytpv_iduser, $card_desc)
     {
         $sql = 'UPDATE ' . _DB_PREFIX_ . 'paytpv_customer set card_desc = "' . pSQL($card_desc) . '" where id_customer
-         = ' . (int) $customer_id . ' and `paytpv_iduser`="' . pSQL($paytpv_iduser) . '"';
+         = ' . (int) $customer_id . ' and `paytpv_iduser`="' . (int)$paytpv_iduser . '"';
         Db::getInstance()->Execute($sql);
         return true;
     }

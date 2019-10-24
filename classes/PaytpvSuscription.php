@@ -48,16 +48,16 @@ class PaytpvSuscription extends ObjectModel
         $importe
     ) {
         // Datos usuario
-        $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_suscription where id_customer = ' . pSQL($id_customer) . ' AND
-         id_order="' . pSQL($id_order) . '"';
+        $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_suscription where id_customer = ' . (int)$id_customer . ' AND
+         id_order="' . (int)$id_order . '"';
         $result = Db::getInstance()->getRow($sql);
 
         // Si no existe la suscripcion la creamos
         if (empty($result) === true) {
             $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'paytpv_suscription(`id_customer`, `id_order`, `paytpv_iduser`,
-            `paytpv_tokenuser`,`periodicity`,`cycles`,`price`,`date`) VALUES(' . pSQL($id_customer) . ',' .
-            pSQL($id_order) . ',' . pSQL($paytpv_iduser) . ',"' . pSQL($paytpv_tokenuser) . '",' . pSQL($periodicity) .
-            ',' . pSQL($cycles) . ',' . pSQL($importe) . ',"' . pSQL(date('Y-m-d H:i:s')) . '")';
+            `paytpv_tokenuser`,`periodicity`,`cycles`,`price`,`date`) VALUES(' . (int)$id_customer . ',' .
+            (int)$id_order . ',' . (int)$paytpv_iduser . ',"' . pSQL($paytpv_tokenuser) . '",' . (int)$periodicity .
+            ',' . (int)$cycles . ',' . (float)$importe . ',"' . pSQL(date('Y-m-d H:i:s')) . '")';
             Db::getInstance()->Execute($sql);
         }
     }
@@ -66,7 +66,7 @@ class PaytpvSuscription extends ObjectModel
     {
         // Datos usuario
         $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_suscription where id_customer = ' . (int) $id_customer . ' and
-        id_suscription = ' . pSQL($id_suscription);
+        id_suscription = ' . (int)$id_suscription;
         $result = Db::getInstance()->getRow($sql);
         return $result;
     }
@@ -74,8 +74,8 @@ class PaytpvSuscription extends ObjectModel
     public static function getSuscriptionOrder($id_customer, $id_order)
     {
         // Datos usuario
-        $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_suscription where id_customer = ' . pSQL($id_customer) . ' AND
-         id_order="' . pSQL($id_order) . '"';
+        $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_suscription where id_customer = ' . (int)$id_customer . ' AND
+         id_order="' . (int)$id_order . '"';
         $result = Db::getInstance()->getRow($sql);
         return $result;
     }
@@ -86,7 +86,7 @@ class PaytpvSuscription extends ObjectModel
         // Check if is a subscription order
         $sql = 'select ps.*,count(po.id_order) as "pagos",1 as "suscription" FROM ' . _DB_PREFIX_ . 'paytpv_suscription
         ps LEFT OUTER JOIN ' . _DB_PREFIX_ . 'paytpv_order po on ps.id_suscription = po.id_suscription and
-        po.id_order!=' . pSQL($id_order) . ' where ps.id_order = ' . pSQL($id_order) . ' group by ps.id_suscription
+        po.id_order!=' . (int)$id_order . ' where ps.id_order = ' . (int)$id_order . ' group by ps.id_suscription
          order by ps.date desc';
         $result = Db::getInstance()->getRow($sql);
 
@@ -94,7 +94,7 @@ class PaytpvSuscription extends ObjectModel
             // Check if is a suscription payment
             $sql = 'select ps.*,count(po.id_order) as "pagos", 0 as "suscription" FROM ' . _DB_PREFIX_ .
             'paytpv_suscription ps LEFT OUTER JOIN ' . _DB_PREFIX_ . 'paytpv_order po on ps.id_suscription =
-            po.id_suscription where po.id_order = ' . pSQL($id_order) . ' group by ps.id_suscription order by ps.date
+            po.id_suscription where po.id_order = ' . (int)$id_order . ' group by ps.id_suscription order by ps.date
             desc';
             $result = Db::getInstance()->getRow($sql);
         }
@@ -150,14 +150,14 @@ class PaytpvSuscription extends ObjectModel
     public static function removeSuscription($customer_id, $id_suscription)
     {
         $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'paytpv_suscription where id_customer = ' . (int) $customer_id . ' and
-         id_suscription = ' . pSQL($id_suscription);
+         id_suscription = ' . (int)$id_suscription;
         Db::getInstance()->Execute($sql);
     }
 
     public static function cancelSuscription($customer_id, $id_suscription)
     {
         $sql = 'UPDATE ' . _DB_PREFIX_ . 'paytpv_suscription set status=1 where id_customer = ' . (int) $customer_id .
-        ' and id_suscription = ' . pSQL($id_suscription);
+        ' and id_suscription = ' . (int)$id_suscription;
         Db::getInstance()->Execute($sql);
     }
 }
