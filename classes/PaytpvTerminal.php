@@ -91,9 +91,10 @@ class PaytpvTerminal extends ObjectModel
         
         $id_shop = Context::getContext()->shop->id;
         $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'paytpv_terminal (id,id_shop,idterminal,idterminal_ns,password,
-        password_ns,jetid,jetid_ns,currency_iso_code,terminales,tdfirst,tdmin) VALUES(' . (int)$id . ',' . (int)$id_shop . ',' .
-        (int)$idterminal . ',' . (int)$idterminal_ns . ',"' . pSQL($password) . '","' . pSQL($password_ns) . '","' . pSQL($jetid) . '","' .
-        pSQL($jetid_ns) . '","' . pSQL($currency_iso_code) . '",' . (int)$terminales . ',' . (int)$tdfirst . ',' . (float)$tdmin . ')';
+        password_ns,jetid,jetid_ns,currency_iso_code,terminales,tdfirst,tdmin) VALUES(' . (int)$id .
+        ',' . (int)$id_shop . ',' . (int)$idterminal . ',' . (int)$idterminal_ns . ',"' . pSQL($password) .
+        '","' . pSQL($password_ns) . '","' . pSQL($jetid) . '","' . pSQL($jetid_ns) . '","' .
+        pSQL($currency_iso_code) . '",' . (int)$terminales . ',' . (int)$tdfirst . ',' . (float)$tdmin . ')';
         Db::getInstance()->Execute($sql);
     }
 
@@ -110,8 +111,8 @@ class PaytpvTerminal extends ObjectModel
         if ($id_shop == 0) {
             $id_shop = Context::getContext()->shop->id;
         }
-        $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where currency_iso_code="' . pSQL($currency_iso_code) . '"
-         and id_shop=' . (int)$id_shop;
+        $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where currency_iso_code="' .
+        pSQL($currency_iso_code) . '" and id_shop=' . (int)$id_shop;
         $result = Db::getInstance()->getRow($sql);
         return $result;
     }

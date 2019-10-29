@@ -1649,8 +1649,8 @@ class PaytpvApi
         $idterminal = trim($idterminal);
         $password = trim($password);
 
-        $endpoint = "https://api.paycomet.com/gateway/json_product_url_check.php";        
-        $signature = hash('sha512', $merchantCode . $idterminal . $password);        
+        $endpoint = "https://api.paycomet.com/gateway/json_product_url_check.php";
+        $signature = hash('sha512', $merchantCode . $idterminal . $password);
 
         $arrParams = array(
             'DS_MERCHANT_MERCHANTCODE' => $merchantCode,
