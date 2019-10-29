@@ -230,7 +230,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
 
             // Bankstore JET
             if ($paytpv_integration == 1) {
-                $this->context->smarty->assign('js_code', $paytpv->jsMinimizedJet());
+                $this->context->smarty->assign('js_code', '');
                 $this->context->smarty->assign('this_path', $this->module->getPath());
             }
 

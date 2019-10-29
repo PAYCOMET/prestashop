@@ -166,7 +166,7 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
 
         // Bankstore JET
         if ($paytpv_integration == 1) {
-            $this->context->smarty->assign('js_code', $this->module->jsMinimizedJet());
+            $this->context->smarty->assign('js_code', '');
         }
 
         $this->setTemplate('module:paytpv/views/templates/hook/payment_bsiframe_newpage.tpl');
