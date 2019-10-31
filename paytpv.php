@@ -873,7 +873,8 @@ class Paytpv extends PaymentModule
         $this->context->smarty->assign(
             'NOTIFICACION',
             Context::getContext()->link->getModuleLink($this->name, 'url', array(), $ssl)
-        );                
+        );
+        
         $this->context->smarty->assign('displayName', Tools::safeOutput($this->displayName));
         $this->context->smarty->assign('description', Tools::safeOutput($this->description));
         $this->context->smarty->assign('errorMessage', $errorMessage);
