@@ -52,7 +52,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.5.7';
+        $this->version = '7.5.8';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
 
@@ -1553,9 +1553,9 @@ class Paytpv extends PaymentModule
 
         // Bankstore JET
         if ($paytpv_integration == 1) {
-            $this->context->controller->registerJavascript('paytpv-jet', 'modules/paytpv/js/paytpv_jet.js');
+            $this->context->controller->registerJavascript('paytpv-jet', 'modules/paytpv/views/js/paytpv_jet.js');
         }
-        $this->context->controller->registerJavascript('paytpv-fancybox', 'modules/paytpv/js/jquery.fancybox.pack.js');
+        $this->context->controller->registerJavascript('paytpv-fancybox', 'modules/paytpv/views/js/jquery.fancybox.pack.js');
     }
 
     public function hookActionFrontControllerSetMedia($params)
@@ -1565,7 +1565,7 @@ class Paytpv extends PaymentModule
 
     public function hookDisplayShoppingCart()
     {
-        $this->context->controller->registerJavascript($this->name . '_js', $this->_path . '/js/paytpv.js');
+        $this->context->controller->registerJavascript($this->name . '_js', $this->_path . 'views/js/paytpv.js');
 
         $this->context->controller->addCSS($this->_path . 'views/css/payment.css', 'all');
         $this->context->controller->addCSS($this->_path . 'views/css/fullscreen.css', 'all');
