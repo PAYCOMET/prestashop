@@ -52,7 +52,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.5.8';
+        $this->version = '7.5.9';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
 
@@ -1581,6 +1581,19 @@ class Paytpv extends PaymentModule
         $this->context->controller->addJS($this->_path . 'views/js/paytpv.js');
     }
 
+    public function getPaycometLang($language_code) {
+        $language_data = explode("-", $language_code);                
+        switch ($language_data[0]) {            
+            default:
+                $language = $language_data[0];
+                break;
+            case "da":
+                $language = "dk";
+                break;
+        }
+        return $language;
+    }
+
     public function getTemplateVarInfos()
     {
         $cart = $this->context->cart;
@@ -1633,9 +1646,9 @@ class Paytpv extends PaymentModule
         $disableoffersavecard = Configuration::get('PAYTPV_DISABLEOFFERSAVECARD');
         $remembercardunselected = Configuration::get('PAYTPV_REMEMBERCARDUNSELECTED');
 
-        $language_data = explode("-", $this->context->language->language_code);
-        $language = $language_data[0];
+        $language = $this->getPaycometLang($this->context->language->language_code);
 
+        
         return array(
             'msg_paytpv' => '',
             'active_suscriptions' => $active_suscriptions,
@@ -1760,8 +1773,7 @@ class Paytpv extends PaymentModule
             $pass_sel = $pass_ns;
         }
 
-        $language_data = explode("-", $this->context->language->language_code);
-        $language = $language_data[0];
+        $language = $this->getPaycometLang($this->context->language->language_code);
 
         $score = $this->transactionScore($cart);
         $MERCHANT_SCORING = $score["score"];
@@ -1940,8 +1952,7 @@ class Paytpv extends PaymentModule
                 $status = $this->l('ENDED');
             }
 
-            $language_data = explode("-", $this->context->language->language_code);
-            $language = $language_data[0];
+            $language = $this->getPaycometLang($this->context->language->language_code);
 
 
             $date_YYYYMMDD = ($language == "es") ?

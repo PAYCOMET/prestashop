@@ -203,9 +203,8 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
 
             $URLOK = Context::getContext()->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
             $URLKO = Context::getContext()->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
-
-            $language_data = explode("-", $this->context->language->language_code);
-            $language = $language_data[0];
+            
+            $language = $paytpv->getPaycometLang($this->context->language->language_code);
 
             if ($jetPayment &&
                 (Tools::getIsset(Tools::getValue("suscription")) && Tools::getValue("suscription") == 1)

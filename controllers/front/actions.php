@@ -177,10 +177,8 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
             // Cálculo Firma
             $signature = hash('sha512', $paytpv->clientcode . $idterminal_sel . $OPERATION . $paytpv_order_ref .
             $importe . $currency_iso_code . md5($pass_sel));
-
-
-            $language_data = explode("-", $this->context->language->language_code);
-            $language = $language_data[0];
+            
+            $language = $paytpv->getPaycometLang($this->context->language->language_code);
 
             $score = $paytpv->transactionScore($cart);
             $MERCHANT_SCORING = $score["score"];
