@@ -1581,9 +1581,10 @@ class Paytpv extends PaymentModule
         $this->context->controller->addJS($this->_path . 'views/js/paytpv.js');
     }
 
-    public function getPaycometLang($language_code) {
-        $language_data = explode("-", $language_code);                
-        switch ($language_data[0]) {            
+    public function getPaycometLang($language_code)
+    {
+        $language_data = explode("-", $language_code);
+        switch ($language_data[0]) {
             default:
                 $language = $language_data[0];
                 break;
