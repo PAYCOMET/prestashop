@@ -104,13 +104,20 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
         $newpage_payment = (int) Configuration::get('PAYTPV_NEWPAGEPAYMENT');
         $paytpv_integration = (int) Configuration::get('PAYTPV_INTEGRATION');
 
+        $iframe_height = $paytpv->iframe_height;
+
         $disableoffersavecard = Configuration::get('PAYTPV_DISABLEOFFERSAVECARD');
-        $remembercardunselected = Configuration::get('PAYTPV_REMEMBERCARDUNSELECTED');
+        $iframe_height = $paytpv->iframe_height;
 
         $this->context->smarty->assign('newpage_payment', $newpage_payment);
+        $this->context->smarty->assign('iframe_height', $iframe_height);
+        $this->context->smarty->assign('iframe_height', $iframe_height);
         $this->context->smarty->assign('paytpv_integration', $paytpv_integration);
+        $this->context->smarty->assign('account', 0);
 
         $this->context->smarty->assign('jet_id', $jetid_sel);
+
+        $this->context->smarty->assign('jet_paytpv', $paytpv->jet_paytpv);
 
         $language_data = explode("-", $this->context->language->language_code);
         $language = $language_data[0];
@@ -136,7 +143,6 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
         );
         $this->context->smarty->assign('active_suscriptions', $active_suscriptions);
         $this->context->smarty->assign('saved_card', $saved_card);
-        $this->context->smarty->assign('commerce_password', $this->module->commerce_password);
         $this->context->smarty->assign('id_cart', Context::getContext()->cart->id);
 
         $this->context->smarty->assign('base_dir', __PS_BASE_URI__);
@@ -156,18 +162,12 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
         $this->context->controller->registerJavascript('paytpv-js', 'modules/paytpv/views/js/paytpv.js');
 
         $this->context->smarty->assign('total_amount', $importe_tienda);
+        
         $this->context->smarty->assign('currency_symbol', $currency->sign);
 
         $this->context->smarty->assign('disableoffersavecard', $disableoffersavecard);
-        $this->context->smarty->assign('remembercardunselected', $remembercardunselected);
-
 
         $this->context->smarty->assign('paytpv_iframe', $this->module->paytpvIframeUrl());
-
-        // Bankstore JET
-        if ($paytpv_integration == 1) {
-            $this->context->smarty->assign('js_code', '');
-        }
 
         $this->setTemplate('module:paytpv/views/templates/hook/payment_bsiframe_newpage.tpl');
     }

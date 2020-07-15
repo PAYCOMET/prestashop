@@ -23,26 +23,18 @@
  *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-class PaytpvUrlkoModuleFrontController extends ModuleFrontController
+/**
+ * @since 1.5.0
+ */
+class PaytpvIframeModuleFrontController extends ModuleFrontController
 {
-    public $display_column_left = false;
-
-    public $ssl = true;
-    /**
-     * @see FrontController::initContent()
-     */
-
     public function initContent()
     {
         parent::initContent();
-        
-        $this->context->smarty->assign('error_msg', "");
-        $this->context->smarty->assign(array(
-            'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name .
-                            '/',
-            'base_dir' =>  __PS_BASE_URI__
-        ));
+        $this->context->smarty->assign([
+            'src' => 'http://www.prestashop.com',
+        ]);
 
-        $this->setTemplate('module:paytpv/views/templates/front/payment_fail.tpl');
+        $this->setTemplate('module:paytpv/views/templates/hook/payment_iframe.tpl');
     }
 }

@@ -43,28 +43,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
         );
 
         $paytpv = $this->module;
-
         
-        $password_fail = 0;
-        $error_msg = "";
-        // Verificar contraseña usuario.
-        if ($paytpv->commerce_password) {
-            if (!$paytpv->validPassword($this->context->cart->id_customer, Tools::getValue('password'))) {
-                $password_fail = 1;
-                $this->context->smarty->assign('password_fail', $password_fail);
-                $this->context->smarty->assign('error_msg', $error_msg);
-                $this->context->smarty->assign(array(
-                    'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' .
-                    $this->module->name . '/',
-                    'base_dir' =>  __PS_BASE_URI__
-                ));
-                $this->setTemplate('module:paytpv/views/templates/front/payment_fail.tpl');
-
-
-                return;
-            }
-        }
-
         $total_pedido = $this->context->cart->getOrderTotal(true, Cart::BOTH);
 
         $datos_pedido = $paytpv->terminalCurrency($this->context->cart);
@@ -78,11 +57,12 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
         $jetid_ns = $datos_pedido["jetid_ns"];
 
         // BANKSTORE JET
-        $token = Tools::getIsset(Tools::getValue("paytpvToken")) ? Tools::getValue("paytpvToken") : "";
-        $savecard_jet = Tools::getIsset(Tools::getValue("savecard_jet")) ? Tools::getValue("savecard_jet") : 0;
-
+        
+        $token = Tools::getIsset('paytpvToken') ? Tools::getValue('paytpvToken') : "";
+        $savecard_jet = Tools::getIsset('paytpv_savecard') ? Tools::getValue("paytpv_savecard") : 0;
+        
         $jetPayment = 0;
-        if ($token && Tools::substr($token) == 64) {
+        if ($token && Tools::strlen($token) == 64) {
             // PAGO SEGURO
             if ($idterminal > 0) {
                 $secure_pay = $paytpv->isSecureTransaction($idterminal, $total_pedido, 0) ? 1 : 0;
@@ -117,7 +97,6 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     'error_msg',
                     $paytpv->l('Cannot operate with given credit card', 'capture')
                 );
-                $this->context->smarty->assign('password_fail', $password_fail);
                 $this->context->smarty->assign(
                     array(
                         'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' .
@@ -146,7 +125,6 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     'error_msg',
                     $paytpv->l('Cannot operate with given credit card', 'capture')
                 );
-                $this->context->smarty->assign('password_fail', "");
                 $this->context->smarty->assign(
                     array(
                     'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' .
@@ -174,13 +152,17 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
             }
         }
 
+        $suscription = (Tools::getIsset("paytpv_suscripcion"))?1:0;
+        $periodicity = (Tools::getIsset("paytpv_periodicity"))?Tools::getValue("paytpv_periodicity"):0;
+        $cycles = (Tools::getIsset("paytpv_cycles"))?Tools::getValue("paytpv_cycles"):0;
+
         PaytpvOrderInfo::saveOrderInfo(
             (int) $this->context->customer->id,
             $this->context->cart->id,
-            0,
-            0,
-            0,
-            0,
+            $savecard_jet,
+            $suscription,
+            $periodicity,
+            $cycles,
             $data["IDUSER"]
         );
 
@@ -190,7 +172,8 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
         $score = $paytpv->transactionScore($this->context->cart);
         $MERCHANT_SCORING = $score["score"];
         $MERCHANT_DATA = $paytpv->getMerchantData($this->context->cart);
-
+        
+        
         // PAGO SEGURO
         if ($secure_pay) {
             $paytpv_order_ref = str_pad($this->context->cart->id, 8, "0", STR_PAD_LEFT);
@@ -207,11 +190,11 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
             $language = $paytpv->getPaycometLang($this->context->language->language_code);
 
             if ($jetPayment &&
-                (Tools::getIsset(Tools::getValue("suscription")) && Tools::getValue("suscription") == 1)
+                (Tools::getIsset('suscripcion') && Tools::getValue('suscripcion') == 1)
             ) {
                 $subscription_startdate = date("Ymd");
-                $susc_periodicity = Tools::getValue("periodicity");
-                $subs_cycles = Tools::getValue("cycles");
+                $susc_periodicity = $periodicity;
+                $subs_cycles = $cycles;
 
                 // Si es indefinido, ponemos como fecha tope la fecha + 10 años.
                 if ($subs_cycles == 0) {
@@ -276,7 +259,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
             $vhash = hash('sha512', md5($query . md5($pass_sel)));
 
             $salida = $paytpv->url_paytpv . "?" . $query . "&VHASH=" . $vhash;
-
+                       
             Tools::redirect($salida);
             exit;
         }
@@ -292,10 +275,10 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
         );
         $paytpv_order_ref = str_pad($this->context->cart->id, 8, "0", STR_PAD_LEFT);
 
-        if ($jetPayment && (Tools::getIsset(Tools::getValue("suscription")) && Tools::getValue("suscription") == 1)) {
+        if ($jetPayment && (Tools::getIsset('paytpv_suscription') && Tools::getValue('paytpv_suscription') == 1)) {
             $subscription_startdate = date("Y-m-d");
-            $susc_periodicity = Tools::getValue("periodicity");
-            $subs_cycles = Tools::getValue("cycles");
+            $susc_periodicity = Tools::getValue("paytpv_periodicity");
+            $subs_cycles = Tools::getValue("paytpv_cycles");
 
             // Si es indefinido, ponemos como fecha tope la fecha + 10 años.
             if ($subs_cycles == 0) {
@@ -329,7 +312,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 $MERCHANT_DATA
             );
         }
-
+        
         if ((Tools::getIsset($charge['DS_RESPONSE']) &&
             (int) $charge['DS_RESPONSE'] == 1) ||
             $charge['DS_ERROR_ID'] == 0
@@ -352,7 +335,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 );
 
                 if ($savecard_jet == 1) {
-                    $result = $client->info_user($data['IDUSER'], $data['TOKEN_USER']);
+                    $result = $client->infoUser($data['IDUSER'], $data['TOKEN_USER']);
                     $result = $paytpv->saveCard(
                         $this->context->cart->id_customer,
                         $data['IDUSER'],
@@ -363,13 +346,13 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 }
             }
 
-
             $values = array(
                 'id_cart' => $this->context->cart->id,
                 'id_module' => (int) $this->module->id,
                 'id_order' => $id_order,
                 'key' => $this->context->customer->secure_key
             );
+            
             Tools::redirect(Context::getContext()->link->getPageLink('order-confirmation', $this->ssl, null, $values));
             return;
         } else {
@@ -383,9 +366,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
         }
 
         $this->context->smarty->assign('error_msg', $paytpv->l('Cannot operate with given credit card', 'capture'));
-        $this->context->smarty->assign('password_fail', $password_fail);
         $this->context->smarty->assign('base_dir', __PS_BASE_URI__);
-        $this->context->smarty->assign('password_fail', $password_fail);
         $this->setTemplate('module:paytpv/views/templates/front/payment_fail.tpl');
     }
 }

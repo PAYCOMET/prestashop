@@ -157,7 +157,6 @@ class PayTpvInstall
     {
         // Valores a quitar si desinstalamos el módulo
         Configuration::deleteByName('PAYTPV_CLIENTCODE');
-        Configuration::deleteByName('PAYTPV_COMMERCEPASSWORD');
         Configuration::deleteByName('PAYTPV_3DFIRST');
         Configuration::deleteByName('PAYTPV_3DMIN');
         Configuration::deleteByName('PAYTPV_TERMINALES');

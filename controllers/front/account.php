@@ -70,7 +70,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
             $pass_ns = $arrTerminal["password_ns"];
             $jetid = $arrTerminal["jetid"];
             $jetid_ns = $arrTerminal["jetid_ns"];
-
+      
             // PAGO SEGURO
             if ($idterminal > 0) {
                 $secure_pay = $paytpv->isSecureTransaction($idterminal, 0, 0) ? 1 : 0;
@@ -91,12 +91,11 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
 
 
             // BANKSTORE JET
-            $token = Tools::getIsset(Tools::getValue("paytpvToken")) ? Tools::getValue("paytpvToken") : "";
-
+            $token = Tools::getIsset('paytpvToken') ? Tools::getValue('paytpvToken') : "";
 
             if ($token && Tools::strlen($token) == 64) {
-                include_once(_PS_MODULE_DIR_ . '/' . $this->name . '/classes/WsClient.php');
-
+                include_once(_PS_MODULE_DIR_ . $paytpv->name . '/classes/WsClient.php');
+                
                 $client = new WsClient(
                     array(
                         'endpoint_paytpv' => $paytpv->endpoint_paytpv,
@@ -124,6 +123,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                     );
                 }
             }
+    
 
             $saved_card = PaytpvCustomer::getCardsCustomer((int) $this->context->customer->id);
 
@@ -198,12 +198,13 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                     true
                 )
             );
+            
 
-            $this->context->smarty->assign('newpage_payment', $paytpv->newpage_payment);
-
+            $this->context->smarty->assign('newpage_payment', 0);
             $this->context->smarty->assign('paytpv_integration', $paytpv_integration);
+            $this->context->smarty->assign('account', 1);
 
-            $this->context->smarty->assign('jet_id', $jetid);
+            $this->context->smarty->assign('jet_id', $jetid_sel);
             
             $this->context->smarty->assign('jet_lang', $language);
 
@@ -223,7 +224,6 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
 
             // Bankstore JET
             if ($paytpv_integration == 1) {
-                $this->context->smarty->assign('js_code', '');
                 $this->context->smarty->assign('this_path', $this->module->getPath());
             }
 
