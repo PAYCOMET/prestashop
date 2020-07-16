@@ -353,26 +353,20 @@ class Paytpv extends PaymentModule
                     case 1130:  // No se encuentra el producto
                     case 1003:  // Credenciales inválidas
                     case 127:   // Parámetro no válido.
-                        $arrDatos["error_txt"] = $this->l(
-                            'Check that the Client Code, Terminal and Password are correct.'
-                        );
+                        $arrDatos["error_txt"] = $this->l('Check that the Client Code, Terminal and Password are correct.');
                         break;
                     case 1337:  // Ruta de notificación no configurada
-                        $arrDatos["error_txt"] = $this->l(
-                            'Notification URL is not defined in the product configuration of your account PAYCOMET account.'
-                        );
+                        $arrDatos["error_txt"] = $this->l('Notification URL is not defined in the product configuration of your account PAYCOMET account.');
                         break;
                     case 28:    // Curl
                     case 1338:  // Ruta de notificación no responde correctamente
                         $ssl = Configuration::get('PS_SSL_ENABLED');
-                        $arrDatos["error_txt"] = $this->l(
-                            'The notification URL defined in the product configuration of your PAYCOMET account does not respond correctly. Verify that it has been defined as: '
-                        ) . Context::getContext()->link->getModuleLink($this->name, 'url', array(), $ssl);
+                        $arrDatos["error_txt"] = $this->l('The notification URL defined in the product configuration of your PAYCOMET account does not respond correctly. Verify that it has been defined as: ')
+                        . Context::getContext()->link->getModuleLink($this->name, 'url', array(), $ssl);
                         break;
                     case 1339:  // Configuración de terminales incorrecta
-                        $arrDatos["error_txt"] = $this->l(
-                            'Your Product in PAYCOMET account is not set up with the Available Terminals option: '
-                        ) . $terminales_txt;
+                        $arrDatos["error_txt"] = $this->l('Your Product in PAYCOMET account is not set up with the Available Terminals option: ')
+                        . $terminales_txt;
                         break;
                 }
             }
