@@ -36,7 +36,7 @@
     var url_savedesc = "{$url_savedesc}";
     var msg_cancelsuscription = "{l s='Cancel Subscription' mod='paytpv'}"
     var msg_removecard = "{l s='Remove Card' mod='paytpv'}";
-    var msg_accept = "{l s='You must accept the terms and conditions of the service' mod='paytpv'}";
+    var msg_accept = "{l s='You must accept save card to continue' mod='paytpv'}";
     var msg_savedesc = "{l s='Save description' mod='paytpv'}";
     var msg_descriptionsaved = "{l s='Description saved' mod='paytpv'}";
     var status_canceled = "{$status_canceled}";
@@ -75,14 +75,11 @@
         <p class="warning">{l s='You still have no card associated.' mod='paytpv'}</p>
     {/if}
 
-    <div id="storingStep_account" class="box">
-        <h4>{l s='STREAMLINE YOUR FUTURE PURCHASES!' mod='paytpv'}</h4>
-        <p>{l s='Link a card to your account to be able to make all procedures easily and quickly.' mod='paytpv'}</p>
-
-        <p class="checkbox">
-            <span class="checked"><input type="checkbox" name="savecard" id="savecard"></span>
-            <label for="savecard">{l s='By linking a card you accept the ' mod='paytpv'}<a id="open_conditions" href="#conditions" class="link"><strong>{l s='terms and conditions of the service' mod='paytpv'}</strong></a></label>
-        </p>
+    <div id="storingStep_account" class="box">        
+        <label for="savecard" class="checkbox">
+            <input type="checkbox" name="savecard" id="savecard">
+            {l s='Save card for future purchases' mod='paytpv'}.<span class="paytpv-pci">{l s='Card data is protected by the Payment Card Industry Data Security Standard (PCI DSS)' mod='paytpv'}.</span>
+        </label>
         <p>
             <button href="javascript:void(0);" onclick="vincularTarjeta();" title="{l s='Link card' mod='paytpv'}" class="btn btn-primary">
                 <span>{l s='Link card' mod='paytpv'}<i class="icon-chevron-right right"></i></span>
@@ -93,8 +90,8 @@
         </p>
 
         <div class="payment_module paytpv_iframe" id="nueva_tarjeta" style="display:none">
-            {if ($paytpv_integration==0)}
-                <iframe src="{$url_paytpv}" id="paytpv_iframe" name="paytpv" style="width: 670px; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-style: initial; border-color: initial; border-image: initial; height: 342px; " marginheight="0" marginwidth="0" scrolling="no"></iframe>
+            {if ($paytpv_integration==0)}                
+                <iframe src="{$url_paytpv}" id="paytpv_iframe" name="paytpv" style="width: 670px; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-style: initial; border-color: initial; border-image: initial; height: 360px; " marginheight="0" marginwidth="0" scrolling="no"></iframe>                
             {else}
                 <form action="{$paytpv_jetid_url}" method="POST" class="paytpv_jet" id="paytpvPaymentForm" onsubmit="return takingOff();">
                 <ul>

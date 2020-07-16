@@ -77,6 +77,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             $context = Context::getContext();
             $id_cart = (int) Tools::substr($ref, 0, 8);
             $cart = new Cart($id_cart);
+            
             if (Context::getContext()->shop->id != $cart->id_shop) {
                 $context->shop->id = $cart->id_shop;
             }
@@ -87,6 +88,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             $idterminal_ns = $arrTerminal["idterminal_ns"];
             $pass = $arrTerminal["password"];
             $pass_ns = $arrTerminal["password_ns"];
+            
 
             if (Tools::getValue('TpvID') == $idterminal) {
                 $idterminal_sel = $idterminal;
@@ -390,11 +392,16 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                         die("[Refund " . $refund . "] " . $cart_problem_txt);
                     }
 
+                    $displayName = $paytpv->displayName;
+                    if (Tools::getIsset('MethodName')) {
+                        $displayName .= " [" . Tools::getValue('MethodName') . "]";
+                    }
+
                     $pagoRegistrado = $paytpv->validateOrder(
                         $new_cart['cart']->id,
                         _PS_OS_PAYMENT_,
                         $importe,
-                        $paytpv->displayName,
+                        $displayName,
                         null,
                         $transaction,
                         null,
@@ -414,11 +421,16 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                 }
                 // NO ORDER
             } else {
+                $displayName = $paytpv->displayName;
+                if (Tools::getIsset('MethodName')) {
+                    $displayName .= " [" . Tools::getValue('MethodName') . "]";
+                }
+
                 $pagoRegistrado = $paytpv->validateOrder(
                     $id_cart,
                     _PS_OS_PAYMENT_,
                     $importe,
-                    $paytpv->displayName,
+                    $displayName,
                     null,
                     $transaction,
                     null,
@@ -429,10 +441,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                 $id_order = Order::getOrderByCartId((int) $id_cart);
                 $id_suscription = 0;
 
-                $disableoffersavecard = $paytpv->disableoffersavecard;
-                $remembercardunselected = $paytpv->remembercardunselected;
-
-                $defaultsavecard = ($disableoffersavecard != 1 && $remembercardunselected != 1) ? 1 : 0;
+                $defaultsavecard = 0;
                 $datos_order = PaytpvOrderInfo::getOrderInfo($cart->id_customer, $id_cart, $defaultsavecard);
 
 
@@ -530,7 +539,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                         ClassRegistro::removeByCartID($id_cart);
                     }
 
-                    // Token Payment
+                // Token Payment or APM
                 } else {
                     $result = PaytpvCustomer::getCustomerIduser($datos_order["paytpv_iduser"]);
                     $paytpv_iduser = $result["paytpv_iduser"];

@@ -73,3 +73,12 @@
     background: #fff;
     padding: 1rem;
 }
+
+.paytpv-pci{
+    font-size: 0.8em;
+    display: block;
+}
+
+#paytpv_block_account label {
+    text-align: left!important;
+}

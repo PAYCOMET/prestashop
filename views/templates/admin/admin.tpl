@@ -63,7 +63,7 @@
 </div>
     
 <div id="paytpvconfigarea">
-    {$errorMessage|escape:'quotes'}
+    {$errorMessage|escape:'quotes':'UTF-8'}
 
     {$configform} {* no escaping needed, comes from PrestaShop Form Helper!!! *}
 
