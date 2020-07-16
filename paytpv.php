@@ -364,14 +364,16 @@ class Paytpv extends PaymentModule
                         break;
                     case 1337:  // Ruta de notificación no configurada
                         $arrDatos["error_txt"] = $this->l(
-                            'Notification URL is not defined in the product configuration of your account PAYCOMET account.'
+                            'Notification URL is not defined in the product configuration of your account \
+                            PAYCOMET account.'
                         );
                         break;
                     case 28:    // Curl
                     case 1338:  // Ruta de notificación no responde correctamente
                         $ssl = Configuration::get('PS_SSL_ENABLED');
                         $arrDatos["error_txt"] = $this->l(
-                            'The notification URL defined in the product configuration of your PAYCOMET account does not respond correctly. Verify that it has been defined as: '
+                            'The notification URL defined in the product configuration of your PAYCOMET account \
+                            does not respond correctly. Verify that it has been defined as: '
                         ) . Context::getContext()->link->getModuleLink($this->name, 'url', array(), $ssl);
                         break;
                     case 1339:  // Configuración de terminales incorrecta
