@@ -29,7 +29,7 @@
                 {section name=card loop=$saved_card }
                     {if ($saved_card[card].url=="0")}
                         {if ($newpage_payment==2)}
-                            <option value='{$paytpv_iframe}'>{l s='NEW CARD' mod='paytpv'}</option>
+                            <option id="paytpv_url" value='{$paytpv_iframe}'>{l s='NEW CARD' mod='paytpv'}</option>
                         {else}
                             <option value='0'>{l s='NEW CARD' mod='paytpv'}</option>
                         {/if}
@@ -38,6 +38,7 @@
                     {/if}
                 {/section}
             </select>
+            <input type="hidden" name="newpage_payment" id="newpage_payment" value="{$newpage_payment}">
         </div>
     </div>
                 

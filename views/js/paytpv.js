@@ -38,11 +38,15 @@ $(document).ready(function() {
 
     // paycomet_payment
     $("body").on("submit","#paycometPagePaymentForm",function(event) {
-        $(this).attr("action",$("#card").val());
+        $(this).attr("action",$("#card").val());        
+        if ($("#card option:selected").attr('id')=="paytpv_url" && $("#newpage_payment").val()==2) {
+            window.open($("#card").val(),"_self");
+            return false;
+        }
         return true;
     });
 
-    $("body").on("change",".paytpv #payptv_periodicity, .paytpv #paytpv_cycles",function(){
+    $("body").on("change",".paytpv #paytpv_periodicity, .paytpv #paytpv_cycles",function(){
         validateSuscription($(this));
     });
 
@@ -74,10 +78,12 @@ function check_suscription(){
         suscribeJQ();
         $("#saved_cards, #storingStep").hide();
     }else{
+        $("#cards_paytpv").show();
         $("#div_periodicity,.paytpv_iframe").hide();
         addCardJQ();
         checkCard();
     }
+    checkConditions();
 }
 
 function checkConditions(){
@@ -129,19 +135,20 @@ function checkCard(){
 
 }
 
-function validateSuscription(element){ 
+function validateSuscription(element){     
     switch (element.attr("id")){
-        case 'paytpv_periodicity':
-            $("#paytpv_cycles option").each(function() {
+        case 'paytpv_periodicity':            
+            $("#paytpv_cycles option").each(function() {                
                 if ($(this).val()*element.val()>(365*5))
                     $(this).hide();
                 else
                     $(this).show();
             });
         break;
+        
         case 'paytpv_cycles':
             $("#paytpv_cycles option").each(function() {
-                if ($(this).val()*element.val()>(365*5))
+                if ($(this).val() * $("#paytpv_periodicity").val()>(365*5))
                     $(this).hide();
                 else
                     $(this).show();
@@ -159,7 +166,6 @@ function addParam(url,param){
     return hasHash ? href.replace("#", appendix + "#") : url + appendix;
 }
 
-
 function saveOrderInfoJQ(paytpv_suscripcion){
     switch (paytpv_suscripcion){
         case 0: // Normal Payment
@@ -167,13 +173,13 @@ function saveOrderInfoJQ(paytpv_suscripcion){
             paytpv_periodicity = 0;
             paytpv_cycles = 0;
         break;
-        case 1: // Suscription
+        case 1: // Suscription           
             paytpv_agree = 0;
-            paytpv_periodicity = $("#periodicity").val();
-            paytpv_cycles = $("#cycles").val()
-            break;
-    }
-
+            paytpv_periodicity = $("#paytpv_periodicity").val();
+            paytpv_cycles = $("#paytpv_cycles").val()            
+        break;
+    }    
+    
     $.ajax({
         url: addParam($("#paytpv_module").val(),'process=saveOrderInfo'),
         type: "POST",
@@ -221,13 +227,14 @@ function suscribeJQ(){
     $("#paytpv_iframe").attr("src","");
     $(".paytpv_iframe").show();
     $("#ajax_loader").show();
+    
     $.ajax({
         url: addParam($("#paytpv_module").val(),'process=suscribe'),
         type: "POST",
         data: {
             'paytpv_agree': 0,
             'paytpv_suscripcion': 1,
-            'paytpv_periodicity': $("#payptv_periodicity").val(),
+            'paytpv_periodicity': $("#paytpv_periodicity").val(),
             'paytpv_cycles': $("#paytpv_cycles").val(),
             'id_cart' : $("#id_cart").val(),
             'ajax': true

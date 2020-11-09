@@ -23,11 +23,8 @@
     *}
 
     <div id="storingStep" class="alert alert-info {if (sizeof($saved_card))>1}hidden{/if}" style="clear:left;">
-        <strong>{l s='STREAMLINE YOUR FUTURE PURCHASES!' mod='paytpv'}</strong>
-        <div class="checkbox"><input type="checkbox" name="paytpv_savecard" id="paytpv_savecard" onChange="saveOrderInfoJQ(0)" {if (!$remembercardunselected==1)} checked="true"{/if}>
-            <label for="paytpv_savecard" style="display:inline!important"> {l s='Yes, remember my card accepting the ' mod='paytpv'}</label>
-            <span class="js-terms-paytpv">
-                <a id="open_conditions" href="#conditions">{l s='terms and conditions of the service' mod='paytpv'}</a>
-            </span>
-        </div>
+        <label for="paytpv_savecard" class="checkbox">
+            <input type="checkbox" name="paytpv_savecard" id="paytpv_savecard" onChange="saveOrderInfoJQ(0)"> {l s='Save card for future purchases' mod='paytpv'}.
+            <span class="paytpv-pci">{l s='Card data is protected by the Payment Card Industry Data Security Standard (PCI DSS)' mod='paytpv'}.</span>
+        </label>
     </div>

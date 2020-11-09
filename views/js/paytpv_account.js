@@ -86,23 +86,16 @@ function alert(msg) {
     });
 }
 
-function vincularTarjeta(){
-    if ($("#paytpv_savecard").is(':checked')){
-        $('#paytpv_savecard').attr("disabled", true);
-        if ($('#newpage_payment').val()==2)
-            window.location = ($("#paytpv_iframe").attr('src'));
-        else{
-            $('#close_vincular').show();
-            $('#nueva_tarjeta').show();
-        }
-    }else{
-        alert(msg_accept);
+function vincularTarjeta(){    
+    if ($('#newpage_payment').val()==2) {
+        window.location = ($("#add_url").val());
+    } else {
+        $('#close_vincular').show();
+        $('#nueva_tarjeta').show();
     }
-
 }
 
-function close_vincularTarjeta(){
-    $('#paytpv_savecard').attr("disabled", false);
+function close_vincularTarjeta(){    
     $('#nueva_tarjeta').hide();
     $('#close_vincular').hide();
 }

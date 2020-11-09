@@ -47,11 +47,8 @@
                 </li>
                 <small class="help">{l s='The CVV is a numerical code, usually 3 digits behind the card' mod='paytpv'}.</small>
             </ul>
-        </li>
-        <li>
-            <label for="Nombre">{l s='Cardholder name' mod='paytpv'}</label>
-            <input type="text" class="paytpv_cardholdername" data-paycomet="cardHolderName" width="360" maxlength="50" value=""  placeholder="{l s='Cardholder name' mod='paytpv'}" onclick="this.value='';">
-        </li>                                
+        </li>        
+        <input type="hidden" class="paytpv_cardholdername" data-paycomet="cardHolderName" width="360" maxlength="50" value="NONAME"  placeholder="{l s='Cardholder name' mod='paytpv'}" onclick="this.value='';">        
     </ul>
     <div>
         {if (($newpage_payment==1 || $paytpv_integration==0) && $account==0)}

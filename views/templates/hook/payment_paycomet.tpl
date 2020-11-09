@@ -23,8 +23,8 @@
     *}
     
     <form action="{$paytpv_jetid_url}" method="POST" class="paytpv_jet" id="paycometPagePaymentForm" style="clear:left;">  
-    
+        <input type="hidden" name="test" value="aaa">
         <div id="saved_cards" style="display:none">
-            {include file='modules/paytpv/views/templates/hook/inc_payment_cards.tpl'}            
+            {include file='modules/paytpv/views/templates/hook/inc_payment_cards.tpl'}        
         </div>
     </form> 

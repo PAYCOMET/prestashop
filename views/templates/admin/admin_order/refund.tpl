@@ -27,8 +27,8 @@
 	<div class="col-lg-12">
 		<div class="panel">
 
-			<div class="panel-heading"><img src="{$base_url}modules/{$module_name}/logo.gif" alt="" /> {l s='PAYCOMET Refund' mod='paytpv'}</div>
-			<form method="post"  class="form-inline" action="{$smarty.server.REQUEST_URI}">
+			<div class="panel-heading"><img src="{$base_url|escape:'htmlall':'UTF-8':FALSE}modules/{$module_name|escape:'htmlall':'UTF-8':FALSE}/logo.gif" alt="" /> {l s='PAYCOMET Refund' mod='paytpv'}</div>
+			<form method="post"  class="form-inline" action="{$smarty.server.REQUEST_URI|escape:'htmlall':'UTF-8':FALSE}">
 				<input type="hidden" name="id_order" value="{$params.id_order|intval}" />				
 				<p><b>{l s='Information:' mod='paytpv'}</b> {l s='Payment accepted' mod='paytpv'} [{$ref_paycomet|escape:'htmlall':'UTF-8':FALSE}]</p>
 				<ul>
@@ -38,25 +38,25 @@
 					{l s='"Partial refund": does not perform the refund of the amount in the Customer\'s credit card.' mod='paytpv'}
 					</li>
 				</ul>
-				<p><b>{l s='Total amount' mod='paytpv'}:</b> <span class="badge badge-success">{$total_amount} {$sign}</span></p>
-				<p><b>{l s='Amount returned' mod='paytpv'}:</b> <span class="badge badge-important">{$amount_returned} {$sign}</span></p>
+				<p><b>{l s='Total amount' mod='paytpv'}:</b> <span class="badge badge-success">{$total_amount|escape:'htmlall':'UTF-8':FALSE} {$sign|escape:'htmlall':'UTF-8':FALSE}</span></p>
+				<p><b>{l s='Amount returned' mod='paytpv'}:</b> <span class="badge badge-important">{$amount_returned|escape:'htmlall':'UTF-8':FALSE} {$sign|escape:'htmlall':'UTF-8':FALSE}</span></p>
 				<p>
 					<ul>
 					{foreach from=$arrRefunds item=refund}
 
 					    <li>
-					    	{$refund["date"]} - {$refund["amount"]} {$sign}
+					    	{$refund["date"]|date_format:"%d-%m-%Y %H:%M"} - {$refund["amount"]|escape:'htmlall':'UTF-8':FALSE} {$sign|escape:'htmlall':'UTF-8':FALSE}
 					    </li>
 
 					{/foreach}
 					</ul>
 				</p>
-				<p><b>{l s='Outstanding amount' mod='paytpv'}:</b> <span class="badge badge-info">{$amount}</span></p>
+				<p><b>{l s='Outstanding amount' mod='paytpv'}:</b> <span class="badge badge-info">{$amount|escape:'htmlall':'UTF-8':FALSE}</span></p>
 				{if $amount>0}
 				<p class="center">
 					<button type="submit" class="btn btn-default" name="submitPayTpvRefund" onclick="if (!confirm('{l s='Are you sure?' mod='paytpv'}'))return false;">
 						<i class="icon-undo"></i>
-						{l s='Total Refund of the Payment' mod='paytpv'}  [{$amount}]
+						{l s='Total Refund of the Payment' mod='paytpv'}  [{$amount|escape:'htmlall':'UTF-8':FALSE}]
 					</button>
 					{l s='Change order status to Refunded' mod='paytpv'}
 				</p>
@@ -65,12 +65,12 @@
 					<span class="input-group-btn">
 						<button type="submit" class="btn btn-default" name="submitPayTpvPartialRefund" onclick="if (!confirm('{l s='Are you sure?' mod='paytpv'}'))return false;">
 							<i class="icon-undo"></i>
-							{l s='Partial Refund of the Payment' mod='paytpv'} [{l s='Máx' mod='paytpv'}.: {$amount}]
+							{l s='Partial Refund of the Payment' mod='paytpv'} [{l s='Máx' mod='paytpv'}.: {$amount|escape:'htmlall':'UTF-8':FALSE}]
 						</button>
 					</span>
 				</p>
 				<div class="row">
-					<span class="label label-warning">{$error_msg}</span>
+					<span class="label label-warning">{$error_msg|escape:'htmlall':'UTF-8':FALSE}</span>
 				</div>
 				{/if}
 			</form>	
@@ -80,9 +80,9 @@
 {else}
 <br />
 <fieldset {if isset($ps_version) && ($ps_version < '1.5')}style="width: 400px"{/if}>
-	<legend><img src="{$base_url}modules/{$module_name}/logo.gif" alt="" />{l s='PAYCOMET Refund' mod='paytpv'}</legend>
-	<form method="post"  class="form-inline" action="{$smarty.server.REQUEST_URI}">
-	<p><b>{l s='Information:' mod='paytpv'}</b> {l s='Payment accepted' mod='paytpv'} [{$ref_paycomet}]</p>
+	<legend><img src="{$base_url|escape:'htmlall':'UTF-8':FALSE}modules/{$module_name|escape:'htmlall':'UTF-8':FALSE}/logo.gif" alt="" />{l s='PAYCOMET Refund' mod='paytpv'}</legend>
+	<form method="post"  class="form-inline" action="{$smarty.server.REQUEST_URI|escape:'htmlall':'UTF-8':FALSE}">
+	<p><b>{l s='Information:' mod='paytpv'}</b> {l s='Payment accepted' mod='paytpv'}</p>
 	<ul>
 		<li>
 		{l s='"Standard refund" or "Return Products": performs a partial Refund in the Customer\'s credit card unless you select "Create a voucher".' mod='paytpv'}</li>
@@ -90,27 +90,27 @@
 		{l s='"Partial refund": does not perform the refund of the amount in the Customer\'s credit card.' mod='paytpv'}
 		</li>
 	</ul>
-	<p><b>{l s='Total amount' mod='paytpv'}:</b> <span class="badge badge-success">{$total_amount} {$sign}</span></p>
-	<p><b>{l s='Amount returned' mod='paytpv'}:</b> <span class="badge badge-important">{$amount_returned} {$sign}</span></p>
+	<p><b>{l s='Total amount' mod='paytpv'}:</b> <span class="badge badge-success">{$total_amount|escape:'htmlall':'UTF-8':FALSE} {$sign|escape:'htmlall':'UTF-8':FALSE}</span></p>
+	<p><b>{l s='Amount returned' mod='paytpv'}:</b> <span class="badge badge-important">{$amount_returned|escape:'htmlall':'UTF-8':FALSE} {$sign|escape:'htmlall':'UTF-8':FALSE}</span></p>
 	<p>
 		<ul>
 		{foreach from=$arrRefunds item=refund}
 
 		    <li>
-		    	{$refund["date"]} - {$refund["amount"]} {$sign}
+		    	{$refund["date"]|date_format:"%d-%m-%Y %H:%M"|escape:'htmlall':'UTF-8':FALSE} - {$refund["amount"]|escape:'htmlall':'UTF-8':FALSE} {$sign|escape:'htmlall':'UTF-8':FALSE}
 		    </li>
 
 		{/foreach}
 		</ul>
 	</p>
-	<p><b>{l s='Outstanding amount:' mod='paytpv'}</b> {$amount}</p>
+	<p><b>{l s='Outstanding amount:' mod='paytpv'}</b> {$amount|escape:'htmlall':'UTF-8':FALSE}</p>
 	
 
 	{if $amount>0}
 	<p>
 		<button type="submit" class="btn btn-default" name="submitPayTpvRefund" onclick="if (!confirm('{l s='Are you sure?' mod='paytpv'}'))return false;">
 			<i class="icon-undo"></i>
-			{l s='Total Refund of the Payment' mod='paytpv'}  [{$amount}]
+			{l s='Total Refund of the Payment' mod='paytpv'}  [{$amount|escape:'htmlall':'UTF-8':FALSE}]
 		</button>
 		{l s='Change order status to Refunded' mod='paytpv'}
 	</p>
@@ -119,12 +119,12 @@
 		<span class="input-group-btn">
 			<button type="submit" class="btn btn-default" name="submitPayTpvPartialRefund" onclick="if (!confirm('{l s='Are you sure?' mod='paytpv'}'))return false;">
 				<i class="icon-undo"></i>
-				{l s='Partial Refund of the Payment' mod='paytpv'} [{l s='Máx' mod='paytpv'}.: {$amount}]
+				{l s='Partial Refund of the Payment' mod='paytpv'} [{l s='Máx' mod='paytpv'}.: {$amount|escape:'htmlall':'UTF-8':FALSE}]
 			</button>
 		</span>
 	</p>
 	<div class="row">
-		<span class="label label-warning">{$error_msg}</span>
+		<span class="label label-warning">{$error_msg|escape:'htmlall':'UTF-8':FALSE}</span>
 	</div>
 	{/if}
 	</form>

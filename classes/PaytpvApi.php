@@ -18,8 +18,8 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author     Jose Ramon Garcia <jrgarcia@paytpv.com>
-*  @copyright  2015 PAYTPV ON LINE S.L.
+*  @author     PAYCOMET <info@paycomet.com>
+*  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 */
 
@@ -30,7 +30,7 @@ class PaytpvApi
     }
 
 
-    // main script, uses two other functions, getOSData() and getItemVersion() as needed
+    // main script, uses two other functions, getOsData() and getItemVersion() as needed
     // Optional $test_excludes is either null or one of the above values
 
     public function browserDetection($which_test, $test_excludes = '', $external_ua_string = '')
@@ -267,34 +267,10 @@ class PaytpvApi
             rv comes last in case it is plain old mozilla. firefox/netscape/seamonkey need to be later
             Thanks to: http://www.zytrax.com/tech/web/firefox-history.html
             **/
-            $a_gecko_types = array(
-                'bonecho',
-                'camino',
-                'conkeror',
-                'epiphany',
-                'fennec',
-                'firebird',
-                'flock',
-                'galeon',
-                'iceape',
-                'icecat',
-                'k-meleon',
-                'minimo',
-                'multizilla',
-                'phoenix',
-                'skyfire',
-                'songbird',
-                'swiftfox',
-                'seamonkey',
-                'shadowfox',
-                'shiretoko',
-                'iceweasel',
-                'firefox',
-                'minefield',
-                'netscape6',
-                'netscape',
-                'rv'
-            );
+            $a_gecko_types = array('bonecho', 'camino', 'conkeror', 'epiphany', 'fennec', 'firebird', 'flock',
+            'galeon', 'iceape', 'icecat', 'k-meleon', 'minimo', 'multizilla', 'phoenix', 'skyfire', 'songbird',
+            'swiftfox', 'seamonkey', 'shadowfox', 'shiretoko', 'iceweasel', 'firefox', 'minefield', 'netscape6',
+            'netscape', 'rv' );
             
             $a_khtml_types = array( 'konqueror', 'khtml' );
             
@@ -309,46 +285,14 @@ class PaytpvApi
             change. Defaults to applewebkit, and will all show the webkit number.
             uc browsers are webkit need to be before safari; puffin before chrome
             IMPORTANT: microsoft edge is webkit ua:
-            Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135
-            Safari/537.36 Edge/12.<OS build number>
+            Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
+            Chrome/42.0.2311.135 Safari/537.36 Edge/12.<OS build number>
             edge must come before chrome
             **/
-            $a_webkit_types = array(
-                'arora',
-                'bolt',
-                'beamrise',
-                'chromium',
-                'puffin',
-                'chrome',
-                'crios',
-                'dooble',
-                'epiphany',
-                'gtklauncher',
-                'icab',
-                'konqueror',
-                'maxthon',
-                'midori',
-                'omniweb',
-                'opera',
-                'qupzilla',
-                'rekonq',
-                'rocketmelt',
-                'samsungbrowser',
-                'silk',
-                'uzbl',
-                'ucbrowser',
-                'ucweb',
-                'shiira',
-                'sputnik',
-                'steel',
-                'teashark',
-                'safari',
-                'applewebkit',
-                'webos',
-                'xxxterm',
-                'vivaldi',
-                'webkit'
-            );
+            $a_webkit_types = array( 'arora', 'bolt', 'beamrise', 'chromium', 'puffin', 'chrome', 'crios', 'dooble',
+            'epiphany', 'gtklauncher', 'icab', 'konqueror', 'maxthon',  'midori', 'omniweb', 'opera', 'qupzilla',
+            'rekonq', 'rocketmelt', 'samsungbrowser', 'silk', 'uzbl', 'ucbrowser', 'ucweb', 'shiira', 'sputnik',
+            'steel', 'teashark', 'safari',  'applewebkit', 'webos', 'xxxterm','vivaldi', 'webkit' );
             /**
             run through the browser_types array, break if you hit a match, if no match, assume old browser
             or non dom browser, assigns false value to $b_success.
@@ -702,7 +646,7 @@ class PaytpvApi
             }
             // get os data, mac os x test requires browser/version information, this is a change from older scripts
             if ($b_os_test) {
-                $a_os_data = $this->getOSData($browser_user_agent, $browser_working, $browser_number);
+                $a_os_data = $this->getOsData($browser_user_agent, $browser_working, $browser_number);
                 $os_type = $a_os_data[0];// os name, abbreviated
                 $os_number = $a_os_data[1];// os number or version if available
             }
@@ -724,7 +668,7 @@ class PaytpvApi
                 }
             }
         }
-        //$browser_number = $_SERVER["REMOTE_ADDR"];
+        //$browser_number = Tools::getRemoteAddr();
         /**
         This is where you return values based on what parameter you used to call the function
         $which_test is the passed parameter in the initial browserDetection('os') for example returns
@@ -873,7 +817,7 @@ class PaytpvApi
     }
 
     // gets which os from the browser string
-    public function getOSData($pv_browser_string, $pv_browser_name, $pv_version_number)
+    public function getOsData($pv_browser_string, $pv_browser_name, $pv_version_number)
     {
         // initialize variables
         $os_working_type = '';
@@ -884,89 +828,19 @@ class PaytpvApi
         **/
         // $a_mac = array( 'intel mac', 'OS X', 'ppc mac', 'mac68k' );// this is not used currently
         // same logic, check in order to catch the os's in order, last is always default item
-        $a_unix_types = array(
-            'dragonfly',
-            'freebsd',
-            'openbsd',
-            'netbsd',
-            'bsd',
-            'unixware',
-            'solaris',
-            'sunos',
-            'sun4',
-            'sun5',
-            'suni86',
-            'sun',
-            'irix5',
-            'irix6',
-            'irix',
-            'hpux9',
-            'hpux10',
-            'hpux11',
-            'hpux',
-            'hp-ux',
-            'aix1',
-            'aix2',
-            'aix3',
-            'aix4',
-            'aix5',
-            'aix',
-            'sco',
-            'unixware',
-            'mpras',
-            'reliant',
-            'dec',
-            'sinix',
-            'unix'
-        );
+        $a_unix_types = array( 'dragonfly', 'freebsd', 'openbsd', 'netbsd', 'bsd', 'unixware', 'solaris', 'sunos',
+        'sun4', 'sun5', 'suni86', 'sun', 'irix5', 'irix6', 'irix', 'hpux9', 'hpux10', 'hpux11', 'hpux', 'hp-ux',
+        'aix1', 'aix2', 'aix3', 'aix4', 'aix5', 'aix', 'sco', 'unixware', 'mpras', 'reliant', 'dec', 'sinix',
+        'unix' );
         // only sometimes will you get a linux distro to id itself...
-        $a_linux_distros = array(
-            'cros',
-            'ubuntu',
-            'kubuntu',
-            'xubuntu',
-            'mepis',
-            'xandros',
-            'linspire',
-            'winspire',
-            'jolicloud',
-            'sidux',
-            'kanotix',
-            'debian',
-            'opensuse',
-            'suse',
-            'fedora',
-            'redhat',
-            'slackware',
-            'slax',
-            'mandrake',
-            'mandriva',
-            'gentoo',
-            'sabayon',
-            'linux'
-        );
-        // $a_linux_process = array( 'i386', 'i586', 'i686', 'x86_64' );// not use currently
+        $a_linux_distros = array( ' cros ', 'ubuntu', 'kubuntu', 'xubuntu', 'mepis', 'xandros', 'linspire', 'winspire',
+        'jolicloud', 'sidux', 'kanotix', 'debian', 'opensuse', 'suse', 'fedora', 'redhat', 'slackware', 'slax',
+        'mandrake', 'mandriva', 'gentoo', 'sabayon', 'linux' );
+        // $a_linux_process = array ( 'i386', 'i586', 'i686', 'x86_64' );// not use currently
         // note, order of os very important in os array, you will get failed ids if changed
         // windows 10 shows android in ua string
-        $a_os_types = array(
-            'blackberry',
-            'iphone',
-            'palmos',
-            'palmsource',
-            'symbian',
-            'beos',
-            'os2',
-            'amiga',
-            'webtv',
-            'macintosh',
-            'mac_',
-            'mac',
-            'nt',
-            'win',
-            'android',
-            $a_unix_types,
-            $a_linux_distros
-        );
+        $a_os_types = array( 'blackberry', 'iphone', 'palmos', 'palmsource', 'symbian', 'beos', 'os2', 'amiga',
+        'webtv', 'macintosh', 'mac_', 'mac ', 'nt', 'win','android',  $a_unix_types, $a_linux_distros );
         
         //os tester
         $i_count = count($a_os_types);
@@ -1036,13 +910,13 @@ class PaytpvApi
                                 $os_working_number = 10;
                             }
                         } elseif ($pv_browser_name == 'saf'
+                        /**
+                        this is a crude test for os x, since safari, camino, ie 5.2, & moz >= rv 1.3
+                        are only made for os x
+                        **/
                                  || $pv_browser_name == 'cam'
                                  || (($pv_browser_name == 'moz') && ($pv_version_number >= 1.3))
                                  || (($pv_browser_name == 'ie') && ($pv_version_number >= 5.2))) {
-                            /**
-                            this is a crude test for os x, since safari, camino, ie 5.2, & moz >= rv 1.3
-                            are only made for os x
-                            **/
                             $os_working_number = 10;
                         }
                         break;
@@ -1197,100 +1071,20 @@ class PaytpvApi
         armv may be a laptop like cros so don't use 'armv' or 'linux armv'
         **/
         // os
-            'android',
-            'blackberry',
-            'epoc',
-            'palmos',
-            'palmsource',
-            'windows ce',
-            'windows phone os',
-            'windows phone',
-            'symbianos',
-            'symbian os',
-            'symbian',
-            'webos',
+        'android', 'blackberry', 'epoc', 'palmos', 'palmsource', 'windows ce', 'windows phone os', 'windows phone',
+        'symbianos', 'symbian os', 'symbian', 'webos',
         // devices - ipod before iphone or fails
-            'benq',
-            'blackberry',
-            'danger hiptop',
-            'ddipocket',
-            'droid',
-            'ipad',
-            'ipod',
-            'iphone',
-            'kindle',
-            'kobo',
-            'lge-cx',
-            'lge-lx',
-            'lge-mx',
-            'lge vx',
-            'lge ',
-            'lge-',
-            'lg;lx',
-            'nexus',
-            'nintendo wii',
-            'nokia',
-            'nook',
-            'palm',
-            'pdxgw',
-            'playstation',
-            'rim',
-            'sagem',
-            'samsung',
-            'sec-sgh',
-            'sharp',
-            'sonyericsson',
-            'sprint',
-            'zune',
-            'j-phone',
-            'n410',
-            'mot 24',
-            'mot-',
-            'htc-',
-            'htc_',
-            'htc',
-            'playbook',
-            'sec-',
-            'sie-m',
-            'sie-s',
-            'spv',
-            'touchpad',
-            'vodaphone',
-            'smartphone',
-            'midp',
-            'mobilephone',
+        'benq', 'blackberry', 'danger hiptop', 'ddipocket', ' droid', 'ipad', 'ipod', 'iphone', 'kindle', 'kobo',
+        'lge-cx', 'lge-lx', 'lge-mx', 'lge vx', 'lge ', 'lge-', 'lg;lx', 'nexus', 'nintendo wii', 'nokia', 'nook',
+        'palm', 'pdxgw', 'playstation', 'rim', 'sagem', 'samsung', 'sec-sgh', 'sharp', 'sonyericsson', 'sprint',
+        'zune', 'j-phone', 'n410', 'mot 24', 'mot-', 'htc-', 'htc_', 'htc ', 'playbook', 'sec-', 'sie-m', 'sie-s',
+        'spv ', 'touchpad', 'vodaphone', 'smartphone', 'midp', 'mobilephone',
         // browsers
-            'avantgo',
-            'blazer',
-            'elaine',
-            'eudoraweb',
-            'fennec',
-            'iemobile',
-            'minimo',
-            'mobile safari',
-            'mobileexplorer',
-            'opera mobi',
-            'opera mini',
-            'netfront',
-            'opwv',
-            'polaris',
-            'puffin',
-            'samsungbrowser',
-            'semc-browser',
-            'skyfire',
-            'up.browser',
-            'ucweb',
-            'ucbrowser',
-            'webpro/',
-            'wms pie',
-            'xiino',
+        'avantgo', 'blazer', 'elaine', 'eudoraweb', 'fennec', 'iemobile',  'minimo', 'mobile safari', 'mobileexplorer',
+        'opera mobi', 'opera mini', 'netfront', 'opwv', 'polaris', 'puffin', 'samsungbrowser', 'semc-browser',
+        'skyfire', 'up.browser', 'ucweb', 'ucbrowser', 'webpro/', 'wms pie', 'xiino',
         // services - astel out of business
-            'astel',
-            'docomo',
-            'novarra-vision',
-            'portalmmm',
-            'reqwirelessweb',
-            'vodafone'
+        'astel', 'docomo', 'novarra-vision', 'portalmmm', 'reqwirelessweb', 'vodafone'
         );
         
         // then do basic mobile type search, this uses data from: getMobileData()
@@ -1328,102 +1122,23 @@ class PaytpvApi
         // note: crios is actuall chrome on ios, uc need to be before safari
         // Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; DEVICE INFO) AppleWebKit/537.36 (KHTML, like Gecko)
         // Chrome/42.0.2311.135 Mobile Safari/537.36 Edge/12.<OS build number>
-        $a_mobile_browser = array(
-            'avantgo',
-            'blazer',
-            'crios',
-            'elaine',
-            'eudoraweb',
-            'fennec',
-            'iemobile',
-            'minimo',
-            'ucweb',
-            'ucbrowser',
-            'mobile safari',
-            'mobileexplorer',
-            'opera mobi',
-            'opera mini',
-            'netfront',
-            'opwv',
-            'polaris',
-            'puffin',
-            'samsungbrowser',
-            'semc-browser',
-            'silk',
-            'steel',
-            'ultralight',
-            'up.browser',
-            'webos',
-            'webpro/',
-            'wms pie',
-            'xiino'
-        );
+        $a_mobile_browser = array( 'avantgo', 'blazer', 'crios', 'elaine', 'eudoraweb', 'fennec', 'iemobile',
+        'minimo', 'ucweb', 'ucbrowser', 'mobile safari', 'mobileexplorer', 'opera mobi', 'opera mini', 'netfront',
+        'opwv', 'polaris', 'puffin', 'samsungbrowser', 'semc-browser', 'silk', 'steel', 'ultralight', 'up.browser',
+        'webos', 'webpro/', 'wms pie', 'xiino' );
         /**
         This goes from easiest to detect to hardest, so don't use this for output unless you
         clean it up more is my advice.
         Special Notes: do not include milestone in general mobile type test above, it's too generic
         Note: we can safely now test for zune because the initial test shows zune with iemobile in ua
         **/
-        $a_mobile_device = array(
-            'benq',
-            'blackberry',
-            'danger hiptop',
-            'ddipocket',
-            'droid',
-            'htc_dream',
-            'htc espresso',
-            'htc hero',
-            'htc halo',
-            'htc huangshan',
-            'htc legend',
-            'htc liberty',
-            'htc paradise',
-            'htc supersonic',
-            'htc tattoo',
-            'ipad',
-            'ipod',
-            'iphone',
-            'kindle',
-            'kobo',
-            'lge-cx',
-            'lge-lx',
-            'lge-mx',
-            'lge vx',
-            'lg;lx',
-            'nexus',
-            'nintendo wii',
-            'nokia',
-            'nook',
-            'palm',
-            'pdxgw',
-            'playstation',
-            'sagem',
-            'samsung',
-            'sec-sgh',
-            'sharp',
-            'sonyericsson',
-            'sprint',
-            'j-phone',
-            'milestone',
-            'n410',
-            'mot 24',
-            'mot-',
-            'htc-',
-            'htc_',
-            'htc',
-            'lge',
-            'lge-',
-            'sec-',
-            'sie-m',
-            'sie-s',
-            'spv ',
-            'smartphone',
-            'midp',
-            'mobilephone',
-            'wp',
-            'zunehd',
-            'zune'
-        );
+        $a_mobile_device = array( 'benq', 'blackberry', 'danger hiptop', 'ddipocket', ' droid', 'htc_dream',
+        'htc espresso', 'htc hero', 'htc halo', 'htc huangshan', 'htc legend', 'htc liberty', 'htc paradise',
+        'htc supersonic', 'htc tattoo', 'ipad', 'ipod', 'iphone', 'kindle', 'kobo', 'lge-cx', 'lge-lx', 'lge-mx',
+        'lge vx', 'lg;lx', 'nexus', 'nintendo wii', 'nokia', 'nook', 'palm', 'pdxgw', 'playstation', 'sagem',
+        'samsung', 'sec-sgh', 'sharp', 'sonyericsson', 'sprint', 'j-phone', 'milestone', 'n410', 'mot 24', 'mot-',
+        'htc-', 'htc_',  'htc ', 'lge ', 'lge-', 'sec-', 'sie-m', 'sie-s', 'spv ', 'smartphone', 'midp', 'mobilephone',
+        'wp', 'zunehd', 'zune'  );
         /**
         note: linux alone can't be searched for, and almost all linux devices are armv types
         ipad 'cpu os' is how the real os number is handled : could be an arm laptop, don't use 'linux armv'
@@ -1431,22 +1146,8 @@ class PaytpvApi
         Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; DEVICE INFO) AppleWebKit/537.36 (KHTML, like Gecko)
         Chrome/42.0.2311.135 Mobile Safari/537.36 Edge/12.0
         **/
-        $a_mobile_os = array(
-            'windows phone os',
-            'windows phone',
-            'android',
-            'blackberry',
-            'epoc',
-            'cpu os',
-            'iphone os',
-            'palmos',
-            'palmsource',
-            'windows ce',
-            'symbianos',
-            'symbian os',
-            'symbian',
-            'webos'
-        );
+        $a_mobile_os = array( 'windows phone os', 'windows phone', 'android', 'blackberry', 'epoc', 'cpu os',
+        'iphone os', 'palmos', 'palmsource', 'windows ce', 'symbianos', 'symbian os', 'symbian', 'webos');
         
         // sometimes there is just no other id for the unit that the CTS type service/server
         $a_mobile_server = array( 'astel', 'docomo', 'novarra-vision', 'portalmmm', 'reqwirelessweb', 'vodafone' );
@@ -1462,21 +1163,8 @@ class PaytpvApi
         cros: X11; CrOS armv7l 6680.81.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36
         ' sch-i' is not accurate for tablets
         **/
-        $a_mobile_tablet = array(
-            'ipad',
-            'android 3',
-            'cros',
-            ' gt-p',
-            'sm-t',
-            'kindle',
-            'kobo',
-            'nook',
-            'playbook',
-            'silk',
-            'touchpad',
-            'tablet',
-            'xoom'
-        );
+        $a_mobile_tablet = array( 'ipad', 'android 3', 'cros', ' gt-p', 'sm-t', 'kindle', 'kobo', 'nook', 'playbook',
+        'silk', 'touchpad', 'tablet', 'xoom' );
         
         $k_count = count($a_mobile_browser);
         for ($k = 0; $k < $k_count; $k++) {
@@ -1557,17 +1245,8 @@ class PaytpvApi
             $mobile_os_number = $this->getItemVersion($pv_browser_user_agent, 'linux');
         }
         
-        $a_mobile_data = array(
-            $mobile_device,
-            $mobile_browser,
-            $mobile_browser_number,
-            $mobile_os,
-            $mobile_os_number,
-            $mobile_server,
-            $mobile_server_number,
-            $mobile_device_number,
-            $mobile_tablet
-        );
+        $a_mobile_data = array( $mobile_device, $mobile_browser, $mobile_browser_number, $mobile_os, $mobile_os_number,
+        $mobile_server, $mobile_server_number, $mobile_device_number, $mobile_tablet );
         return $a_mobile_data;
     }
 

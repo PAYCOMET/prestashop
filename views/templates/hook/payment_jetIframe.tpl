@@ -57,7 +57,8 @@
     </div>
             
     <input type="hidden" name="paytpv_module" id="paytpv_module" value="{$link->getModuleLink('paytpv', 'actions',[], true)|escape:'htmlall':'UTF-8'}">
-    <input type="hidden" name="paytpv_integration" id="paytpv_integration" value="{$paytpv_integration}">    
+    <input type="hidden" name="paytpv_integration" id="paytpv_integration" value="{$paytpv_integration}"> 
+    <input type="hidden" name="id_cart" id="id_cart"  value="{$id_cart}">
     
 
     <div style="display: none;">

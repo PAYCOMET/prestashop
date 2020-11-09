@@ -40,6 +40,7 @@ class PaycometApiRest
         $payment = [],
         $subscription = []
     ) {
+        
         $params = [
             "operationType" => (int) $operationType,
             "language" => (string) $language,
@@ -51,11 +52,12 @@ class PaycometApiRest
 
         return $this->executeRequest('https://rest.paycomet.com/v1/form', $params);
     }
-
+    
     public function addUser(
         $terminal,
         $jetToken,
         $order,
+        $notify = '1',
         $productDescription = '',
         $language = 'ES'
     ) {
@@ -63,6 +65,7 @@ class PaycometApiRest
             "terminal" => (int) $terminal,
             "jetToken" => (string) $jetToken,
             "order" => (string) $order,
+            "notify" => (string) $notify,
             "productDescription" => (string) $productDescription,
             "language" => (string) $language
         ];
@@ -132,7 +135,7 @@ class PaycometApiRest
                 'scoring' => (string) $scoring,
                 'productDescription' => (string) $productDescription,
                 'merchantDescription' => (string) $merchantDescription,
-                'userInteraction' => (int) $userInteraction,
+                'userInteraction' => (string) $userInteraction,
                 'escrowTargets' => $escrowTargets,
                 'trxType' => (string) $trxType,
                 'SCAException' => (string) $SCAException,
@@ -169,64 +172,61 @@ class PaycometApiRest
         $SCAException = '',
         $merchantData = []
     ) {
-        $params = ["subscription" => [
-                    "startDate" => (string) $startDate,
-                    "endDate" => (string) $endDate,
-                    "periodicity" => (string) $periodicity,
-                ],
-                ["payment" => [
-                    "terminal" => (int) $terminal,
-                    "methodId" => (string) $methodId,
-                    "order" => (string) $order,
-                    "amount" => (string) $amount,
-                    "currency" => (string) $currency,
-                    "originalIp" => (string) $originalIp,
-                    "idUser" => (int) $idUser,
-                    "tokenUser" => (string) $tokenUser,
-                    "secure" => (string) $secure,
-                    "scoring" => (string) $scoring,
-                    "productDescription" => (string) $productDescription,
-                    "merchantDescriptor" => (string) $merchantDescriptor,
-                    "userInteraction" => (string) $userInteraction,
-                    "escrowTargets" => $escrowTargets,
-                    "trxType" => (string) $trxType,
-                    "SCAException" => (string) $SCAException,
-                    "urlOk" => (string) $urlOk,
-                    "urlKo" => (string) $urlKo,
-                    "merchantData" => $merchantData,
-                ]
+        $params = [
+            "subscription" => [
+                "startDate" => (string) $startDate,
+                "endDate" => (string) $endDate,
+                "periodicity" => (string) $periodicity,
+            ],
+            "payment" => [
+                "terminal" => (int) $terminal,
+                "methodId" => (string) $methodId,
+                "order" => (string) $order,
+                "amount" => (string) $amount,
+                "currency" => (string) $currency,
+                "originalIp" => (string) $originalIp,
+                "idUser" => (int) $idUser,
+                "tokenUser" => (string) $tokenUser,
+                "secure" => (string) $secure,
+                "scoring" => (string) $scoring,
+                "productDescription" => (string) $productDescription,
+                "merchantDescriptor" => (string) $merchantDescriptor,
+                "userInteraction" => (string) $userInteraction,
+                "escrowTargets" => $escrowTargets,
+                "trxType" => (string) $trxType,
+                "SCAException" => (string) $SCAException,
+                "urlOk" => (string) $urlOk,
+                "urlKo" => (string) $urlKo,
+                "merchantData" => $merchantData,
             ]
         ];
-
+        
         return $this->executeRequest('https://rest.paycomet.com/v1/subscription', $params);
     }
 
     public function removeSubscription(
-        $terminal,
-        $order,
+        $terminal,        
         $idUser,
         $tokenUser
     ) {
         $params = ["payment" => [
-                'terminal' => (int) $terminal,
-                'order' => (string) $order,
+                'terminal' => (int) $terminal,                
                 'idUser' => (int) $idUser,
                 'tokenUser' => (string) $tokenUser
             ]
         ];
 
-        return $this->executeRequest('https://rest.paycomet.com/v1/subscription/' . $order . '/remove', $params);
+        return $this->executeRequest('https://rest.paycomet.com/v1/subscription/remove', $params);
     }
-
+    
     public function executeRefund(
         $order,
         $terminal,
         $amount,
         $currency,
         $authCode,
-        $originalIp,
-        $tokenUser = '',
-        $idUser = ''
+        $originalIp,        
+        $notifyDirectPayment = 1
     ) {
         $params = [
             "payment" => [
@@ -235,10 +235,9 @@ class PaycometApiRest
                 'currency' => (string) $currency,
                 'authCode' => (string) $authCode,
                 'originalIp' => (string) $originalIp,
-                'tokenUser' => (string) $tokenUser = '',
-                'idUser' => (int) $idUser = ''
+                'notifyDirectPayment' => (int) $notifyDirectPayment
             ]
-        ];
+        ];      
 
         return $this->executeRequest('https://rest.paycomet.com/v1/payments/' . $order . '/refund', $params);
     }
