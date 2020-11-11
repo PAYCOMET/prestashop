@@ -30,8 +30,8 @@
         </div>
 
         <div id="div_periodicity" class="suscription_period" style="display:none">
-            <div class="nota">{l s='The first purchase will be made when placing the order and the following as defined as the frequency of the subscription' mod='paytpv'}.
-                {l s='By subscribing you agree to the ' mod='paytpv'} <a id="open_conditions2" href="#conditions">{l s='terms and conditions of the service' mod='paytpv'}</a>.
+            <div class="nota">
+                {l s='The first purchase will be made when placing the order and the following as defined as the frequency of the subscription' mod='paytpv'}.            
             </div>
 
             <div class="form-inline">

@@ -24,12 +24,7 @@
 
 
 $(document).ready(function() {    
-    paytpv_initialize();
-
-    $("#open_conditions,#open_conditions2").fancybox({
-            autoSize:false,
-            'width':parseInt($(window).width() * 0.7)
-        });
+    paytpv_initialize();    
 
     $("body").on("click",".exec_directpay",function(event) {
         $(this).hide();

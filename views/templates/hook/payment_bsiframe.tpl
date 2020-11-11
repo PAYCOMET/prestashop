@@ -173,10 +173,6 @@
 
         <input type="hidden" name="id_cart" id="id_cart"  value="{$id_cart}">
 
-    </form>
-
-    <div style="display: none;">
-        {include file='modules/paytpv/views/templates/hook/inc_payment_conditions.tpl'}
-    </div>
+    </form>    
    
 </div>

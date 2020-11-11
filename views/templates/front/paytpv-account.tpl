@@ -157,11 +157,7 @@
         <input type="hidden" name="id_suscription" id="id_suscription">
         <input type="hidden" name="newpage_payment" id="newpage_payment" value="{$newpage_payment}">
         <input type="hidden" name="paytpv_integration" id="paytpv_integration" value="{$paytpv_integration}">
-    </div>
-
-    <div style="display: none;">
-        {include file='modules/paytpv/views/templates/hook/inc_payment_conditions.tpl'}
-    </div>
+    </div>    
     
 </div>
 </section>
