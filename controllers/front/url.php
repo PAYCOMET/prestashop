@@ -458,9 +458,9 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                                 'endpoint_paytpv' => $paytpv->endpoint_paytpv,
                                 'clientcode' => $paytpv->clientcode,
                                 'term' => Tools::getValue('TpvID'),
-                                'pass' => $pass,
+                                'pass' => $pass_sel,
                             )
-                        );
+                        );                                           
                         $result = $client->infoUser($paytpv_iduser, $paytpv_tokenuser);
 
                         $result = $paytpv->saveCard(

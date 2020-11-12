@@ -52,7 +52,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.5.10';
+        $this->version = '7.5.11';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
 
@@ -2306,6 +2306,18 @@ class Paytpv extends PaymentModule
     ) {
 
         $arrTerminal = PaytpvTerminal::getTerminalByCurrency($currency_iso_code, $order->id_shop);
+        
+        $idterminal = $arrTerminal["idterminal"];
+        $idterminal_ns = $arrTerminal["idterminal_ns"];
+        $pass = $arrTerminal["password"];
+        $pass_ns = $arrTerminal["password_ns"];
+        if ($idterminal > 0) {
+            $idterminal_sel = $idterminal;
+            $pass_sel = $pass;
+        } else {
+            $idterminal_sel = $idterminal_ns;
+            $pass_sel = $pass_ns;
+        }
 
         // Refund amount
         include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WsClient.php');
@@ -2313,11 +2325,10 @@ class Paytpv extends PaymentModule
             array(
                 'endpoint_paytpv' => $this->endpoint_paytpv,
                 'clientcode' => Configuration::get('PAYTPV_CLIENTCODE', null, null, $order->id_shop),
-                'term' => $arrTerminal["idterminal"],
-                'pass' => $arrTerminal["password"]
+                'term' => $idterminal_sel,
+                'pass' => $pass_sel
             )
         );
-
 
         // Refund amount of transaction
         $result = $client->executeRefund(
