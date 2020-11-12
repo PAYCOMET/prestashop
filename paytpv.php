@@ -2179,15 +2179,7 @@ class Paytpv extends PaymentModule
 
         include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WSClient.php');
         include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php');
-
-        $client = new WSClient(
-            array(
-                'endpoint_paytpv' => $this->endpoint_paytpv,
-                'clientcode' => $this->clientcode,
-                'term' => $idterminal_sel,
-                'pass' => $pass_sel
-            )
-        );
+        
         // Datos usuario
 
         $result = PaytpvSuscription::getSuscriptionId((int) $this->context->customer->id, $id_suscription);
@@ -2216,21 +2208,22 @@ class Paytpv extends PaymentModule
                 if($this->apikey != '') {
                     $apiRest = new PaycometApiRest($this->apikey);
                     $removeSubscriptionResponse = $apiRest->removeSubscription(
-                        $arrTerminal["idterminal_ns"],
+                        $idterminal_sel,
                         $paytpv_iduser,
                         $paytpv_tokenuser
                     );
 
                     $result["DS_RESPONSE"] = ($removeSubscriptionResponse->errorCode > 0)? 0 : 1;
                 } else {
+
                     $client = new WSClient(
                         array(
                             'endpoint_paytpv' => $this->endpoint_paytpv,
                             'clientcode' => $this->clientcode,
-                            'term' => $arrTerminal["idterminal_ns"],
-                            'pass' => $arrTerminal["password_ns"]
+                            'term' => $idterminal_sel,
+                            'pass' => $pass_sel
                         )
-                    );
+                    );                   
 
                     $result = $client->removeSubscription($paytpv_iduser, $paytpv_tokenuser);
                 }
@@ -2265,16 +2258,7 @@ class Paytpv extends PaymentModule
 
         include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WSClient.php');
         include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php');
-
-        $client = new WSClient(
-            array(
-                'endpoint_paytpv' => $this->endpoint_paytpv,
-                'clientcode' => $this->clientcode,
-                'term' => $idterminal_sel,
-                'pass' => $pass_sel
-            )
-        );
-
+        
         // Datos usuario
         $result = PaytpvSuscription::getSuscriptionId((int) $this->context->customer->id, $id_suscription);
         if (empty($result) === true) {
@@ -2287,7 +2271,7 @@ class Paytpv extends PaymentModule
                 $apiRest = new PaycometApiRest($this->apikey);
                 try {
                     $removeSubscriptionResponse = $apiRest->removeSubscription(
-                        $arrTerminal["idterminal_ns"],
+                        $idterminal_sel,
                         $paytpv_iduser,
                         $paytpv_tokenuser
                     );
@@ -2296,12 +2280,13 @@ class Paytpv extends PaymentModule
                     $result["DS_RESPONSE"] = 0;
                 }
             } else {
+                
                 $client = new WSClient(
                     array(
                         'endpoint_paytpv' => $this->endpoint_paytpv,
                         'clientcode' => $this->clientcode,
-                        'term' => $arrTerminal["idterminal_ns"],
-                        'pass' => $arrTerminal["password_ns"]
+                        'term' => $idterminal_sel,
+                        'pass' => $pass_sel
                     )
                 );
                 $result = $client->removeSubscription($paytpv_iduser, $paytpv_tokenuser);
