@@ -2405,6 +2405,19 @@ class Paytpv extends PaymentModule
 
         $arrTerminal = PaytpvTerminal::getTerminalByCurrency($currency_iso_code, $order->id_shop);
 
+        $idterminal = $arrTerminal["idterminal"];
+        $idterminal_ns = $arrTerminal["idterminal_ns"];
+        $pass = $arrTerminal["password"];
+        $pass_ns = $arrTerminal["password_ns"];
+        if ($idterminal > 0) {
+            $idterminal_sel = $idterminal;
+            $pass_sel = $pass;
+        } else {
+            $idterminal_sel = $idterminal_ns;
+            $pass_sel = $pass_ns;
+        }
+
+
         // Refund amount
         include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WSClient.php');
         include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php');                   
@@ -2418,7 +2431,7 @@ class Paytpv extends PaymentModule
             $apiRest = new PaycometApiRest($this->apikey);
             $executeRefundReponse = $apiRest->executeRefund(
                 $paytpv_order_ref,
-                $arrTerminal["idterminal"],
+                $idterminal_sel,
                 $amount,
                 $currency_iso_code,
                 $authcode,
@@ -2436,8 +2449,8 @@ class Paytpv extends PaymentModule
                 array(
                     'endpoint_paytpv' => $this->endpoint_paytpv,
                     'clientcode' => Configuration::get('PAYTPV_CLIENTCODE', null, null, $order->id_shop),
-                    'term' => $arrTerminal["idterminal"],
-                    'pass' => $arrTerminal["password"]
+                    'term' => $idterminal_sel,
+                    'pass' => $pass_sel
                 )
             );
 
@@ -2466,7 +2479,7 @@ class Paytpv extends PaymentModule
                 $apiRest = new PaycometApiRest($this->apikey);
                 $executeRefundReponse = $apiRest->executeRefund(
                     $paytpv_order_ref,
-                    $arrTerminal["idterminal_ns"],
+                    $idterminal_ns,
                     $amount,
                     $currency_iso_code,
                     $authcode,
@@ -2482,8 +2495,8 @@ class Paytpv extends PaymentModule
                     array(
                         'endpoint_paytpv' => $this->endpoint_paytpv,
                         'clientcode' => $this->clientcode,
-                        'term' => $arrTerminal["idterminal_ns"],
-                        'pass' => $arrTerminal["password_ns"]
+                        'term' => $idterminal_ns,
+                        'pass' => $pass_ns
                     )
                 );
 
@@ -2513,7 +2526,7 @@ class Paytpv extends PaymentModule
                 $apiRest = new PaycometApiRest($this->apikey);
                 $executeRefundReponse = $apiRest->executeRefund(
                     $paytpv_order_ref,
-                    $arrTerminal["idterminal"],
+                    $idterminal_sel,
                     $amount,
                     $currency_iso_code,
                     $authcode,
@@ -2530,8 +2543,8 @@ class Paytpv extends PaymentModule
                     array(
                         'endpoint_paytpv' => $this->endpoint_paytpv,
                         'clientcode' => Configuration::get('PAYTPV_CLIENTCODE', null, null, $order->id_shop),
-                        'term' => $arrTerminal["idterminal"],
-                        'pass' => $arrTerminal["password"]
+                        'term' => $idterminal_sel,
+                        'pass' => $pass_sel
                     )
                 );
                 
