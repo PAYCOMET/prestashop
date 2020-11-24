@@ -543,7 +543,7 @@ class Paytpv extends PaymentModule
         }
 
         // CALC ORDER SCORE
-        if (sizeof($arrScore["scoreCalc"]) > 0) {
+        if (isset($arrScore["scoreCalc"]) && sizeof($arrScore["scoreCalc"]) > 0) {
             //$score = floor(array_sum($arrScore["scoreCalc"]) / sizeof($arrScore["scoreCalc"]));   // Media
             $score = floor(array_sum($arrScore["scoreCalc"])); // Suma de valores. Si es superior a 100 asignamos 100
             if ($score > 100) {
