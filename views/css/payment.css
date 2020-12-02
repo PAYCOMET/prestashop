@@ -91,7 +91,7 @@
     font-size: 90%;
     background-color: #d9edf7;
     border-color: #bce8f1;
-    margin: 5px 0px;
+    margin: 5px 10px 5px 0
 }
 
 .suscripcion{
@@ -116,4 +116,12 @@
 .paytpv-pci{
     font-size: 0.8em;
     display: block;
+}
+
+.checkbox #savecard {   
+    appearance: auto!important;
+}
+
+#storingStep .checkbox {
+    display: block!important;
 }

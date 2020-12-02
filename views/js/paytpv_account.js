@@ -23,11 +23,9 @@
 */
 
 
-$(document).ready(function() {
-    $("#open_conditions").fancybox({
-            autoSize:false,
-            'width':parseInt($(window).width() * 0.7)
-        });
+$(document).ready(function() {   
+
+    
     
     $(".remove_card").on("click", function(e){   
         e.preventDefault();
@@ -88,23 +86,16 @@ function alert(msg) {
     });
 }
 
-function vincularTarjeta(){
-    if ($("#savecard").is(':checked')){
-        $('#savecard').attr("disabled", true);
-        if ($('#newpage_payment').val()==2)
-            window.location = ($("#paytpv_iframe").attr('src'));
-        else{
-            $('#close_vincular').show();
-            $('#nueva_tarjeta').show();
-        }
-    }else{
-        alert(msg_accept);
+function vincularTarjeta(){    
+    if ($('#newpage_payment').val()==2) {
+        window.location = ($("#add_url").val());
+    } else {
+        $('#close_vincular').show();
+        $('#nueva_tarjeta').show();
     }
-
 }
 
-function close_vincularTarjeta(){
-    $('#savecard').attr("disabled", false);
+function close_vincularTarjeta(){    
     $('#nueva_tarjeta').hide();
     $('#close_vincular').hide();
 }
@@ -186,41 +177,3 @@ function cancelSuscription()
     
 };
 
-
-function takingOff() {
-    ShowHidePaymentButton(false);
-    var x = new PAYTPV.Tokenizator();
-    x.getToken(document.forms["paytpvPaymentForm"], boarding);
-    return false;
-};
-
-function boarding(passenger) {
-    document.getElementById("paymentErrorMsg").innerHTML = "";
-    if (passenger.errorID !== 0 || passenger.paytpvToken === "") {
-        document.getElementById("paymentErrorMsg").innerHTML = passenger.errorText;
-    } else {
-        
-        var newInputField = document.createElement("input");
-
-        newInputField.type = "hidden";
-        newInputField.name = "paytpvToken";
-        newInputField.value = passenger.paytpvToken;
-
-        var paytpvPaymentForm = document.forms["paytpvPaymentForm"];
-        paytpvPaymentForm.appendChild(newInputField);
-
-        paytpvPaymentForm.submit();
-        
-    }
-}
-
-function ShowHidePaymentButton(show){
-  
-  if (show){
-    $("#clockwait_jet").hide('fast');
-    $("#btnforg").show('fast');
-  }else{
-    $("#btnforg").hide('fast');
-    $("#clockwait_jet").show('fast');
-  }
-}

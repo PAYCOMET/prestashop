@@ -144,18 +144,34 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             if ($sign != $local_sign) {
                 die('Error 2');
             }
+            
+            if ($paytpv->apikey != '') {
+                include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaytpvApi.php');
+                $apiRest = new PaycometApiRest($paytpv->apikey);
+                $infoUserResponse = $apiRest->infoUser(
+                    Tools::getValue('IdUser'),
+                    Tools::getValue('TokenUser'),
+                    $idterminal_sel
+                );
 
-            include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WsClient.php');
-            $client = new WsClient(
-                array(
-                    'endpoint_paytpv' => $paytpv->endpoint_paytpv,
-                    'clientcode' => $paytpv->clientcode,
-                    'term' => $idterminal_sel,
-                    'pass' => $pass_sel,
-                )
-            );
+                $result = array();
+                $result['DS_MERCHANT_PAN'] = $infoUserResponse->pan;
+                $result['DS_CARD_BRAND'] = $infoUserResponse->cardBrand;
 
-            $result = $client->infoUser(Tools::getValue('IdUser'), Tools::getValue('TokenUser'));
+            } else {
+                include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WSClient.php');
+                $client = new WSClient(
+                    array(
+                        'endpoint_paytpv' => $paytpv->endpoint_paytpv,
+                        'clientcode' => $paytpv->clientcode,
+                        'term' => $idterminal_sel,
+                        'pass' => $pass_sel,
+                    )
+                );
+
+                $result = $client->infoUser(Tools::getValue('IdUser'), Tools::getValue('TokenUser'));
+            }
+
             $paytpv->saveCard(
                 $id_customer,
                 Tools::getValue('IdUser'),
@@ -272,25 +288,50 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                         exit;
                     } elseif (!$new_cart['success']) {
                         // Refund amount
-                        include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WsClient.php');
-                        $client = new WsClient(
-                            array(
-                                'endpoint_paytpv' => $paytpv->endpoint_paytpv,
-                                'clientcode' => $paytpv->clientcode,
-                                'term' => $idterminal_sel,
-                                'pass' => $pass_sel,
-                            )
-                        );
+                        if($paytpv->apikey != '') {
+                            include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaytpvApi.php');
+                            
+                            $ip = Tools::getRemoteAddr();
+                            if ($ip=="::1" || $ip=="") {
+                                $ip = "127.0.0.1";
+                            }
 
-                        // Refund amount of transaction
-                        $result = $client->executeRefund(
-                            $paytpv_iduser,
-                            $paytpv_tokenuser,
-                            Tools::getValue('Order'),
-                            Tools::getValue('Currency'),
-                            Tools::getValue('AuthCode'),
-                            Tools::getValue('Amount')
-                        );
+                            $notifyDirectPayment = 2;
+                            
+                            $apiRest = new PaycometApiRest($paytpv->apikey);
+                            $executeRefundReponse = $apiRest->executeRefund(
+                                Tools::getValue('Order'),
+                                $idterminal_sel,
+                                Tools::getValue('Amount'),
+                                Tools::getValue('Currency'),
+                                Tools::getValue('AuthCode'),
+                                $ip,
+                                $notifyDirectPayment
+                            );
+                            $result = array();
+                            $result['DS_RESPONSE'] = $executeRefundReponse->errorCode;
+                            $result['DS_MERCHANT_AUTHCODE'] = $executeRefundReponse->authCode;
+                        } else {
+                            include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WSClient.php');
+                            $client = new WSClient(
+                                array(
+                                    'endpoint_paytpv' => $paytpv->endpoint_paytpv,
+                                    'clientcode' => $paytpv->clientcode,
+                                    'term' => $idterminal_sel,
+                                    'pass' => $pass_sel,
+                                )
+                            );
+
+                            $result = $client->executeRefund(
+                                $paytpv_iduser,
+                                $paytpv_tokenuser,
+                                Tools::getValue('Order'),
+                                Tools::getValue('Currency'),
+                                Tools::getValue('AuthCode'),
+                                Tools::getValue('Amount')
+                            );
+                        }
+
                         $refund = 1;
                         if ((int) $result['DS_RESPONSE'] != 1) {
                             $refund = 0;
@@ -410,7 +451,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                     );
                     $id_order = Order::getOrderByCartId((int) $new_cart['cart']->id);
 
-                    Order::save_Order(
+                    PaytpvOrder::addOrder(
                         $paytpv_iduser,
                         $paytpv_tokenuser,
                         $id_suscription,
@@ -452,16 +493,32 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
                     // IF check agreement save token
                     if ($suscripcion == 0 && $datos_order["paytpvagree"]) {
-                        include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WsClient.php');
-                        $client = new WsClient(
-                            array(
-                                'endpoint_paytpv' => $paytpv->endpoint_paytpv,
-                                'clientcode' => $paytpv->clientcode,
-                                'term' => Tools::getValue('TpvID'),
-                                'pass' => $pass_sel,
-                            )
-                        );                                           
-                        $result = $client->infoUser($paytpv_iduser, $paytpv_tokenuser);
+                        if ($paytpv->apikey != '') {
+                            include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaytpvApi.php');
+
+                            $apiRest = new PaycometApiRest($paytpv->apikey);
+                            $infoUserResponse = $apiRest->infoUser(
+                                $paytpv_iduser,
+                                $paytpv_tokenuser,
+                                $idterminal_sel
+                            );
+
+                            $result = array();
+                            $result['DS_MERCHANT_PAN'] = $infoUserResponse->pan;
+                            $result['DS_CARD_BRAND'] = $infoUserResponse->cardBrand;
+                        } else {
+                            include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WSClient.php');
+
+                            $client = new WSClient(
+                                array(
+                                    'endpoint_paytpv' => $paytpv->endpoint_paytpv,
+                                    'clientcode' => $paytpv->clientcode,
+                                    'term' => $idterminal_sel,
+                                    'pass' => $pass_sel,
+                                )
+                            );
+                            $result = $client->infoUser($paytpv_iduser, $paytpv_tokenuser);
+                        }
 
                         $result = $paytpv->saveCard(
                             $cart->id_customer,

@@ -28,11 +28,7 @@
 {block name='page_content'}
 <h2>{l s='Payment not completed' mod='paytpv'}</h2>
 
-
-	{if ($password_fail)}
-	<img src="{$this_path}views/img/icon-cancel.png"/> &nbsp;&nbsp; {l s='Incorrect Password'  mod='paytpv'}  
-	
-	{elseif ($error_msg)}
+	{if ($error_msg)}
 	<img src="{$this_path}views/img/icon-cancel.png"/> &nbsp;&nbsp; {$error_msg}
 	{else}
 	<img src="{$this_path}views/img/icon-cancel.png"/>&nbsp;&nbsp;   

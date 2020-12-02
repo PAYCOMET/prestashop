@@ -24,7 +24,7 @@
 
 <table width="100%" border="0">
     <tr>
-    	<td><img src="{$base_dir}img/admin/icon-valid.png"/></td>
+    	<td><img src="{$this_path}views/img/icon-valid.png"/></td>
     	<td>{l s='Thank you for trusting us. Your purchase has been formalized correctly and we will process your order soon.' mod='paytpv'} {l s='Order Reference' mod='paytpv'}: <strong>{$reference}</strong> </td>
 	</tr>
 </table>

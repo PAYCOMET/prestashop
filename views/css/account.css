@@ -57,10 +57,8 @@
     list-style:none;
 } 
 
-.checkbox.savedcard {
-    clear: both;
-    float: left;
-    margin: 15px 0 25px 0;
+.checkbox #savecard {   
+    appearance: auto!important;
 }
 
 #storingStep.box{

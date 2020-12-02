@@ -27,7 +27,7 @@ if (!class_exists('nusoap_client')) {
     include_once(_PS_MODULE_DIR_ . '/' . 'paytpv/lib/nusoap.php');
 }
 
-class WsClient
+class WSClient
 {
     public $client = null;
     public $config = null;
@@ -94,7 +94,7 @@ class WsClient
                                             $this->config['pass']);
 
 
-        $DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
+        $DS_ORIGINAL_IP = Tools::getRemoteAddr();
         if ($DS_ORIGINAL_IP == "::1") {
             $DS_ORIGINAL_IP = "127.0.0.1";
         }
@@ -155,7 +155,7 @@ class WsClient
         $DS_MERCHANT_MERCHANTSIGNATURE = hash('sha512', $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER .
                                         $DS_MERCHANT_TERMINAL . $this->config['pass']);
 
-        $DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
+        $DS_ORIGINAL_IP = Tools::getRemoteAddr();
         if ($DS_ORIGINAL_IP == "::1") {
             $DS_ORIGINAL_IP = "127.0.0.1";
         }
@@ -199,7 +199,7 @@ class WsClient
         $DS_MERCHANT_MERCHANTSIGNATURE = hash('sha512', $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER .
                                          $DS_MERCHANT_TERMINAL . $this->config['pass']);
 
-        $DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
+        $DS_ORIGINAL_IP = Tools::getRemoteAddr();
         if ($DS_ORIGINAL_IP == "::1") {
             $DS_ORIGINAL_IP = "127.0.0.1";
         }
@@ -231,20 +231,18 @@ class WsClient
     public function createSubscriptionToken(
         $idUser,
         $tokeUser,
-        $DS_SUSCRIPTION_CURRENCY,
         $amount,
-        $ref,
         $stardate,
         $enddate,
         $peridicity,
         $MERCHANT_SCORING,
-        $MERCHANT_DATA
+        $MERCHANT_DATA,
+        $DS_SUSCRIPTION_CURRENCY = 'EUR',
+        $ref = ''
     ) {
+        $DS_MERCHANT_MERCHANTCODE = $this->config[ 'clientcode' ];
 
-
-        $DS_MERCHANT_MERCHANTCODE = $this->config['clientcode'];
-
-        $DS_MERCHANT_TERMINAL = $this->config['term'];
+        $DS_MERCHANT_TERMINAL = $this->config[ 'term' ];
 
         $DS_IDUSER = $idUser;
 
@@ -253,7 +251,7 @@ class WsClient
         $DS_SUBSCRIPTION_STARTDATE = $stardate;
         $DS_SUBSCRIPTION_ENDDATE = $enddate;
 
-        if ($ref == '') {
+        if ($ref=='') {
             $DS_SUBSCRIPTION_ORDER = time();
         } else {
             $DS_SUBSCRIPTION_ORDER = str_pad($ref, 8, "0", STR_PAD_LEFT) . round(rand(0, 99));
@@ -262,14 +260,15 @@ class WsClient
         $DS_SUBSCRIPTION_PERIODICITY = $peridicity;
 
         $DS_SUSCRIPTION_AMOUNT = $amount;
+        
+        $DS_MERCHANT_MERCHANTSIGNATURE = hash(
+            'sha512',
+            $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER . $DS_MERCHANT_TERMINAL . $DS_SUSCRIPTION_AMOUNT
+            .$DS_SUSCRIPTION_CURRENCY . $this->config[ 'pass' ]
+        );
 
-        $DS_MERCHANT_MERCHANTSIGNATURE = hash('sha512', $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER .
-                                        $DS_MERCHANT_TERMINAL . $DS_SUSCRIPTION_AMOUNT .  $DS_SUSCRIPTION_CURRENCY .
-                                        $this->config['pass']);
-
-
-        $DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
-        if ($DS_ORIGINAL_IP == "::1") {
+        $DS_ORIGINAL_IP = Tools::getRemoteAddr();
+        if ($DS_ORIGINAL_IP=="::1") {
             $DS_ORIGINAL_IP = "127.0.0.1";
         }
 
@@ -286,13 +285,13 @@ class WsClient
             'DS_SUBSCRIPTION_STARTDATE' => $DS_SUBSCRIPTION_STARTDATE,
             'DS_SUBSCRIPTION_ENDDATE' => $DS_SUBSCRIPTION_ENDDATE,
 
-            'DS_SUBSCRIPTION_ORDER' => (string) $DS_SUBSCRIPTION_ORDER,
+            'DS_SUBSCRIPTION_ORDER' => ( string ) $DS_SUBSCRIPTION_ORDER,
             'DS_SUBSCRIPTION_PERIODICITY' => $DS_SUBSCRIPTION_PERIODICITY,
 
-            'DS_SUBSCRIPTION_AMOUNT' => (string) $DS_SUSCRIPTION_AMOUNT,
+            'DS_SUBSCRIPTION_AMOUNT' => ( string ) $DS_SUSCRIPTION_AMOUNT,
 
             'DS_SUBSCRIPTION_CURRENCY' => $DS_SUSCRIPTION_CURRENCY,
-
+            
 
             'DS_MERCHANT_MERCHANTSIGNATURE' => $DS_MERCHANT_MERCHANTSIGNATURE,
 
@@ -300,18 +299,20 @@ class WsClient
 
         );
 
-        if ($MERCHANT_SCORING != null) {
+
+        if ($MERCHANT_SCORING!=null) {
             $p["MERCHANT_SCORING"] = $MERCHANT_SCORING;
         }
-        if ($MERCHANT_DATA != null) {
+        if ($MERCHANT_DATA!=null) {
             $p["MERCHANT_DATA"] = $MERCHANT_DATA;
         }
 
-        $this->writeLog("Petición create_subscription_token:\n" . print_r($p, true));
+        
+        $this->writeLog("Petición create_subscription_token:\n".print_r($p, true));
 
         $res = $this->client->call('create_subscription_token', $p, '', '', false, true);
 
-        $this->writeLog("Respuesta create_subscription_token:\n" . print_r($res, true));
+        $this->writeLog("Respuesta create_subscription_token:\n".print_r($res, true));
 
         return $res;
     }
@@ -332,7 +333,7 @@ class WsClient
         $DS_MERCHANT_MERCHANTSIGNATURE = hash('sha512', $DS_MERCHANT_MERCHANTCODE . $DS_IDUSER . $DS_TOKEN_USER .
                                          $DS_MERCHANT_TERMINAL . $this->config['pass']);
 
-        $DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
+        $DS_ORIGINAL_IP = Tools::getRemoteAddr();
         if ($DS_ORIGINAL_IP == "::1") {
             $DS_ORIGINAL_IP = "127.0.0.1";
         }
@@ -377,7 +378,7 @@ class WsClient
                                         $DS_MERCHANT_TERMINAL . $DS_MERCHANT_AUTHCODE . $DS_MERCHANT_ORDER .
                                         $this->config['pass']);
 
-        $DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
+        $DS_ORIGINAL_IP = Tools::getRemoteAddr();
         if ($DS_ORIGINAL_IP == "::1") {
             $DS_ORIGINAL_IP = "127.0.0.1";
         }
@@ -417,7 +418,7 @@ class WsClient
         $DS_MERCHANT_MERCHANTSIGNATURE = hash('sha512', $DS_MERCHANT_MERCHANTCODE . $token . $DS_JETID .
                                         $DS_MERCHANT_TERMINAL . $this->config['pass']);
 
-        $DS_ORIGINAL_IP = $_SERVER['REMOTE_ADDR'];
+        $DS_ORIGINAL_IP = Tools::getRemoteAddr();
         if ($DS_ORIGINAL_IP == "::1") {
             $DS_ORIGINAL_IP = "127.0.0.1";
         }
