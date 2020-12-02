@@ -106,7 +106,7 @@
             <ul>
                 {section name=suscription loop=$suscriptions} 
                     <li class="suscriptionCard" id="suscription_{$suscriptions[suscription].ID_SUSCRIPTION|escape:'htmlall':'UTF-8':FALSE}">  
-                        <a href="{$link->getPageLink('order-detail',true,null,"id_order={$suscriptions[suscription].ID_ORDER}")|escape:'html'}">{l s='Order' mod='paytpv'}: {$suscriptions[suscription].ORDER_REFERENCE}</a>
+                        <a href="{$link->getPageLink('order-detail',true,null,"id_order={$suscriptions[suscription].ID_ORDER}")|escape:'html':'UTF-8':FALSE}">{l s='Order' mod='paytpv'}: {$suscriptions[suscription].ORDER_REFERENCE|escape:'htmlall':'UTF-8':FALSE}</a>
                         <br>
                         {l s='Every' mod='paytpv'} {$suscriptions[suscription].PERIODICITY|escape:'htmlall':'UTF-8':FALSE} {l s='days' mod='paytpv'} - {l s='repeat' mod='paytpv'} {$suscriptions[suscription].CYCLES|escape:'htmlall':'UTF-8':FALSE} {l s='times' mod='paytpv'} - {l s='Amount' mod='paytpv'}: {$suscriptions[suscription].PRICE|escape:'htmlall':'UTF-8':FALSE} - {l s='Start' mod='paytpv'}: {$suscriptions[suscription].DATE_YYYYMMDD|escape:'htmlall':'UTF-8':FALSE}
                         <label class="button_del">
@@ -129,7 +129,7 @@
                             <ul >
                                 {section name=suscription_pay loop=$suscription_pay}
                                 <li class="suscription_pay" id="suscription_pay{$suscription_pay[suscription_pay].ID_SUSCRIPTION|escape:'htmlall':'UTF-8':FALSE}">
-                                     <a href="{$link->getPageLink('order-detail',true,null,"id_order={$suscription_pay[suscription_pay].ID_ORDER}")|escape:'html'}">{l s='Order' mod='paytpv'}: {$suscription_pay[suscription_pay].ORDER_REFERENCE}</a>
+                                     <a href="{$link->getPageLink('order-detail',true,null,"id_order={$suscription_pay[suscription_pay].ID_ORDER}")|escape:'html':'UTF-8':FALSE}">{l s='Order' mod='paytpv'}: {$suscription_pay[suscription_pay].ORDER_REFERENCE|escape:'htmlall':'UTF-8':FALSE}</a>
                                      {l s='Amount' mod='paytpv'}: {$suscription_pay[suscription_pay].PRICE|escape:'htmlall':'UTF-8':FALSE} - {l s='Date' mod='paytpv'}: {$suscription_pay[suscription_pay].DATE_YYYYMMDD|escape:'htmlall':'UTF-8':FALSE}
 
                                 </li>
