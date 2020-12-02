@@ -110,7 +110,7 @@ class PaycometApiRest
         $originalIp,
         $secure,
         $idUser = '',
-        $tokenUser= '',
+        $tokenUser = '',
         $urlOk = '',
         $ulrKo = '',
         $scoring = '0',
@@ -205,12 +205,12 @@ class PaycometApiRest
     }
 
     public function removeSubscription(
-        $terminal,        
+        $terminal,
         $idUser,
         $tokenUser
     ) {
         $params = ["payment" => [
-                'terminal' => (int) $terminal,                
+                'terminal' => (int) $terminal,
                 'idUser' => (int) $idUser,
                 'tokenUser' => (string) $tokenUser
             ]
@@ -225,7 +225,7 @@ class PaycometApiRest
         $amount,
         $currency,
         $authCode,
-        $originalIp,        
+        $originalIp,
         $notifyDirectPayment = 1
     ) {
         $params = [
@@ -237,7 +237,7 @@ class PaycometApiRest
                 'originalIp' => (string) $originalIp,
                 'notifyDirectPayment' => (int) $notifyDirectPayment
             ]
-        ];      
+        ];
 
         return $this->executeRequest('https://rest.paycomet.com/v1/payments/' . $order . '/refund', $params);
     }

@@ -44,7 +44,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
         );
 
         $paytpv = $this->module;
-        
+
         $total_pedido = $this->context->cart->getOrderTotal(true, Cart::BOTH);
 
         $datos_pedido = $paytpv->terminalCurrency($this->context->cart);
@@ -58,10 +58,10 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
         $jetid_ns = $datos_pedido["jetid_ns"];
 
         // BANKSTORE JET
-        
+
         $token = Tools::getIsset('paytpvToken') ? Tools::getValue('paytpvToken') : "";
         $savecard_jet = Tools::getIsset('paytpv_savecard') ? 1 : 0;
-        
+
         $jetPayment = 0;
         if ($token && Tools::strlen($token) == 64) {
             // PAGO SEGURO
@@ -82,11 +82,10 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 $jetid_sel = $jetid_ns;
             }
 
-            if($paytpv->apikey != '') {
-
+            if ($paytpv->apikey != '') {
                 $notify = 2; // No notificar HTTP
 
-                $apiRest = new PaycometApiRest($paytpv->apikey);                
+                $apiRest = new PaycometApiRest($paytpv->apikey);
                 $addUserResponse = $apiRest->addUser(
                     $idterminal_sel,
                     $token,
@@ -94,7 +93,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     $notify
                 );
                 $addUserResponseErrorCode = $addUserResponse->errorCode;
-                
+
                 $idUser = $addUserResponse->idUser;
                 $tokenUser = $addUserResponse->tokenUser;
             } else {
@@ -107,7 +106,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                         'jetid' => $jetid_sel
                     )
                 );
-    
+
                 $addUserResponse = $client->addUserToken($token);
                 $addUserResponseErrorCode = $addUserResponse[ 'DS_ERROR_ID' ];
                 $idUser = $addUserResponse["DS_IDUSER"];
@@ -141,7 +140,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 Tools::getValue('TOKEN_USER'),
                 $this->context->cart->id_customer
             );
-            
+
             if (!isset($data["IDUSER"])) {
                 $this->context->smarty->assign(
                     'error_msg',
@@ -193,22 +192,22 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
 
         $score = $paytpv->transactionScore($this->context->cart);
         $MERCHANT_SCORING = $scoring = $score["score"];
-        
+
         $values = array(
             'id_cart' => (int) $this->context->cart->id,
             'key' => Context::getContext()->customer->secure_key
         );
         $ssl = Configuration::get('PS_SSL_ENABLED');
-        
+
         // PAGO SEGURO
         if ($secure_pay) {
-            $paytpv_order_ref = str_pad($this->context->cart->id, 8, "0", STR_PAD_LEFT);         
+            $paytpv_order_ref = str_pad($this->context->cart->id, 8, "0", STR_PAD_LEFT);
 
             $URLOK = Context::getContext()->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
             $URLKO = Context::getContext()->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
-            
+
             $language = $paytpv->getPaycometLang($this->context->language->language_code);
-            
+
             $subscription_startdate = date("Ymd");
             $susc_periodicity = $periodicity;
             $subs_cycles = $cycles;
@@ -226,7 +225,6 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 if ($jetPayment &&
                     (Tools::getIsset('suscripcion') && Tools::getValue('suscripcion') == 1)
                 ) {
-    
                     $OPERATION = "110";
                     $signature = hash('sha512', $paytpv->clientcode . $data["IDUSER"] . $data['TOKEN_USER'] .
                     $idterminal_sel . $OPERATION . $paytpv_order_ref . $importe . $currency_iso_code . md5($pass_sel));
@@ -252,7 +250,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     $OPERATION = "109"; //exec_purchase_token
                     $signature = hash('sha512', $paytpv->clientcode . $data["IDUSER"] . $data['TOKEN_USER'] .
                      $idterminal_sel . $OPERATION . $paytpv_order_ref . $importe . $currency_iso_code . md5($pass_sel));
-    
+
                     $fields = array(
                         'MERCHANT_MERCHANTCODE' => $paytpv->clientcode,
                         'MERCHANT_TERMINAL' => $idterminal_sel,
@@ -269,26 +267,25 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                         'URLKO' => $URLKO
                     );
                 }
-    
+
                 if ($MERCHANT_SCORING != null) {
                     $fields["MERCHANT_SCORING"] = $MERCHANT_SCORING;
                 }
-                
+
                 $query = http_build_query($fields);
-    
+
                 $vhash = hash('sha512', md5($query . md5($pass_sel)));
-    
+
                 $salida = $paytpv->url_paytpv . "?" . $query . "&VHASH=" . $vhash;
             } else {
-
                 $merchantData = $paytpv->getMerchantData($this->context->cart);
                 $userInteraction = '1';
                 $methodId = '1';
-                
+
                 $apiRest = new PaycometApiRest($paytpv->apikey);
 
-                if ($jetPayment && (Tools::getIsset("paytpv_suscripcion") && Tools::getValue("paytpv_suscripcion")==1)) {
-                    
+                if ($jetPayment &&
+                (Tools::getIsset("paytpv_suscripcion") && Tools::getValue("paytpv_suscripcion")==1)) {
                     $createSubscriptionResponse = $apiRest->createSubscription(
                         $subscription_startdate,
                         $subscription_enddate,
@@ -312,13 +309,9 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                         '',
                         '',
                         $merchantData
-
                     );
-                    
                     $salida = $createSubscriptionResponse->challengeUrl;
-
                 } else {
-
                     try {
                         $executePurchaseResponse = $apiRest->executePurchase(
                             $idterminal_sel,
@@ -343,18 +336,16 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                         );
 
                         $salida = $URLKO;
-                        
+
                         if ($executePurchaseResponse->challengeUrl != "") {
                             $salida = $executePurchaseResponse->challengeUrl;
                         }
-                        
-
                     } catch (exception $e) {
                         $salida = $URLKO;
                     }
                 }
             }
-                       
+
             Tools::redirect($salida);
             exit;
         }
@@ -383,9 +374,8 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 $dias_subscription = $subs_cycles * $susc_periodicity;
                 $subscription_enddate = date('Y-m-d', strtotime("+" . $dias_subscription . " days"));
             }
-            
-           
-            if ($paytpv->apikey == '') {                    
+
+            if ($paytpv->apikey == '') {
                 $charge = $client->createSubscriptionToken(
                     $data['IDUSER'],
                     $data['TOKEN_USER'],
@@ -398,14 +388,12 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     $currency_iso_code,
                     $paytpv_order_ref
                 );
-
-            } else {   
-                        
+            } else {
                 $apiRest = new PaycometApiRest($paytpv->apikey);
 
                 $URLOK=Context::getContext()->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
-                $URLKO=Context::getContext()->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);                
-                
+                $URLKO=Context::getContext()->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
+
                 $userInteraction = '1';
                 $methodId = '1';
                 $merchantData = $paytpv->getMerchantData($this->context->cart);
@@ -433,7 +421,6 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     '',
                     '',
                     $merchantData
-
                 );
 
                 if ($createSubscriptionResponse->challengeUrl != "") {
@@ -442,10 +429,9 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 } else {
                     $charge = array();
                     $charge["DS_RESPONSE"] = ($createSubscriptionResponse->errorCode > 0)? 0 : 1;
-                    $charge['DS_ERROR_ID'] = $createSubscriptionResponse->errorCode;                    
+                    $charge['DS_ERROR_ID'] = $createSubscriptionResponse->errorCode;
                 }
             }
-            
         } else {
             // REST
             if ($paytpv->apikey != '') {
@@ -458,7 +444,6 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 $merchantData = $paytpv->getMerchantData($this->context->cart);
 
                 try {
-
                     $executePurchaseResponse = $apiRest->executePurchase(
                         $idterminal_sel,
                         $paytpv_order_ref,
@@ -484,19 +469,17 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     $charge = array();
                     $charge["DS_RESPONSE"] = ($executePurchaseResponse->errorCode > 0)? 0 : 1;
                     $charge['DS_ERROR_ID'] = $executePurchaseResponse->errorCode;
-                    
+
                     if ($executePurchaseResponse->challengeUrl != "") {
-                        Tools::redirect($executePurchaseResponse->challengeUrl);    
+                        Tools::redirect($executePurchaseResponse->challengeUrl);
                         exit;
                     }
                 } catch (exception $e) {
                     $charge = array();
                     $charge["DS_RESPONSE"] = ($executePurchaseResponse->errorCode > 0)? 0 : 1;
-                    $charge['DS_ERROR_ID'] = $executePurchaseResponse->errorCode;        
-                }                
-
+                    $charge['DS_ERROR_ID'] = $executePurchaseResponse->errorCode;
+                }
             } else {
-                
                 $charge = $client->executePurchase(
                     $data['IDUSER'],
                     $data['TOKEN_USER'],
@@ -507,10 +490,9 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     $MERCHANT_SCORING,
                     null
                 );
-                
             }
         }
-        
+
         if ((Tools::getIsset($charge['DS_RESPONSE']) &&
             (int) $charge['DS_RESPONSE'] == 1) ||
             $charge['DS_ERROR_ID'] == 0
@@ -533,9 +515,10 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 );
 
                 if ($savecard_jet == 1) {
+                    $result = array();
                     if ($paytpv->apikey != '') {
                         $apiRest = new PaycometApiRest($paytpv->apikey);
-                        
+
                         $infoUserResponse = $apiRest->infoUser(
                             $data['IDUSER'],
                             $data['TOKEN_USER'],
@@ -547,7 +530,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     } else {
                         $result = $client->infoUser($data['IDUSER'], $data['TOKEN_USER']);
                     }
-                    
+
                     $result = $paytpv->saveCard(
                         $this->context->cart->id_customer,
                         $data['IDUSER'],
@@ -564,7 +547,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 'id_order' => $id_order,
                 'key' => $this->context->customer->secure_key
             );
-            
+
             Tools::redirect(Context::getContext()->link->getPageLink('order-confirmation', $this->ssl, null, $values));
             return;
         } else {
