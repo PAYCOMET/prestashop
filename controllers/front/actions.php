@@ -194,8 +194,8 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                         'order' => (string) $paytpv_order_ref,
                         'amount' => (string) $importe,
                         'currency' => (string) $currency_iso_code,
-                        'userInteraction' => (string) $userInteraction,
-                        'secure' => $secure_pay,
+                        'userInteraction' => (int) $userInteraction,
+                        'secure' => (int) $secure_pay,
                         'merchantData' => $merchantData,
                         'urlOk' => $URLOK,
                         'urlKo' => $URLKO
@@ -400,8 +400,8 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                         'order' => (string) $paytpv_order_ref,
                         'amount' => (string) $importe,
                         'currency' => (string) $currency_iso_code,
-                        'userInteraction' => (string) $userInteraction,
-                        'secure' => $secure_pay,
+                        'userInteraction' => (int) $userInteraction,
+                        'secure' => (int) $secure_pay,
                         'merchantData' => $merchantData,
                         'urlOk' => $URLOK,
                         'urlKo' => $URLKO

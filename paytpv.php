@@ -357,8 +357,7 @@ class Paytpv extends PaymentModule
                     case 1130:  // No se encuentra el producto
                     case 1003:  // Credenciales inválidas
                     case 127:   // Parámetro no válido.
-                        $arrDatos["error_txt"] = $this->l(
-                            'Check that the Client Code, Terminal and Password are correct.');
+                        $arrDatos["error_txt"] = $this->l('Check that the Client Code, Terminal and Password are correct.');
                         break;
                     case 1337:  // Ruta de notificación no configurada
                         $arrDatos["error_txt"] = $this->l('Notification URL is not defined in the product configuration of your account PAYCOMET account.');
@@ -1853,8 +1852,8 @@ class Paytpv extends PaymentModule
                     'order' => (string) $paytpv_order_ref,
                     'amount' => (string) $importe,
                     'currency' => (string) $currency_iso_code,
-                    'userInteraction' => (string) $userInteraction,
-                    'secure' => $secure_pay,
+                    'userInteraction' => (int) $userInteraction,
+                    'secure' => (int) $secure_pay,
                     'merchantData' => $merchantData,
                     'urlOk' => $URLOK,
                     'urlKo' => $URLKO

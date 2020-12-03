@@ -40,7 +40,6 @@ class PaycometApiRest
         $payment = [],
         $subscription = []
     ) {
-        
         $params = [
             "operationType" => (int) $operationType,
             "language" => (string) $language,
@@ -52,7 +51,7 @@ class PaycometApiRest
 
         return $this->executeRequest('https://rest.paycomet.com/v1/form', $params);
     }
-    
+
     public function addUser(
         $terminal,
         $jetToken,
@@ -72,7 +71,7 @@ class PaycometApiRest
 
         return $this->executeRequest('https://rest.paycomet.com/v1/cards', $params);
     }
-    
+
     public function infoUser(
         $idUser,
         $tokenUser,
@@ -81,9 +80,9 @@ class PaycometApiRest
         $params = [
             'idUser' => (int) $idUser,
             'tokenUser' => (string) $tokenUser,
-            'terminal' => (string) $terminal,
+            'terminal' => (int) $terminal,
         ];
-            
+
         return $this->executeRequest('https://rest.paycomet.com/v1/cards/info', $params);
     }
 
@@ -93,11 +92,11 @@ class PaycometApiRest
         $tokenUser
     ) {
         $params = [
-            'terminal' => (string) $terminal,
+            'terminal' => (int) $terminal,
             'idUser' => (int) $idUser,
             'tokenUser' => (string) $tokenUser,
         ];
-            
+
         return $this->executeRequest('https://rest.paycomet.com/v1/cards/delete', $params);
     }
 
@@ -113,7 +112,7 @@ class PaycometApiRest
         $tokenUser = '',
         $urlOk = '',
         $ulrKo = '',
-        $scoring = '0',
+        $scoring = 0,
         $productDescription = '',
         $merchantDescription = '',
         $userInteraction = 1,
@@ -127,15 +126,15 @@ class PaycometApiRest
                 'order' => (string) $order,
                 'amount' => (string) $amount,
                 'currency' => (string) $currency,
-                'methodId' => (string) $methodId,
+                'methodId' => (int) $methodId,
                 'originalIp' => (string) $originalIp,
-                'secure' => (string) $secure,
+                'secure' => (int) $secure,
                 'idUser' => (int) $idUser,
                 'tokenUser' => (string) $tokenUser,
-                'scoring' => (string) $scoring,
+                'scoring' => (int) $scoring,
                 'productDescription' => (string) $productDescription,
                 'merchantDescription' => (string) $merchantDescription,
-                'userInteraction' => (string) $userInteraction,
+                'userInteraction' => (int) $userInteraction,
                 'escrowTargets' => $escrowTargets,
                 'trxType' => (string) $trxType,
                 'SCAException' => (string) $SCAException,
@@ -176,22 +175,22 @@ class PaycometApiRest
             "subscription" => [
                 "startDate" => (string) $startDate,
                 "endDate" => (string) $endDate,
-                "periodicity" => (string) $periodicity,
+                "periodicity" => (int) $periodicity,
             ],
             "payment" => [
                 "terminal" => (int) $terminal,
-                "methodId" => (string) $methodId,
+                "methodId" => (int) $methodId,
                 "order" => (string) $order,
                 "amount" => (string) $amount,
                 "currency" => (string) $currency,
                 "originalIp" => (string) $originalIp,
                 "idUser" => (int) $idUser,
                 "tokenUser" => (string) $tokenUser,
-                "secure" => (string) $secure,
-                "scoring" => (string) $scoring,
+                "secure" => (int) $secure,
+                "scoring" => (int) $scoring,
                 "productDescription" => (string) $productDescription,
                 "merchantDescriptor" => (string) $merchantDescriptor,
-                "userInteraction" => (string) $userInteraction,
+                "userInteraction" => (int) $userInteraction,
                 "escrowTargets" => $escrowTargets,
                 "trxType" => (string) $trxType,
                 "SCAException" => (string) $SCAException,
@@ -200,7 +199,7 @@ class PaycometApiRest
                 "merchantData" => $merchantData,
             ]
         ];
-        
+
         return $this->executeRequest('https://rest.paycomet.com/v1/subscription', $params);
     }
 
@@ -231,7 +230,7 @@ class PaycometApiRest
         $params = [
             "payment" => [
                 'terminal' => (int) $terminal,
-                'amount' => (string) $amount,
+                'amount' => (int) $amount,
                 'currency' => (string) $currency,
                 'authCode' => (string) $authCode,
                 'originalIp' => (string) $originalIp,
@@ -263,9 +262,9 @@ class PaycometApiRest
                     "Content-Type: application/json"
             ),
         ));
-        
+
         $response = curl_exec($curl);
-        
+
         curl_close($curl);
 
         return json_decode($response);
