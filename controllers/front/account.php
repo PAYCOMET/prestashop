@@ -131,7 +131,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                 }
 
                 if (( int ) $addUserResponseErrorCode > 0) {
-                    $error = $paytpv->l('Cannot operate with given credit card','account');
+                    $error = $paytpv->l('Cannot operate with given credit card', 'account');
                 } else {
                     $result = array();
                     if ($paytpv->apikey != '') {
