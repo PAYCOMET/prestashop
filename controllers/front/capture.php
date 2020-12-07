@@ -229,7 +229,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
 
             if ($paytpv->apikey == '') {
                 if ($jetPayment &&
-                    (Tools::getIsset('suscripcion') && Tools::getValue('suscripcion') == 1)
+                    (Tools::getIsset('paytpv_suscripcion') && Tools::getValue('paytpv_suscripcion') == 1)
                 ) {
                     $OPERATION = 110;
                     $signature = hash('sha512', $paytpv->clientcode . $data["IDUSER"] . $data['TOKEN_USER'] .
