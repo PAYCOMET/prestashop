@@ -175,7 +175,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
             $cycles,
             0
         )) {
-            $OPERATION = "1";
+            $OPERATION = 1;
 
             if ($paytpv->apikey != '') {
                 include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php');
@@ -213,7 +213,10 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                         $payment
                     );
 
-                    $url_paytpv = $formResponse->challengeUrl;
+                    $url_paytpv = "";
+                    if ($formResponse->errorCode == 0) {
+                        $url_paytpv = $formResponse->challengeUrl;
+                    }
                 } catch (exception $e) {
                     $url_paytpv = "";
                 }
@@ -366,7 +369,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
             $cycles,
             0
         )) {
-            $OPERATION = "9";
+            $OPERATION = 9;
             $subscription_startdate = date("Ymd");
             $susc_periodicity = $periodicity;
             $subs_cycles = $cycles;
@@ -425,7 +428,10 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                         $subscription
                     );
 
-                    $url_paytpv = $formResponse->challengeUrl;
+                    $url_paytpv = "";
+                    if ($formResponse->errorCode == 0) {
+                        $url_paytpv = $formResponse->challengeUrl;
+                    }
                 } catch (exception $e) {
                     $url_paytpv = "";
                 }

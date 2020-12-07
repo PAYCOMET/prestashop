@@ -92,10 +92,13 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     $this->context->cart->id,
                     $notify
                 );
+
                 $addUserResponseErrorCode = $addUserResponse->errorCode;
 
-                $idUser = $addUserResponse->idUser;
-                $tokenUser = $addUserResponse->tokenUser;
+                if ($addUserResponse->errorCode == 0) {
+                    $idUser = $addUserResponse->idUser;
+                    $tokenUser = $addUserResponse->tokenUser;
+                }
             } else {
                 $client = new WSClient(
                     array(
@@ -109,8 +112,11 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
 
                 $addUserResponse = $client->addUserToken($token);
                 $addUserResponseErrorCode = $addUserResponse[ 'DS_ERROR_ID' ];
-                $idUser = $addUserResponse["DS_IDUSER"];
-                $tokenUser = $addUserResponse["DS_TOKEN_USER"];
+
+                if ($addUserResponse[ 'DS_ERROR_ID' ] == 0) {
+                    $idUser = $addUserResponse["DS_IDUSER"];
+                    $tokenUser = $addUserResponse["DS_TOKEN_USER"];
+                }
             }
 
             if ((int) $addUserResponseErrorCode > 0) {
@@ -225,7 +231,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 if ($jetPayment &&
                     (Tools::getIsset('suscripcion') && Tools::getValue('suscripcion') == 1)
                 ) {
-                    $OPERATION = "110";
+                    $OPERATION = 110;
                     $signature = hash('sha512', $paytpv->clientcode . $data["IDUSER"] . $data['TOKEN_USER'] .
                     $idterminal_sel . $OPERATION . $paytpv_order_ref . $importe . $currency_iso_code . md5($pass_sel));
                     $fields = array(
@@ -247,7 +253,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                         '3DSECURE' => $secure_pay
                     );
                 } else {
-                    $OPERATION = "109"; //exec_purchase_token
+                    $OPERATION = 109; //exec_purchase_token
                     $signature = hash('sha512', $paytpv->clientcode . $data["IDUSER"] . $data['TOKEN_USER'] .
                      $idterminal_sel . $OPERATION . $paytpv_order_ref . $importe . $currency_iso_code . md5($pass_sel));
 
@@ -310,7 +316,11 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                         '',
                         $merchantData
                     );
-                    $salida = $createSubscriptionResponse->challengeUrl;
+
+                    $salida = $URLKO;
+                    if ($createSubscriptionResponse->challengeUrl != "") {
+                        $salida = $createSubscriptionResponse->challengeUrl;
+                    }
                 } else {
                     try {
                         $executePurchaseResponse = $apiRest->executePurchase(

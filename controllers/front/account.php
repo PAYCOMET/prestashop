@@ -96,7 +96,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                 include_once(_PS_MODULE_DIR_.'/paytpv/classes/PaycometApiRest.php');
 
                 if ($paytpv->apikey != '') {
-                    $notify = '2';
+                    $notify = 2;
                     $apiRest = new PaycometApiRest($paytpv->apikey);
                     $addUserResponse = $apiRest->addUser(
                         $idterminal_sel,
@@ -105,8 +105,11 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                         $notify
                     );
                     $addUserResponseErrorCode = $addUserResponse->errorCode;
-                    $idUser = $addUserResponse->idUser;
-                    $tokenUser = $addUserResponse->tokenUser;
+
+                    if ($addUserResponse->errorCode == 0) {
+                        $idUser = $addUserResponse->idUser;
+                        $tokenUser = $addUserResponse->tokenUser;
+                    }
                 } else {
                     $client = new WSClient(
                         array(
@@ -119,13 +122,16 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                     );
 
                     $addUserResponse = $client->addUserToken($token);
+
                     $addUserResponseErrorCode = $addUserResponse['DS_ERROR_ID'];
-                    $idUser = $addUserResponse["DS_IDUSER"];
-                    $tokenUser = $addUserResponse["DS_TOKEN_USER"];
+                    if ($addUserResponse['DS_ERROR_ID'] == 0) {
+                        $idUser = $addUserResponse["DS_IDUSER"];
+                        $tokenUser = $addUserResponse["DS_TOKEN_USER"];
+                    }
                 }
 
                 if (( int ) $addUserResponseErrorCode > 0) {
-                    $error = $paytpv->l('Cannot operate with given credit card');
+                    $error = $paytpv->l('Cannot operate with given credit card','account');
                 } else {
                     $result = array();
                     if ($paytpv->apikey != '') {
@@ -135,8 +141,11 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                             $tokenUser,
                             $idterminal_sel
                         );
-                        $result['DS_MERCHANT_PAN'] = $infoUserResponse->pan;
-                        $result['DS_CARD_BRAND'] = $infoUserResponse->cardBrand;
+
+                        if ($infoUserResponse->errorCode == 0) {
+                            $result['DS_MERCHANT_PAN'] = $infoUserResponse->pan;
+                            $result['DS_CARD_BRAND'] = $infoUserResponse->cardBrand;
+                        }
                     } else {
                         $result = $client->infoUser($idUser, $tokenUser);
                     }
@@ -181,8 +190,10 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                         ],
                         []
                     );
-
-                    $url_paytpv = $formResponse->challengeUrl;
+                    $url_paytpv = "";
+                    if ($formResponse->errorCode == 0) {
+                        $url_paytpv = $formResponse->challengeUrl;
+                    }
                 } catch (exception $e) {
                     $url_paytpv = "";
                 }

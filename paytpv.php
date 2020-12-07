@@ -1839,9 +1839,9 @@ class Paytpv extends PaymentModule
         $score = $this->transactionScore($cart);
         $scoring = $score["score"];
 
-        $OPERATION = "1";
+        $OPERATION = 1;
         if ($this->apikey != '') {
-            $userInteraction = '1';
+            $userInteraction = 1;
             $merchantData = $this->getMerchantData($cart);
 
             try {
@@ -1871,7 +1871,10 @@ class Paytpv extends PaymentModule
                     $payment
                 );
 
-                $url_paytpv = $formResponse->challengeUrl;
+                $url_paytpv = "";
+                if ($formResponse->errorCode == 0) {
+                    $url_paytpv = $formResponse->challengeUrl;
+                }
             } catch (exception $e) {
                 $url_paytpv = "";
             }
@@ -2426,7 +2429,9 @@ class Paytpv extends PaymentModule
 
             $result["DS_RESPONSE"] = ($executeRefundReponse->errorCode > 0)? 0 : 1;
             $result['DS_ERROR_ID'] = $executeRefundReponse->errorCode;
-            $result['DS_MERCHANT_AUTHCODE'] = $executeRefundReponse->authCode;
+            if ($executeRefundReponse->errorCode == 0) {
+                $result['DS_MERCHANT_AUTHCODE'] = $executeRefundReponse->authCode;
+            }
         } else {
             $client = new WSClient(
                 array(
@@ -2471,7 +2476,10 @@ class Paytpv extends PaymentModule
 
                 $result["DS_RESPONSE"] = ($executeRefundReponse->errorCode > 0)? 0 : 1;
                 $result['DS_ERROR_ID'] = $executeRefundReponse->errorCode;
-                $result['DS_MERCHANT_AUTHCODE'] = $executeRefundReponse->authCode;
+
+                if ($executeRefundReponse->errorCode == 0) {
+                    $result['DS_MERCHANT_AUTHCODE'] = $executeRefundReponse->authCode;
+                }
             } else {
                 $client = new WSClient(
                     array(
@@ -2517,7 +2525,9 @@ class Paytpv extends PaymentModule
 
                 $result["DS_RESPONSE"] = ($executeRefundReponse->errorCode > 0)? 0 : 1;
                 $result['DS_ERROR_ID'] = $executeRefundReponse->errorCode;
-                $result['DS_MERCHANT_AUTHCODE'] = $executeRefundReponse->authCode;
+                if ($executeRefundReponse->errorCode == 0) {
+                    $result['DS_MERCHANT_AUTHCODE'] = $executeRefundReponse->authCode;
+                }
             } else {
                 $client = new WSClient(
                     array(
