@@ -59,7 +59,6 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             $arrDatos = array("module_v" => $paytpv->version, "ps_v" => _PS_VERSION_);
             exit(json_encode($arrDatos));
         }
-        
 
         // Notify response
         // (execute_purchase)
@@ -77,7 +76,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             $context = Context::getContext();
             $id_cart = (int) Tools::substr($ref, 0, 8);
             $cart = new Cart($id_cart);
-            
+
             if (Context::getContext()->shop->id != $cart->id_shop) {
                 $context->shop->id = $cart->id_shop;
             }
@@ -88,7 +87,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             $idterminal_ns = $arrTerminal["idterminal_ns"];
             $pass = $arrTerminal["password"];
             $pass_ns = $arrTerminal["password_ns"];
-            
+
 
             if (Tools::getValue('TpvID') == $idterminal) {
                 $idterminal_sel = $idterminal;
@@ -144,7 +143,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             if ($sign != $local_sign) {
                 die('Error 2');
             }
-            
+
             if ($paytpv->apikey != '') {
                 include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaytpvApi.php');
                 $apiRest = new PaycometApiRest($paytpv->apikey);
@@ -157,7 +156,6 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                 $result = array();
                 $result['DS_MERCHANT_PAN'] = $infoUserResponse->pan;
                 $result['DS_CARD_BRAND'] = $infoUserResponse->cardBrand;
-
             } else {
                 include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WSClient.php');
                 $client = new WSClient(
@@ -288,16 +286,16 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                         exit;
                     } elseif (!$new_cart['success']) {
                         // Refund amount
-                        if($paytpv->apikey != '') {
+                        if ($paytpv->apikey != '') {
                             include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaytpvApi.php');
-                            
+
                             $ip = Tools::getRemoteAddr();
                             if ($ip=="::1" || $ip=="") {
                                 $ip = "127.0.0.1";
                             }
 
                             $notifyDirectPayment = 2;
-                            
+
                             $apiRest = new PaycometApiRest($paytpv->apikey);
                             $executeRefundReponse = $apiRest->executeRefund(
                                 Tools::getValue('Order'),

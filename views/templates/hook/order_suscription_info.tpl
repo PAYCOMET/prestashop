@@ -23,9 +23,9 @@
 *}
 
 <p class="alert alert-danger">
-	<strong>{$suscription_type}</strong>
+	<strong>{$suscription_type|escape:'htmlall':'UTF-8':FALSE}</strong>
 
-	[[ {l s='Every' mod='paytpv'} {$periodicity} {l s='days' mod='paytpv'} - {l s='repeat' mod='paytpv'} {$cycles} {l s='times' mod='paytpv'} - {l s='Amount' mod='paytpv'}: {$price} - {l s='Start' mod='paytpv'}: {$date_yyyymmdd} [<strong>{l s='Status' mod='paytpv'}: {$status}</strong>] ]]
+	[[ {l s='Every' mod='paytpv'} {$periodicity|escape:'htmlall':'UTF-8':FALSE} {l s='days' mod='paytpv'} - {l s='repeat' mod='paytpv'} {$cycles|escape:'htmlall':'UTF-8':FALSE} {l s='times' mod='paytpv'} - {l s='Amount' mod='paytpv'}: {$price|escape:'htmlall':'UTF-8':FALSE} - {l s='Start' mod='paytpv'}: {$date_yyyymmdd|escape:'htmlall':'UTF-8':FALSE} [<strong>{l s='Status' mod='paytpv'}: {$status|escape:'htmlall':'UTF-8':FALSE}</strong>] ]]
 </p>
 
 

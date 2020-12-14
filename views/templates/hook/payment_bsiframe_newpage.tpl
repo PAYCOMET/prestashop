@@ -22,14 +22,10 @@
     *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
     *}
 
-    
-    {extends file='page.tpl'}   
+    {extends file='page.tpl'}
 
     {block name='page_content'}
 
         {include file='modules/paytpv/views/templates/hook/payment_bsiframe.tpl'}
 
     {/block}
-
-   
-    

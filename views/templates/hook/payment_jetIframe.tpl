@@ -21,23 +21,23 @@
     *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
     *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
     *}
-        
-    <form action="{$paytpv_jetid_url}" method="POST" class="paytpv_jet paycomet_jet" id="paycometPaymentForm" style="clear:left;">
+
+    <form action="{$paytpv_jetid_url|escape:'htmlall':'UTF-8':FALSE}" method="POST" class="paytpv_jet paycomet_jet" id="paycometPaymentForm" style="clear:left;">
     <div class="row">
         <div class="paytpv">
-            
-            <p style="padding-top: 5px;"><a href="http://www.paycomet.com" target="_blank"><img src="{$this_path}views/img/paytpv_logo.svg" width="135"></a></p>
-           
+
+            <p style="padding-top: 5px;"><a href="http://www.paycomet.com" target="_blank"><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/paytpv_logo.svg" width="135"></a></p>
+
             {if ($msg_paytpv!="")}
             <p>
-                <span class="message">{$msg_paytpv}</span>
+                <span class="message">{$msg_paytpv|escape:'htmlall':'UTF-8':FALSE}</span>
             </p>
             {/if}
 
             {if ($active_suscriptions)}
-                {include file='modules/paytpv/views/templates/hook/inc_payment_suscription.tpl'}            
-            {/if}       
-            
+                {include file='modules/paytpv/views/templates/hook/inc_payment_suscription.tpl'}
+            {/if}
+
             <div id="saved_cards" style="display:none">
                 {include file='modules/paytpv/views/templates/hook/inc_payment_cards.tpl'}
             </div>
@@ -49,15 +49,15 @@
             <br class="clear"/>
 
             <div class="payment_module paytpv_iframe">
-                                                                                    
+
                 {include file='modules/paytpv/views/templates/hook/inc_payment_jetIframe.tpl'}
-                                    
+
             </div>
         </div>
     </div>
-            
+
     <input type="hidden" name="paytpv_module" id="paytpv_module" value="{$link->getModuleLink('paytpv', 'actions',[], true)|escape:'htmlall':'UTF-8'}">
-    <input type="hidden" name="paytpv_integration" id="paytpv_integration" value="{$paytpv_integration}"> 
-    <input type="hidden" name="id_cart" id="id_cart"  value="{$id_cart}">
-        
+    <input type="hidden" name="paytpv_integration" id="paytpv_integration" value="{$paytpv_integration|escape:'htmlall':'UTF-8':FALSE}">
+    <input type="hidden" name="id_cart" id="id_cart"  value="{$id_cart|escape:'htmlall':'UTF-8':FALSE}">
+
     </form>

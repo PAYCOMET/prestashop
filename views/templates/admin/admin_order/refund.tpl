@@ -104,7 +104,6 @@
 		</ul>
 	</p>
 	<p><b>{l s='Outstanding amount:' mod='paytpv'}</b> {$amount|escape:'htmlall':'UTF-8':FALSE}</p>
-	
 
 	{if $amount>0}
 	<p>

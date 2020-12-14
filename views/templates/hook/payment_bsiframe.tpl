@@ -21,7 +21,7 @@
     *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
     *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
     *}
-   
+
 
     <div class="row">
         {if ($newpage_payment==1)}
@@ -32,58 +32,58 @@
             <div class="paytpv">
 
                 {if ($paytpv_integration==1)}
-                    <form action="{$paytpv_jetid_url}" method="POST" class="paytpv_jet" id="paycometPaymentForm" style="clear:left;">
+                    <form action="{$paytpv_jetid_url|escape:'htmlall':'UTF-8':FALSE}" method="POST" class="paytpv_jet" id="paycometPaymentForm" style="clear:left;">
                 {/if}
 
-            
+
                 <p style="padding-top: 5px;">
-                    <a href="http://www.paycomet.com" target="_blank"><img src="{$this_path}views/img/paytpv_logo.svg" width="135"></a>
+                    <a href="http://www.paycomet.com" target="_blank"><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/paytpv_logo.svg" width="135"></a>
                 </p>
-                
+
                 {if ($msg_paytpv!="")}
                 <p>
-                    <span class="message">{$msg_paytpv}</span>
+                    <span class="message">{$msg_paytpv|escape:'htmlall':'UTF-8':FALSE}</span>
                 </p>
                 {/if}
                 {if ($active_suscriptions)}
-                    {include file='modules/paytpv/views/templates/hook/inc_payment_suscription.tpl'}            
-                {/if}   
-                
+                    {include file='modules/paytpv/views/templates/hook/inc_payment_suscription.tpl'}
+                {/if}
+
                 {if ($newpage_payment==1)}
                     <p class="operation_data">
-                        <div class="pad">                          
+                        <div class="pad">
                           <div style="display:inline-table;">
                             <div class="operation">
-                                <h4 class="cost_num">{l s='Total Amount' mod='paytpv'}:<b>{$total_amount} {$currency_symbol}</b></h4>
+                                <h4 class="cost_num">{l s='Total Amount' mod='paytpv'}:<b>{$total_amount|escape:'htmlall':'UTF-8':FALSE} {$currency_symbol|escape:'htmlall':'UTF-8':FALSE}</b></h4>
                             </div>
                           </div>
                         </div>
                   </p>
                 {/if}
-            
+
 
                 <div id="saved_cards" style="display:none">
                     {include file='modules/paytpv/views/templates/hook/inc_payment_cards.tpl'}
 
                     {if (sizeof($saved_card)>1)}
-                        <div id="button_directpay" style="margin-top:10px;">              
-                            <button id="exec_directpay" href="#" class="btn btn-primary center-block exec_directpay paytpv_pay">          
+                        <div id="button_directpay" style="margin-top:10px;">
+                            <button id="exec_directpay" href="#" class="btn btn-primary center-block exec_directpay paytpv_pay">
                                 <span>{l s='Pay' mod='paytpv'}<i class="icon-chevron-right right"></i></span>
-                            </button>                        
-                            <img id='clockwait' style="display:none" src="{$base_dir}modules/paytpv/views/img/clockpayblue.gif"></img>
+                            </button>
+                            <img id='clockwait' style="display:none" src="{$base_dir|escape:'htmlall':'UTF-8':FALSE}modules/paytpv/views/img/clockpayblue.gif"></img>
                         </div>
                     {/if}
-                    
+
                 </div>
 
                 <div id="paytpv_checkconditions" style="display:none">
                     <strong>{l s='You must accept the license terms to continue' mod='paytpv'}</strong>
-                </div>                
-                
+                </div>
+
                 {if (!$disableoffersavecard==1)}
                     {include file='modules/paytpv/views/templates/hook/inc_payment_savecards.tpl'}
                 {/if}
-                    
+
                 <br class="clear"/>
 
                 <div class="payment_module paytpv_iframe" style="display:none">
@@ -94,17 +94,17 @@
                         </div>
                     {/if}
 
-                          
+
                     {if ($newpage_payment<2)}
-                        
+
                         {if ($paytpv_integration==0)}
                             <p id='ajax_loader' style="display:none">
-                                <img id='ajax_loader' src="{$base_dir}modules/paytpv/views/img/clockpayblue.gif"></img>
+                                <img id='ajax_loader' src="{$base_dir|escape:'htmlall':'UTF-8':FALSE}modules/paytpv/views/img/clockpayblue.gif"></img>
                                 {l s='Loading payment form...' mod='paytpv'}
                             </p>
-                            <iframe id="paytpv_iframe" src="{$paytpv_iframe}" name="paytpv" style="width: 100%; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-style: initial; border-color: initial; border-image: initial; height: {$iframe_height}px; " marginheight="0" marginwidth="0" scrolling="no"></iframe>
-                        {else}                            
-                            {include file='modules/paytpv/views/templates/hook/inc_payment_jetIframe.tpl'}                            
+                            <iframe id="paytpv_iframe" src="{$paytpv_iframe|escape:'htmlall':'UTF-8':FALSE}" name="paytpv" style="width: 100%; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-style: initial; border-color: initial; border-image: initial; height: {$iframe_height|escape:'htmlall':'UTF-8':FALSE}px;" marginheight="0" marginwidth="0" scrolling="no"></iframe>
+                        {else}
+                            {include file='modules/paytpv/views/templates/hook/inc_payment_jetIframe.tpl'}
                         {/if}
 
 
@@ -115,20 +115,20 @@
                                 <div class="footer_line">
                                   <div class="footer_logo">
                                       <a href="https://www.paycomet.com" target="_blank">
-                                      <img src="{$this_path}views/img/paytpv_logo.svg">
+                                      <img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/paytpv_logo.svg">
                                     </a>
                                   </div>
                                   <ul class="payment_icons">
-                                    <li><img src="{$this_path}views/img/visa.png" alt="Visa"></li>
-                                    <li><img src="{$this_path}views/img/visa_electron.png" alt="Visa Electron"></li>
-                                    <li><img src="{$this_path}views/img/mastercard.png" alt="Mastercard"></li>
-                                    <li><img src="{$this_path}views/img/maestro.png" alt="Maestro"></li>
-                                    <li><img src="{$this_path}views/img/amex.png" alt="American Express"></li>
-                                    <li><img src="{$this_path}views/img/jcb.png" alt="JCB card"></li>
-                                    <li><img src="{$this_path}views/img/veryfied_by_visa.png" alt="Veryfied by Visa"></li>
-                                    <li><img src="{$this_path}views/img/mastercard_secure_code.png" alt="Mastercard Secure code"></li>
-                                    <li><img src="{$this_path}views/img/pci.png" alt="PCI"></li>
-                                    <li><img src="{$this_path}views/img/thawte.png" alt="Thawte"></li>
+                                    <li><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/visa.png" alt="Visa"></li>
+                                    <li><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/visa_electron.png" alt="Visa Electron"></li>
+                                    <li><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/mastercard.png" alt="Mastercard"></li>
+                                    <li><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/maestro.png" alt="Maestro"></li>
+                                    <li><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/amex.png" alt="American Express"></li>
+                                    <li><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/jcb.png" alt="JCB card"></li>
+                                    <li><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/veryfied_by_visa.png" alt="Veryfied by Visa"></li>
+                                    <li><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/mastercard_secure_code.png" alt="Mastercard Secure code"></li>
+                                    <li><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/pci.png" alt="PCI"></li>
+                                    <li><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/thawte.png" alt="Thawte"></li>
                                   </ul>
                                 </div>
                             </div>
@@ -154,12 +154,12 @@
           </div>
         </div>
     </div>
-    
-    <input type="hidden" name="paytpv_module" id="paytpv_module" value="{$link->getModuleLink('paytpv', 'actions',[], true)|escape:'htmlall':'UTF-8'}">
-    <input type="hidden" name="newpage_payment" id="newpage_payment" value="{$newpage_payment}">
-    <input type="hidden" name="paytpv_integration" id="paytpv_integration" value="{$paytpv_integration}">
 
-    <form id="form_paytpv" action="{$base_dir}index.php?controller=order" method="post">
+    <input type="hidden" name="paytpv_module" id="paytpv_module" value="{$link->getModuleLink('paytpv', 'actions',[], true)|escape:'htmlall':'UTF-8'}">
+    <input type="hidden" name="newpage_payment" id="newpage_payment" value="{$newpage_payment|escape:'htmlall':'UTF-8':FALSE}">
+    <input type="hidden" name="paytpv_integration" id="paytpv_integration" value="{$paytpv_integration|escape:'htmlall':'UTF-8':FALSE}">
+
+    <form id="form_paytpv" action="{$base_dir|escape:'htmlall':'UTF-8':FALSE}index.php?controller=order" method="post">
         <input type="hidden" name="step" value="3">
         <input type="hidden" name="paytpv_cc" id="paytpv_cc" value="">
 
@@ -171,8 +171,8 @@
         <input type="hidden" name="paytpv_periodicity" id="paytpv_periodicity"  value="0">
         <input type="hidden" name="paytpv_cycles" id="paytpv_cycles"  value="0">
 
-        <input type="hidden" name="id_cart" id="id_cart"  value="{$id_cart}">
+        <input type="hidden" name="id_cart" id="id_cart"  value="{$id_cart|escape:'htmlall':'UTF-8':FALSE}">
 
-    </form>    
-   
+    </form>
+
 </div>
