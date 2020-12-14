@@ -29,29 +29,29 @@
 <h2>{l s='Payment not completed' mod='paytpv'}</h2>
 
 	{if ($error_msg)}
-	<img src="{$this_path}views/img/icon-cancel.png"/> &nbsp;&nbsp; {$error_msg}
+	<img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/icon-cancel.png"/> &nbsp;&nbsp; {$error_msg|escape:'htmlall':'UTF-8':FALSE}
 	{else}
-	<img src="{$this_path}views/img/icon-cancel.png"/>&nbsp;&nbsp;   
+	<img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/icon-cancel.png"/>&nbsp;&nbsp;
 	{l s='We are sorry. Your payment has not been completed. You can try again or choose another payment method. Remember that you can use cards adhered to the Visa secure payment system called "Verified by Visa", or MasterCard secure payment system, called "MasterCard SecureCode"'  mod='paytpv'}
 	{/if}
 
-<ul class="footer_links">    
-	<li>    	
-		<a href="{$link->getPageLink('my-account')}" title="{l s='Go to your account'  mod='paytpv'}">    		
-			<img src="{$this_path}views/img/nav-user.gif" alt="{l s='Go to your account' mod='paytpv'}" class="icon" />&nbsp;{l s='Go to your account'  mod='paytpv'}    	
+<ul class="footer_links">
+	<li>
+		<a href="{$link->getPageLink('my-account')|escape:'htmlall':'UTF-8':FALSE}" title="{l s='Go to your account'  mod='paytpv'}">
+			<img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/nav-user.gif" alt="{l s='Go to your account' mod='paytpv'}" class="icon" />&nbsp;{l s='Go to your account'  mod='paytpv'}
 		</a>
 	</li>
-	<li>&nbsp;&nbsp;</li>    
-	<li>    	
-		<a href="{$link->getPageLink('order',false, NULL,'step=3')}" title="{l s='Select payment method'  mod='paytpv'}">    		
-			<img src="{$this_path}views/img/cart.gif" alt="{l s='Select payment method' mod='paytpv'}" class="icon" />&nbsp;{l s='Select payment method'  mod='paytpv'}    	
-	    </a>    
-	</li>    
-	<li>&nbsp;&nbsp;</li>    
-	<li>    	
-		<a href="{$base_dir}">    		
-			<img src="{$this_path}views/img/home.gif" alt="{l s='Home' mod='paytpv'}" class="icon" />&nbsp;{l s='Home'  mod='paytpv'}    	
-		</a>    
+	<li>&nbsp;&nbsp;</li>
+	<li>
+		<a href="{$link->getPageLink('order',false, NULL,'step=3')|escape:'htmlall':'UTF-8':FALSE}" title="{l s='Select payment method'  mod='paytpv'}">
+			<img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/cart.gif" alt="{l s='Select payment method' mod='paytpv'}" class="icon" />&nbsp;{l s='Select payment method'  mod='paytpv'}
+	    </a>
+	</li>
+	<li>&nbsp;&nbsp;</li>
+	<li>
+		<a href="{$base_dir|escape:'htmlall':'UTF-8'}">
+			<img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/home.gif" alt="{l s='Home' mod='paytpv'}" class="icon" />&nbsp;{l s='Home'  mod='paytpv'}
+		</a>
 	</li>
 </ul>
 

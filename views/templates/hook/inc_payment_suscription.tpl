@@ -21,8 +21,7 @@
     *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
     *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
     *}
-   
-                
+
     <div id="tipo-pago">
         <div>
             <span class="checked"><input type="checkbox" name="paytpv_suscripcion" id="paytpv_suscripcion" onclick="check_suscription();" value="1"></span>
@@ -31,11 +30,11 @@
 
         <div id="div_periodicity" class="suscription_period" style="display:none">
             <div class="nota">
-                {l s='The first purchase will be made when placing the order and the following as defined as the frequency of the subscription' mod='paytpv'}.            
+                {l s='The first purchase will be made when placing the order and the following as defined as the frequency of the subscription' mod='paytpv'}.
             </div>
 
             <div class="form-inline">
-                <div class="form-group">    
+                <div class="form-group">
                     <label for="paytpv_periodicity" class="control-label">{l s='Frequency:' mod='paytpv'} </label>
                     <select name="paytpv_periodicity" id="paytpv_periodicity" onChange="saveOrderInfoJQ(1)" class="form-control" style="min-width:200px;">
                         <option value="7">{l s='7 days (weekly)' mod='paytpv'}</option>
@@ -64,9 +63,6 @@
                         <option value="12">12</option>
                     </select>
                 </div>
-            </div>                    
+            </div>
         </div>
-    </div>            
-           
-            
-            
+    </div>

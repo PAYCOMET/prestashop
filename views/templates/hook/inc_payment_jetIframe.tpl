@@ -21,9 +21,8 @@
     *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
     *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
     *}
-   
-    
-    <input type="hidden" data-paycomet="jetID" value="{$jet_id}">
+
+    <input type="hidden" data-paycomet="jetID" value="{$jet_id|escape:'htmlall':'UTF-8':FALSE}">
     <ul>
         <li>
             <label for="MERCHANT_PAN">{l s='Credit Card Number' mod='paytpv'}:</label>
@@ -47,7 +46,7 @@
                 </li>
                 <small class="help">{l s='The CVV is a numerical code, usually 3 digits behind the card' mod='paytpv'}.</small>
             </ul>
-        </li>        
+        </li>
         <input type="hidden" class="paytpv_cardholdername" data-paycomet="cardHolderName" width="360" maxlength="50" value="NONAME"  placeholder="{l s='Cardholder name' mod='paytpv'}" onclick="this.value='';">        
     </ul>
     <div>
@@ -60,10 +59,10 @@
         {elseif ($account==1)}
             <button type="submit" title="{l s='Save Card' mod='paytpv'}" class="btn btn-primary button-small" id="btnforg">
                 <span>{l s='Save Card' mod='paytpv'}<i class="icon-chevron-right right"></i></span>
-            </button>        
+            </button>
         {/if}
     </div>
     <div id="paymentErrorMsg"></div>
-    <script type="text/javascript" src="{$jet_paytpv}?lang={$jet_lang}"></script>
+    <script type="text/javascript" src="{$jet_paytpv|escape:'htmlall':'UTF-8':FALSE}?lang={$jet_lang|escape:'htmlall':'UTF-8':FALSE}"></script>
 
-    <input type="hidden" name="paytpv_jetid_url" id="paytpv_jetid_url" value="{$paytpv_jetid_url}">
+    <input type="hidden" name="paytpv_jetid_url" id="paytpv_jetid_url" value="{$paytpv_jetid_url|escape:'htmlall':'UTF-8':FALSE}">

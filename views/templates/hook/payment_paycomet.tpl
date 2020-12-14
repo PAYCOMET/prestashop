@@ -21,10 +21,10 @@
     *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
     *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
     *}
-    
-    <form action="{$paytpv_jetid_url}" method="POST" class="paytpv_jet" id="paycometPagePaymentForm" style="clear:left;">  
+
+    <form action="{$paytpv_jetid_url|escape:'htmlall':'UTF-8':FALSE}" method="POST" class="paytpv_jet" id="paycometPagePaymentForm" style="clear:left;">
         <input type="hidden" name="test" value="aaa">
         <div id="saved_cards" style="display:none">
-            {include file='modules/paytpv/views/templates/hook/inc_payment_cards.tpl'}        
+            {include file='modules/paytpv/views/templates/hook/inc_payment_cards.tpl'}
         </div>
-    </form> 
+    </form>
