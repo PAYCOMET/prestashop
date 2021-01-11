@@ -53,7 +53,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.6.1';
+        $this->version = '7.6.2';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
 
@@ -780,14 +780,16 @@ class Paytpv extends PaymentModule
             $arrDatosHomePhone = array();
             if ($billing->phone) {
                 $arrDatosHomePhone["cc"] = $billing_address_country->call_prefix;
-                $arrDatosHomePhone["subscriber"] = $billing->phone;
+                $suscriber_phone = preg_replace('/[^0-9]/', '', $billing->phone);
+                $arrDatosHomePhone["subscriber"] = $suscriber_phone;
                 $Merchant_EMV3DS["customer"]["homePhone"] = $arrDatosHomePhone;
             }
 
             $arrDatosMobilePhone = array();
             if ($billing->phone_mobile) {
                 $arrDatosMobilePhone["cc"] = $billing_address_country->call_prefix;
-                $arrDatosMobilePhone["subscriber"] = $billing->phone_mobile;
+                $suscriber_phone_mobile = preg_replace('/[^0-9]/', '', $billing->phone_mobile);
+                $arrDatosMobilePhone["subscriber"] = $suscriber_phone_mobile;
                 $Merchant_EMV3DS["customer"]["mobilePhone"] = $arrDatosMobilePhone;
             }
         }
@@ -1680,13 +1682,20 @@ class Paytpv extends PaymentModule
 
         $language = $this->getPaycometLang($this->context->language->language_code);
 
+        $paytpv_error = 0;
+        $iframeURL = $this->paytpvIframeURL();
+        if (filter_var($iframeURL, FILTER_VALIDATE_URL) === false) {
+            $paytpv_error = $iframeURL;
+            $iframeURL = "";
+        }
 
         return array(
             'msg_paytpv' => '',
             'active_suscriptions' => $active_suscriptions,
             'saved_card' => $saved_card,
             'id_cart' => $cart->id,
-            'paytpv_iframe' => $this->paytpvIframeUrl(),
+            'paytpv_iframe' => $iframeURL,
+            'paytpv_error' => $paytpv_error,
             'paytpv_integration' => $paytpv_integration,
             'account' => 0,
             'jet_id' => $jetid_sel,
@@ -1722,40 +1731,61 @@ class Paytpv extends PaymentModule
             ->setForm($form_paytpv);
         // Pago en página de PAYCOMET
         } elseif ($newpage_payment == 2) {
+            $arrTemplateVarInfos = $this->getTemplateVarInfos();
             $this->context->smarty->assign(
-                $this->getTemplateVarInfos()
+                $arrTemplateVarInfos
             );
-
-            $newOption = new PaymentOption();
-            $newOption->setCallToActionText($this->trans($this->l('Pay with card'), array(), 'Modules.Paytpv.Shop'))
-                        ->setForm($this->paycometPageForm());
+            if ($arrTemplateVarInfos['paytpv_error']!=0) {
+                $newOption = new PaymentOption();
+                $newOption->setCallToActionText(
+                    $this->trans($this->l('Pay with card'), array(), 'Modules.Paytpv.Shop')
+                );
+                $newOption->setAdditionalInformation(
+                    $this->fetch('module:paytpv/views/templates/hook/payment_error_hook.tpl')
+                );
+            } else {
+                $newOption = new PaymentOption();
+                $newOption->setCallToActionText($this->trans($this->l('Pay with card'), array(), 'Modules.Paytpv.Shop'))
+                            ->setForm($this->paycometPageForm());
+            }
         // Pago integrado
         } else {
+            $arrTemplateVarInfos = $this->getTemplateVarInfos();
             $this->context->smarty->assign(
-                $this->getTemplateVarInfos()
+                $arrTemplateVarInfos
             );
 
-            switch ($this->integration) {
-                // Iframe
-                case 0:
-                    $newOption = new PaymentOption();
-                    $newOption->setBinary(true);
-                    $newOption->setCallToActionText(
-                        $this->trans($this->l('Pay with card'), array(), 'Modules.Paytpv.Shop')
-                    );
-                    $newOption->setAdditionalInformation(
-                        $this->fetch('module:paytpv/views/templates/hook/payment_bsiframe_hook.tpl')
-                    );
-                    break;
+            if ($arrTemplateVarInfos['paytpv_error']!=0) {
+                $newOption = new PaymentOption();
+                $newOption->setCallToActionText(
+                    $this->trans($this->l('Pay with card'), array(), 'Modules.Paytpv.Shop')
+                );
+                $newOption->setAdditionalInformation(
+                    $this->fetch('module:paytpv/views/templates/hook/payment_error_hook.tpl')
+                );
+            } else {
+                switch ($this->integration) {
+                    // Iframe
+                    case 0:
+                        $newOption = new PaymentOption();
+                        $newOption->setBinary(true);
+                        $newOption->setCallToActionText(
+                            $this->trans($this->l('Pay with card'), array(), 'Modules.Paytpv.Shop')
+                        );
+                        $newOption->setAdditionalInformation(
+                            $this->fetch('module:paytpv/views/templates/hook/payment_bsiframe_hook.tpl')
+                        );
+                        break;
 
-                // JetIframe
-                case 1:
-                    $newOption = new PaymentOption();
-                    $newOption->setCallToActionText(
-                        $this->trans($this->l('Pay with card'), array(), 'Modules.Paytpv.Shop')
-                    );
-                    $newOption->setForm($this->jetIframeForm());
-                    break;
+                    // JetIframe
+                    case 1:
+                        $newOption = new PaymentOption();
+                        $newOption->setCallToActionText(
+                            $this->trans($this->l('Pay with card'), array(), 'Modules.Paytpv.Shop')
+                        );
+                        $newOption->setForm($this->jetIframeForm());
+                        break;
+                }
             }
         }
 
@@ -1874,9 +1904,11 @@ class Paytpv extends PaymentModule
                 $url_paytpv = "";
                 if ($formResponse->errorCode == 0) {
                     $url_paytpv = $formResponse->challengeUrl;
+                } else {
+                    $url_paytpv = $formResponse->errorCode;
                 }
             } catch (exception $e) {
-                $url_paytpv = "";
+                $url_paytpv = $e->getCode();
             }
         } else {
             // Cálculo Firma

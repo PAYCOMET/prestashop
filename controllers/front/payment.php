@@ -167,8 +167,15 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
 
         $this->context->smarty->assign('disableoffersavecard', $disableoffersavecard);
 
-        $this->context->smarty->assign('paytpv_iframe', $this->module->paytpvIframeUrl());
-
-        $this->setTemplate('module:paytpv/views/templates/hook/payment_bsiframe_newpage.tpl');
+        $iframeURL = $this->module->paytpvIframeURL();
+        if (filter_var($iframeURL, FILTER_VALIDATE_URL) === false) {
+            $paytpv_error = $iframeURL;
+            $iframeURL = "";
+            $this->context->smarty->assign('paytpv_error', $paytpv_error);
+            $this->setTemplate('module:paytpv/views/templates/hook/payment_error.tpl');
+        } else {
+            $this->context->smarty->assign('paytpv_iframe', $iframeURL);
+            $this->setTemplate('module:paytpv/views/templates/hook/payment_bsiframe_newpage.tpl');
+        }
     }
 }
