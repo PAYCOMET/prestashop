@@ -41,7 +41,7 @@ function ShowHidePaymentButton(show){
 
 $(document).ready(function() {
 
-    $('#expiry_date').on('input',function()
+    $("body").on("input","#expiry_date",function(event)    
     {
         var curLength = $(this).val().length;
         if(curLength === 2){
