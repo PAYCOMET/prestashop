@@ -746,10 +746,10 @@ class Paytpv extends PaymentModule
 
         $Merchant_EMV3DS = array();
 
-        $Merchant_EMV3DS["customer"]["id"] = $this->context->customer->id;
-        $Merchant_EMV3DS["customer"]["name"] = $this->context->customer->firstname;
-        $Merchant_EMV3DS["customer"]["surname"] = $this->context->customer->lastname;
-        $Merchant_EMV3DS["customer"]["email"] = $this->context->customer->email;
+        $Merchant_EMV3DS["customer"]["id"] = isset($this->context->customer->id) ? $this->context->customer->id : 0;
+        $Merchant_EMV3DS["customer"]["name"] = isset($this->context->customer->firstname) ? $this->context->customer->firstname : '';
+        $Merchant_EMV3DS["customer"]["surname"] = isset($this->context->customer->lastname) ? $this->context->customer->lastname : '';
+        $Merchant_EMV3DS["customer"]["email"] = isset($this->context->customer->email) ? $this->context->customer->email : '';
 
 
         // Billing info
@@ -759,12 +759,11 @@ class Paytpv extends PaymentModule
             $billing_address_country = new Country($billing->id_country);
             $billing_address_state = new State($billing->id_state);
 
-
             $Merchant_EMV3DS["billing"]["billAddrCity"] = ($billing) ? $billing->city : "";
             $Merchant_EMV3DS["billing"]["billAddrCountry"] = ($billing) ? $billing_address_country->iso_code : "";
             if ($Merchant_EMV3DS["billing"]["billAddrCountry"] != "") {
                 $Merchant_EMV3DS["billing"]["billAddrCountry"] =
-                        $this->isoCodeToNumber($Merchant_EMV3DS["billing"]["billAddrCountry"]);
+                    $this->isoCodeToNumber($Merchant_EMV3DS["billing"]["billAddrCountry"]);
             }
             $Merchant_EMV3DS["billing"]["billAddrLine1"] = ($billing) ? $billing->address1 : "";
             $Merchant_EMV3DS["billing"]["billAddrLine2"] = ($billing) ? $billing->address2 : "";
@@ -779,17 +778,17 @@ class Paytpv extends PaymentModule
 
             $arrDatosHomePhone = array();
             if ($billing->phone) {
-                $arrDatosHomePhone["cc"] = $billing_address_country->call_prefix;
+                $arrDatosHomePhone["cc"] = (string) $billing_address_country->call_prefix;
                 $suscriber_phone = preg_replace('/[^0-9]/', '', $billing->phone);
-                $arrDatosHomePhone["subscriber"] = $suscriber_phone;
+                $arrDatosHomePhone["subscriber"] = (string) $suscriber_phone;
                 $Merchant_EMV3DS["customer"]["homePhone"] = $arrDatosHomePhone;
             }
 
             $arrDatosMobilePhone = array();
             if ($billing->phone_mobile) {
-                $arrDatosMobilePhone["cc"] = $billing_address_country->call_prefix;
+                $arrDatosMobilePhone["cc"] = (string) $billing_address_country->call_prefix;
                 $suscriber_phone_mobile = preg_replace('/[^0-9]/', '', $billing->phone_mobile);
-                $arrDatosMobilePhone["subscriber"] = $suscriber_phone_mobile;
+                $arrDatosMobilePhone["subscriber"] = (string) $suscriber_phone_mobile;
                 $Merchant_EMV3DS["customer"]["mobilePhone"] = $arrDatosMobilePhone;
             }
         }
@@ -821,8 +820,8 @@ class Paytpv extends PaymentModule
 
             $arrDatosWorkPhone = array();
             if ($shipping->phone) {
-                $arrDatosWorkPhone["cc"] = $billing_address_country->call_prefix;
-                $arrDatosWorkPhone["subscriber"] = $shipping->phone;
+                $arrDatosWorkPhone["cc"] = (string) $billing_address_country->call_prefix;
+                $arrDatosWorkPhone["subscriber"] = (string) $shipping->phone;
 
                 $Merchant_EMV3DS["customer"]["workPhone"] = $arrDatosWorkPhone;
             }
