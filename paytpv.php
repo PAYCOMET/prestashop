@@ -53,7 +53,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.6.2';
+        $this->version = '7.6.3';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
 
@@ -698,46 +698,51 @@ class Paytpv extends PaymentModule
 
     public function isoCodeToNumber($code)
     {
+        $isoCodeNumber = 724; // Default value;
 
         $arrCode = array(
-            "AF" => "004", "AX" => "248", "AL" => "008", "DE" => "276", "AD" => "020", "AO" => "024", "AI" => "660",
-            "AQ" => "010", "AG" => "028", "SA" => "682", "DZ" => "012", "AR" => "032", "AM" => "051", "AW" => "533",
-            "AU" => "036", "AT" => "040", "AZ" => "031", "BS" => "044", "BD" => "050", "BB" => "052", "BH" => "048",
-            "BE" => "056", "BZ" => "084", "BJ" => "204", "BM" => "060", "BY" => "112", "BO" => "068", "BQ" => "535",
-            "BA" => "070", "BW" => "072", "BR" => "076", "BN" => "096", "BG" => "100", "BF" => "854", "BI" => "108",
-            "BT" => "064", "CV" => "132", "KH" => "116", "CM" => "120", "CA" => "124", "QA" => "634", "TD" => "148",
-            "CL" => "52", "CN" => "156", "CY" => "196", "CO" => "170", "KM" => "174", "KP" => "408", "KR" => "410",
-            "CI" => "384", "CR" => "188", "HR" => "191", "CU" => "192", "CW" => "531", "DK" => "208", "DM" => "212",
-            "EC" => "218", "EG" => "818", "SV" => "222", "AE" => "784", "ER" => "232", "SK" => "703", "SI" => "705",
-            "ES" => "724", "US" => "840", "EE" => "233", "ET" => "231", "PH" => "608", "FI" => "246", "FJ" => "242",
-            "FR" => "250", "GA" => "266", "GM" => "270", "GE" => "268", "GH" => "288", "GI" => "292", "GD" => "308",
-            "GR" => "300", "GL" => "304", "GP" => "312", "GU" => "316", "GT" => "320", "GF" => "254", "GG" => "831",
-            "GN" => "324", "GW" => "624", "GQ" => "226", "GY" => "328", "HT" => "332", "HN" => "340", "HK" => "344",
-            "HU" => "348", "IN" => "356", "ID" => "360", "IQ" => "368", "IR" => "364", "IE" => "372", "BV" => "074",
-            "IM" => "833", "CX" => "162", "IS" => "352", "KY" => "136", "CC" => "166", "CK" => "184", "FO" => "234",
-            "GS" => "239", "HM" => "334", "FK" => "238", "MP" => "580", "MH" => "584", "PN" => "612", "SB" => "090",
-            "TC" => "796", "UM" => "581", "VG" => "092", "VI" => "850", "IL" => "376", "IT" => "380", "JM" => "388",
-            "JP" => "392", "JE" => "832", "JO" => "400", "KZ" => "398", "KE" => "404", "KG" => "417", "KI" => "296",
-            "KW" => "414", "LA" => "418", "LS" => "426", "LV" => "428", "LB" => "422", "LR" => "430", "LY" => "434",
-            "LI" => "438", "LT" => "440", "LU" => "442", "MO" => "446", "MK" => "807", "MG" => "450", "MY" => "458",
-            "MW" => "454", "MV" => "462", "ML" => "466", "MT" => "470", "MA" => "504", "MQ" => "474", "MU" => "480",
-            "MR" => "478", "YT" => "175", "MX" => "484", "FM" => "583", "MD" => "498", "MC" => "492", "MN" => "496",
-            "ME" => "499", "MS" => "500", "MZ" => "508", "MM" => "104", "NA" => "516", "NR" => "520", "NP" => "524",
-            "NI" => "558", "NE" => "562", "NG" => "566", "NU" => "570", "NF" => "574", "NO" => "578", "NC" => "540",
-            "NZ" => "554", "OM" => "512", "NL" => "528", "PK" => "586", "PW" => "585", "PS" => "275", "PA" => "591",
-            "PG" => "598", "PY" => "600", "PE" => "604", "PF" => "258", "PL" => "616", "PT" => "620", "PR" => "630",
-            "GB" => "826", "EH" => "732", "CF" => "140", "CZ" => "203", "CG" => "178", "CD" => "180", "DO" => "214",
-            "RE" => "638", "RW" => "646", "RO" => "642", "RU" => "643", "WS" => "882", "AS" => "016", "BL" => "652",
-            "KN" => "659", "SM" => "674", "MF" => "663", "PM" => "666", "VC" => "670", "SH" => "654", "LC" => "662",
-            "ST" => "678", "SN" => "686", "RS" => "688", "SC" => "690", "SL" => "694", "SG" => "702", "SX" => "534",
-            "SY" => "760", "SO" => "706", "LK" => "144", "SZ" => "748", "ZA" => "710", "SD" => "729", "SS" => "728",
-            "SE" => "752", "CH" => "756", "SR" => "740", "SJ" => "744", "TH" => "764", "TW" => "158", "TZ" => "834",
-            "TJ" => "762", "IO" => "086", "TF" => "260", "TL" => "626", "TG" => "768", "TK" => "772", "TO" => "776",
-            "TT" => "780", "TN" => "788", "TM" => "795", "TR" => "792", "TV" => "798", "UA" => "804", "UG" => "800",
-            "UY" => "858", "UZ" => "860", "VU" => "548", "VA" => "336", "VE" => "862", "VN" => "704", "WF" => "876",
-            "YE" => "887", "DJ" => "262", "ZM" => "894", "ZW" => "716");
+            "AF" => "004", "AX" => "248", "AL" => "008", "DE" => "276", "AD" => "020", "AO" => "024",
+            "AI" => "660", "AQ" => "010", "AG" => "028", "SA" => "682", "DZ" => "012", "AR" => "032", "AM" => "051",
+            "AW" => "533", "AU" => "036", "AT" => "040", "AZ" => "031", "BS" => "044", "BD" => "050", "BB" => "052",
+            "BH" => "048", "BE" => "056", "BZ" => "084", "BJ" => "204", "BM" => "060", "BY" => "112", "BO" => "068",
+            "BQ" => "535", "BA" => "070", "BW" => "072", "BR" => "076", "BN" => "096", "BG" => "100", "BF" => "854",
+            "BI" => "108", "BT" => "064", "CV" => "132", "KH" => "116", "CM" => "120", "CA" => "124", "QA" => "634",
+            "TD" => "148", "CL" => "52", "CN" => "156", "CY" => "196", "CO" => "170", "KM" => "174", "KP" => "408",
+            "KR" => "410", "CI" => "384", "CR" => "188", "HR" => "191", "CU" => "192", "CW" => "531", "DK" => "208",
+            "DM" => "212", "EC" => "218", "EG" => "818", "SV" => "222", "AE" => "784", "ER" => "232", "SK" => "703",
+            "SI" => "705", "ES" => "724", "US" => "840", "EE" => "233", "ET" => "231", "PH" => "608", "FI" => "246",
+            "FJ" => "242", "FR" => "250", "GA" => "266", "GM" => "270", "GE" => "268", "GH" => "288", "GI" => "292",
+            "GD" => "308", "GR" => "300", "GL" => "304", "GP" => "312", "GU" => "316", "GT" => "320", "GF" => "254",
+            "GG" => "831", "GN" => "324", "GW" => "624", "GQ" => "226", "GY" => "328", "HT" => "332", "HN" => "340",
+            "HK" => "344", "HU" => "348", "IN" => "356", "ID" => "360", "IQ" => "368", "IR" => "364", "IE" => "372",
+            "BV" => "074", "IM" => "833", "CX" => "162", "IS" => "352", "KY" => "136", "CC" => "166", "CK" => "184",
+            "FO" => "234", "GS" => "239", "HM" => "334", "FK" => "238", "MP" => "580", "MH" => "584", "PN" => "612",
+            "SB" => "090", "TC" => "796", "UM" => "581", "VG" => "092", "VI" => "850", "IL" => "376", "IT" => "380",
+            "JM" => "388", "JP" => "392", "JE" => "832", "JO" => "400", "KZ" => "398", "KE" => "404", "KG" => "417",
+            "KI" => "296", "KW" => "414", "LA" => "418", "LS" => "426", "LV" => "428", "LB" => "422", "LR" => "430",
+            "LY" => "434", "LI" => "438", "LT" => "440", "LU" => "442", "MO" => "446", "MK" => "807", "MG" => "450",
+            "MY" => "458", "MW" => "454", "MV" => "462", "ML" => "466", "MT" => "470", "MA" => "504", "MQ" => "474",
+            "MU" => "480", "MR" => "478", "YT" => "175", "MX" => "484", "FM" => "583", "MD" => "498", "MC" => "492",
+            "MN" => "496", "ME" => "499", "MS" => "500", "MZ" => "508", "MM" => "104", "NA" => "516", "NR" => "520",
+            "NP" => "524", "NI" => "558", "NE" => "562", "NG" => "566", "NU" => "570", "NF" => "574", "NO" => "578",
+            "NC" => "540", "NZ" => "554", "OM" => "512", "NL" => "528", "PK" => "586", "PW" => "585", "PS" => "275",
+            "PA" => "591", "PG" => "598", "PY" => "600", "PE" => "604", "PF" => "258", "PL" => "616", "PT" => "620",
+            "PR" => "630", "GB" => "826", "EH" => "732", "CF" => "140", "CZ" => "203", "CG" => "178", "CD" => "180",
+            "DO" => "214", "RE" => "638", "RW" => "646", "RO" => "642", "RU" => "643", "WS" => "882", "AS" => "016",
+            "BL" => "652", "KN" => "659", "SM" => "674", "MF" => "663", "PM" => "666", "VC" => "670", "SH" => "654",
+            "LC" => "662", "ST" => "678", "SN" => "686", "RS" => "688", "SC" => "690", "SL" => "694", "SG" => "702",
+            "SX" => "534", "SY" => "760", "SO" => "706", "LK" => "144", "SZ" => "748", "ZA" => "710", "SD" => "729",
+            "SS" => "728", "SE" => "752", "CH" => "756", "SR" => "740", "SJ" => "744", "TH" => "764", "TW" => "158",
+            "TZ" => "834", "TJ" => "762", "IO" => "086", "TF" => "260", "TL" => "626", "TG" => "768", "TK" => "772",
+            "TO" => "776", "TT" => "780", "TN" => "788", "TM" => "795", "TR" => "792", "TV" => "798", "UA" => "804",
+            "UG" => "800", "UY" => "858", "UZ" => "860", "VU" => "548", "VA" => "336", "VE" => "862", "VN" => "704",
+            "WF" => "876", "YE" => "887", "DJ" => "262", "ZM" => "894", "ZW" => "716"
+        );
 
-        return $arrCode[$code];
+        if (isset($arrCode[$code])) {
+            $isoCodeNumber = $arrCode[$code];
+        }
+        return $isoCodeNumber;
     }
 
 
@@ -746,10 +751,14 @@ class Paytpv extends PaymentModule
 
         $Merchant_EMV3DS = array();
 
-        $Merchant_EMV3DS["customer"]["id"] = isset($this->context->customer->id) ? $this->context->customer->id : 0;
-        $Merchant_EMV3DS["customer"]["name"] = isset($this->context->customer->firstname) ? $this->context->customer->firstname : '';
-        $Merchant_EMV3DS["customer"]["surname"] = isset($this->context->customer->lastname) ? $this->context->customer->lastname : '';
-        $Merchant_EMV3DS["customer"]["email"] = isset($this->context->customer->email) ? $this->context->customer->email : '';
+        $Merchant_EMV3DS["customer"]["id"] =
+            isset($this->context->customer->id) ? $this->context->customer->id : '';
+        $Merchant_EMV3DS["customer"]["name"] =
+            isset($this->context->customer->firstname) ? $this->context->customer->firstname : '';
+        $Merchant_EMV3DS["customer"]["surname"] =
+            isset($this->context->customer->lastname) ? $this->context->customer->lastname : '';
+        $Merchant_EMV3DS["customer"]["email"] =
+            isset($this->context->customer->email) ? $this->context->customer->email : '';
 
 
         // Billing info
@@ -759,36 +768,42 @@ class Paytpv extends PaymentModule
             $billing_address_country = new Country($billing->id_country);
             $billing_address_state = new State($billing->id_state);
 
-            $Merchant_EMV3DS["billing"]["billAddrCity"] = ($billing) ? $billing->city : "";
-            $Merchant_EMV3DS["billing"]["billAddrCountry"] = ($billing) ? $billing_address_country->iso_code : "";
+            $Merchant_EMV3DS["billing"]["billAddrCity"] = ($billing) ? $billing->city : '';
+            $Merchant_EMV3DS["billing"]["billAddrCountry"] = ($billing) ? $billing_address_country->iso_code : '';
             if ($Merchant_EMV3DS["billing"]["billAddrCountry"] != "") {
                 $Merchant_EMV3DS["billing"]["billAddrCountry"] =
                     $this->isoCodeToNumber($Merchant_EMV3DS["billing"]["billAddrCountry"]);
+                // billAddrState -> Only if defined billAddrCountry
+                if ($billing_address_state->iso_code != "") {
+                    $billAddState = explode("-", $billing_address_state->iso_code);
+                    $billAddState = end($billAddState);
+                    $Merchant_EMV3DS["billing"]["billAddrState"] = $billAddState;
+                }
             }
-            $Merchant_EMV3DS["billing"]["billAddrLine1"] = ($billing) ? $billing->address1 : "";
-            $Merchant_EMV3DS["billing"]["billAddrLine2"] = ($billing) ? $billing->address2 : "";
+            $Merchant_EMV3DS["billing"]["billAddrLine1"] = ($billing) ? $billing->address1 : '';
+            $Merchant_EMV3DS["billing"]["billAddrLine2"] = ($billing) ? $billing->address2 : '';
             //$Merchant_EMV3DS["billing"]["billAddrLine3"] = "";
-            $Merchant_EMV3DS["billing"]["billAddrPostCode"] = ($billing) ? $billing->postcode : "";
-
-            if ($billing_address_state->iso_code != "") {
-                $billAddState = explode("-", $billing_address_state->iso_code);
-                $billAddState = end($billAddState);
-                $Merchant_EMV3DS["billing"]["billAddrState"] = $billAddState;
-            }
-
-            $arrDatosHomePhone = array();
+            $Merchant_EMV3DS["billing"]["billAddrPostCode"] = ($billing) ? $billing->postcode : '';
+            
             if ($billing->phone) {
-                $arrDatosHomePhone["cc"] = (string) $billing_address_country->call_prefix;
-                $suscriber_phone = preg_replace('/[^0-9]/', '', $billing->phone);
-                $arrDatosHomePhone["subscriber"] = (string) $suscriber_phone;
+                $arrDatosHomePhone = array();
+
+                $arrDatosHomePhone["cc"] =
+                    Tools::substr(preg_replace('/[^0-9]/', '', $billing_address_country->call_prefix), 0, 3);
+                $arrDatosHomePhone["subscriber"] =
+                    Tools::substr(preg_replace('/[^0-9]/', '', $billing->phone), 0, 15);
+
                 $Merchant_EMV3DS["customer"]["homePhone"] = $arrDatosHomePhone;
             }
 
-            $arrDatosMobilePhone = array();
             if ($billing->phone_mobile) {
-                $arrDatosMobilePhone["cc"] = (string) $billing_address_country->call_prefix;
-                $suscriber_phone_mobile = preg_replace('/[^0-9]/', '', $billing->phone_mobile);
-                $arrDatosMobilePhone["subscriber"] = (string) $suscriber_phone_mobile;
+                $arrDatosMobilePhone = array();
+
+                $arrDatosMobilePhone["cc"] =
+                    Tools::substr(preg_replace('/[^0-9]/', '', $billing_address_country->call_prefix), 0, 3);
+                $arrDatosMobilePhone["subscriber"] =
+                    Tools::substr(preg_replace('/[^0-9]/', '', $billing->phone_mobile), 0, 15);
+
                 $Merchant_EMV3DS["customer"]["mobilePhone"] = $arrDatosMobilePhone;
             }
         }
@@ -801,27 +816,30 @@ class Paytpv extends PaymentModule
             $shipping_address_country = new Country($shipping->id_country);
             $shipping_address_state = new State($shipping->id_state);
 
-            $Merchant_EMV3DS["shipping"]["shipAddrCity"] = ($shipping) ? $shipping->city : "";
-            $Merchant_EMV3DS["shipping"]["shipAddrCountry"] = ($shipping) ? $shipping_address_country->iso_code : "";
+            $Merchant_EMV3DS["shipping"]["shipAddrCity"] = ($shipping) ? $shipping->city : '';
+            $Merchant_EMV3DS["shipping"]["shipAddrCountry"] = ($shipping) ? $shipping_address_country->iso_code : '';
             if ($Merchant_EMV3DS["shipping"]["shipAddrCountry"] != "") {
                 $Merchant_EMV3DS["shipping"]["shipAddrCountry"] =
                     $this->isoCodeToNumber($Merchant_EMV3DS["shipping"]["shipAddrCountry"]);
+                // shipAddrState -> Only if defined shipAddrCountry
+                if ($shipping_address_state->iso_code != "") {
+                    $shipAddrState = explode("-", $shipping_address_state->iso_code);
+                    $shipAddrState = end($shipAddrState);
+                    $Merchant_EMV3DS["shipping"]["shipAddrState"] = $shipAddrState;
+                }
             }
-            $Merchant_EMV3DS["shipping"]["shipAddrLine1"] = ($shipping) ? $shipping->address1 : "";
-            $Merchant_EMV3DS["shipping"]["shipAddrLine2"] = ($shipping) ? $shipping->address2 : "";
+            $Merchant_EMV3DS["shipping"]["shipAddrLine1"] = ($shipping) ? $shipping->address1 : '';
+            $Merchant_EMV3DS["shipping"]["shipAddrLine2"] = ($shipping) ? $shipping->address2 : '';
             //$Merchant_EMV3DS["shipping"]["shipAddrLine3"] = "";
-            $Merchant_EMV3DS["shipping"]["shipAddrPostCode"] = ($shipping) ? $shipping->postcode : "";
+            $Merchant_EMV3DS["shipping"]["shipAddrPostCode"] = ($shipping) ? $shipping->postcode : '';
 
-            if ($shipping_address_state->iso_code != "") {
-                $shipAddrState = explode("-", $shipping_address_state->iso_code);
-                $shipAddrState = end($shipAddrState);
-                $Merchant_EMV3DS["shipping"]["shipAddrState"] = $shipAddrState;
-            }
-
-            $arrDatosWorkPhone = array();
             if ($shipping->phone) {
-                $arrDatosWorkPhone["cc"] = (string) $billing_address_country->call_prefix;
-                $arrDatosWorkPhone["subscriber"] = (string) $shipping->phone;
+                $arrDatosWorkPhone = array();
+
+                $arrDatosWorkPhone["cc"] =
+                    Tools::substr(preg_replace('/[^0-9]/', '', $shipping_address_country->call_prefix), 0, 3);
+                $arrDatosWorkPhone["subscriber"] =
+                    Tools::substr(preg_replace('/[^0-9]/', '', $shipping->phone), 0, 15);
 
                 $Merchant_EMV3DS["customer"]["workPhone"] = $arrDatosWorkPhone;
             }
