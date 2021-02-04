@@ -78,7 +78,8 @@ class WSClient
         $amount,
         $ref,
         $MERCHANT_SCORING,
-        $MERCHANT_DATA
+        $MERCHANT_DATA,
+        $DS_USER_INTERACTION = 0
     ) {
 
         $DS_MERCHANT_MERCHANTCODE = $this->config['clientcode'];
@@ -130,6 +131,9 @@ class WSClient
         }
         if ($MERCHANT_DATA != null) {
             $p["MERCHANT_DATA"] = $MERCHANT_DATA;
+        }
+        if ($DS_USER_INTERACTION!='') {
+            $p["DS_USER_INTERACTION"] = $DS_USER_INTERACTION;
         }
 
         $this->writeLog("Petición execute_purchase:\n" . print_r($p, true));

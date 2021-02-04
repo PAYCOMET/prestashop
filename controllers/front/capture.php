@@ -207,6 +207,10 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
         );
         $ssl = Configuration::get('PS_SSL_ENABLED');
 
+        $userInteraction = '1';
+        $methodId = '1';
+        $notifyDirectPayment = 1;
+
         // PAGO SEGURO
         if ($secure_pay) {
             $paytpv_order_ref = str_pad($this->context->cart->id, 8, "0", STR_PAD_LEFT);
@@ -287,9 +291,6 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 $salida = $paytpv->url_paytpv . "?" . $query . "&VHASH=" . $vhash;
             } else {
                 $merchantData = $paytpv->getMerchantData($this->context->cart);
-                $userInteraction = '1';
-                $methodId = '1';
-                $notifyDirectPayment = 1;
 
                 $apiRest = new PaycometApiRest($paytpv->apikey);
 
@@ -408,8 +409,6 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 $URLOK=Context::getContext()->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
                 $URLKO=Context::getContext()->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
 
-                $userInteraction = '1';
-                $methodId = '1';
                 $merchantData = $paytpv->getMerchantData($this->context->cart);
 
                 $createSubscriptionResponse = $apiRest->createSubscription(
@@ -453,9 +452,6 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 $URLOK=Context::getContext()->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
                 $URLKO=Context::getContext()->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
 
-                $userInteraction = '1';
-                $methodId = '1';
-                $notifyDirectPayment = 1;
                 $merchantData = $paytpv->getMerchantData($this->context->cart);
 
                 try {
@@ -504,8 +500,14 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     $importe,
                     $paytpv_order_ref,
                     $MERCHANT_SCORING,
-                    null
+                    null,
+                    $userInteraction
                 );
+
+                if (isset($charge["DS_CHALLENGE_URL"]) && $charge["DS_CHALLENGE_URL"] != "" && $charge["DS_CHALLENGE_URL"] != "0") {
+                    Tools::redirect(urldecode($charge["DS_CHALLENGE_URL"]));
+                    exit;
+                }
             }
         }
 
