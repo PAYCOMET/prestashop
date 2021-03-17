@@ -137,6 +137,69 @@ class Paytpv extends PaymentModule
         if (isset($config['PAYTPV_DISABLEOFFERSAVECARD'])) {
             $this->disableoffersavecard = $config['PAYTPV_DISABLEOFFERSAVECARD'];
         }
+        if (array_key_exists('PAYTPV_APM_paypal', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_paypal'];
+        }
+        if (array_key_exists('PAYTPV_APM_klarna_payments', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_klarna_payments'];
+        }
+        if (array_key_exists('PAYTPV_APM_ideal', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_ideal'];
+        }
+        if (array_key_exists('PAYTPV_APM_giropay', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_giropay'];
+        }
+        if (array_key_exists('PAYTPV_APM_mybank', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_mybank'];
+        }
+        if (array_key_exists('PAYTPV_APM_multibanco_sibs', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_multibanco_sibs'];
+        }
+        if (array_key_exists('PAYTPV_APM_trustly', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_trustly'];
+        }
+        if (array_key_exists('PAYTPV_APM_przelewy24', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_przelewy24'];
+        }
+        if (array_key_exists('PAYTPV_APM_bancontact', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_bancontact'];
+        }
+        if (array_key_exists('PAYTPV_APM_eps', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_eps'];
+        }
+        if (array_key_exists('PAYTPV_APM_tele2', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_tele2'];
+        }
+        if (array_key_exists('PAYTPV_APM_paysera', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_paysera'];
+        }
+        if (array_key_exists('PAYTPV_APM_postfinance', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_postfinance'];
+        }
+        if (array_key_exists('PAYTPV_APM_qiwi_wallet', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_qiwi_wallet'];
+        }
+        if (array_key_exists('PAYTPV_APM_yandex_money', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_yandex_money'];
+        }
+        if (array_key_exists('PAYTPV_APM_mts', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_mts'];
+        }
+        if (array_key_exists('PAYTPV_APM_beeline', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_beeline'];
+        }
+        if (array_key_exists('PAYTPV_APM_paysafecard', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_paysafecard'];
+        }
+        if (array_key_exists('PAYTPV_APM_skrill', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_skrill'];
+        }
+        if (array_key_exists('PAYTPV_APM_webmoney', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_webmoney'];
+        }
+        if (array_key_exists('PAYTPV_APM_instant_credit', $config)) {
+            $this->firstpurchase_scoring = $config['PAYTPV_APM_instant_credit'];
+        }
 
 
         parent::__construct();
@@ -418,6 +481,30 @@ class Paytpv extends PaymentModule
                 );
             }
 
+            //APMs
+
+            Configuration::updateValue('PAYTPV_APM_BIZUM', Tools::getValue('apms_bizum'));
+            Configuration::updateValue('PAYTPV_APM_paypal', Tools::getValue('apms_paypal'));
+            Configuration::updateValue('PAYTPV_APM_klarna_payments', Tools::getValue('apms_klarna_payments'));
+            Configuration::updateValue('PAYTPV_APM_ideal', Tools::getValue('apms_ideal'));
+            Configuration::updateValue('PAYTPV_APM_giropay', Tools::getValue('apms_giropay'));
+            Configuration::updateValue('PAYTPV_APM_mybank', Tools::getValue('apms_mybank'));
+            Configuration::updateValue('PAYTPV_APM_multibanco_sibs', Tools::getValue('apms_multibanco_sibs'));
+            Configuration::updateValue('PAYTPV_APM_trustly', Tools::getValue('apms_trustly'));
+            Configuration::updateValue('PAYTPV_APM_przelewy24', Tools::getValue('apms_przelewy24'));
+            Configuration::updateValue('PAYTPV_APM_bancontact', Tools::getValue('apms_bancontact'));
+            Configuration::updateValue('PAYTPV_APM_eps', Tools::getValue('apms_eps'));
+            Configuration::updateValue('PAYTPV_APM_tele2', Tools::getValue('apms_tele2'));
+            Configuration::updateValue('PAYTPV_APM_paysera', Tools::getValue('apms_paysera'));
+            Configuration::updateValue('PAYTPV_APM_postfinance', Tools::getValue('apms_postfinance'));
+            Configuration::updateValue('PAYTPV_APM_qiwi_wallet', Tools::getValue('apms_qiwi_wallet'));
+            Configuration::updateValue('PAYTPV_APM_yandex_money', Tools::getValue('apms_yandex_money'));
+            Configuration::updateValue('PAYTPV_APM_mts', Tools::getValue('apms_mts'));
+            Configuration::updateValue('PAYTPV_APM_beeline', Tools::getValue('apms_beeline'));
+            Configuration::updateValue('PAYTPV_APM_paysafecard', Tools::getValue('apms_paysafecard'));
+            Configuration::updateValue('PAYTPV_APM_skrill', Tools::getValue('apms_skrill'));
+            Configuration::updateValue('PAYTPV_APM_webmoney', Tools::getValue('apms_webmoney'));
+            Configuration::updateValue('PAYTPV_APM_instant_credit', Tools::getValue('apms_instant_credit'));
 
             // Datos Scoring
 
@@ -976,6 +1063,30 @@ class Paytpv extends PaymentModule
         $arrValues["dcountry_scoring_score"] = $config["PAYTPV_DCOUNTRY_SCORING_SCORE"];
         $arrValues["ip_change_scoring"] = $config["PAYTPV_IPCHANGE_SCORING"];
 
+        //APMs
+        $arrValues["apms_bizum"] = $config["PAYTPV_APM_BIZUM"];
+        $arrValues["apms_paypal"] = $config["PAYTPV_APM_paypal"];
+        $arrValues["apms_klarna_payments"] = $config["PAYTPV_APM_klarna_payments"];
+        $arrValues["apms_ideal"] = $config["PAYTPV_APM_ideal"];
+        $arrValues["apms_giropay"] = $config["PAYTPV_APM_giropay"];
+        $arrValues["apms_mybank"] = $config["PAYTPV_APM_mybank"];
+        $arrValues["apms_multibanco_sibs"] = $config["PAYTPV_APM_multibanco_sibs"];
+        $arrValues["apms_trustly"] = $config["PAYTPV_APM_trustly"];
+        $arrValues["apms_przelewy24"] = $config["PAYTPV_APM_przelewy24"];
+        $arrValues["apms_bancontact"] = $config["PAYTPV_APM_bancontact"];
+        $arrValues["apms_eps"] = $config["PAYTPV_APM_eps"];
+        $arrValues["apms_tele2"] = $config["PAYTPV_APM_tele2"];
+        $arrValues["apms_paysera"] = $config["PAYTPV_APM_paysera"];
+        $arrValues["apms_postfinance"] = $config["PAYTPV_APM_postfinance"];
+        $arrValues["apms_qiwi_wallet"] = $config["PAYTPV_APM_qiwi_wallet"];
+        $arrValues["apms_yandex_money"] = $config["PAYTPV_APM_yandex_money"];
+        $arrValues["apms_mts"] = $config["PAYTPV_APM_mts"];
+        $arrValues["apms_beeline"] = $config["PAYTPV_APM_beeline"];
+        $arrValues["apms_paysafecard"] = $config["PAYTPV_APM_paysafecard"];
+        $arrValues["apms_skrill"] = $config["PAYTPV_APM_skrill"];
+        $arrValues["apms_webmoney"] = $config["PAYTPV_APM_webmoney"];
+        $arrValues["apms_instant_credit"] = $config["PAYTPV_APM_instant_credit"];
+
         $arrValues["ip_change_scoring_score"] = $config["PAYTPV_IPCHANGE_SCORING_SCORE"];
         $arrValues["browser_scoring"] = $config["PAYTPV_BROWSER_SCORING"];
         $arrValues["browser_scoring_score"] = $config["PAYTPV_BROWSER_SCORING_SCORE"];
@@ -1320,6 +1431,35 @@ class Paytpv extends PaymentModule
         );
 
         $arrFields[] = $options_form;
+
+        //APMs
+
+        if(Tools::getValue('apikey') != '' || $this->apikey) {
+            $apms_form = array(
+                'form' => array(
+                    'legend' => array(
+                        'title' => $this->l('Medios de pago alternativos'),
+                        'icon' => 'icon-credit-card',
+                    ),
+                    'input' => array(
+                        array(
+                            'type' => 'checkbox',
+                            'label' => $this->l('Medios de pago alternativos'),
+                            'name' => 'apms',
+                            'values' => array(
+                                'query' => $this->getUserAlternativePaymentMethods(),
+                                'id' => 'id',
+                                'name' => 'name'
+                            ),
+                            'hint' => $this->l('Paycomet Alternative Payment Methods')
+                        ),
+                    )
+                )
+            );
+        }
+
+        $arrFields[] = $apms_form;
+
         // Array Score
 
         $arrScore = array();
@@ -1552,7 +1692,26 @@ class Paytpv extends PaymentModule
         return $arrFields;
     }
 
+    public function getUserAlternativePaymentMethods()
+    {
+        $apiRest = new PaycometApiRest($this->apikey);
+        $terminalId = Tools::getValue("term")[0] ? Tools::getValue("term")[0] : PaytpvTerminal::getTerminals()[0]['idterminal'];
+        $paymentMethods = $apiRest->getUserPaymentMethods($terminalId);
+        $apms = [];
 
+        foreach ($paymentMethods as $apm) {
+            if($apm->name == 'Tarjeta') {
+                continue;
+            }
+            $apms[] = [
+                'id' => preg_replace('/\s+/', '_', strtolower($apm->name)),
+                'name' => $apm->name,
+                'val' => $apm->id,
+            ];
+        }
+
+        return $apms;
+    }
 
     public function obtenerTerminalesConfigurados()
     {
@@ -1731,7 +1890,7 @@ class Paytpv extends PaymentModule
 
     public function hookPaymentOptions()
     {
-
+        $payment_options = [];
         // Check New Page payment
         $newpage_payment = (int) Configuration::get('PAYTPV_NEWPAGEPAYMENT');
         // Pago en nueva página
@@ -1803,13 +1962,144 @@ class Paytpv extends PaymentModule
                         $newOption->setForm($this->jetIframeForm());
                         break;
                 }
+
+                $alternativePaymentMethods = $this->getUserApmsForPayment();
+
+                foreach ($alternativePaymentMethods as $apm) {
+                    $apmOption = new PaymentOption();
+                    $apmOption->setCallToActionText($this->trans('Pay with' . $apm['method_name'], array(), 'Modules.MyModule.Shop'))
+                        ->setLogo(_MODULE_DIR_ . 'paytpv/views/img/apms/' . $apm['id'] . '.png')
+                        ->setAction($apm['url']);
+                    
+                    array_push($payment_options, $apmOption);
+                }
             }
         }
 
-        $payment_options = [
-            $newOption,
-        ];
+        array_unshift($payment_options, $newOption);
+
         return $payment_options;
+    }
+
+    private function getUserApmsForPayment()
+    {
+        if($this->apikey != '') {
+            $apms = [];
+
+            Configuration::get('PAYTPV_APM_klarna_payments') != null ? array_push($apms, Configuration::get('PAYTPV_APM_klarna_payments')) : false;
+            Configuration::get('PAYTPV_APM_BIZUM') != null ? array_push($apms, Configuration::get('PAYTPV_APM_BIZUM')) : false;
+            Configuration::get('PAYTPV_APM_paypal') != null ? array_push($apms, Configuration::get('PAYTPV_APM_paypal')) : false;
+            Configuration::get('PAYTPV_APM_ideal') != null ? array_push($apms, Configuration::get('PAYTPV_APM_ideal')) : false;
+            Configuration::get('PAYTPV_APM_giropay') != null ? array_push($apms, Configuration::get('PAYTPV_APM_giropay')) : false;
+            Configuration::get('PAYTPV_APM_mybank') != null ? array_push($apms, Configuration::get('PAYTPV_APM_mybank')) : false;
+            Configuration::get('PAYTPV_APM_multibanco_sibs') != null ? array_push($apms, Configuration::get('PAYTPV_APM_multibanco_sibs')) : false;
+            Configuration::get('PAYTPV_APM_trustly') != null ? array_push($apms, Configuration::get('PAYTPV_APM_trustly')) : false;
+            Configuration::get('PAYTPV_APM_przelewy24') != null ? array_push($apms, Configuration::get('PAYTPV_APM_przelewy24')) : false;
+            Configuration::get('PAYTPV_APM_bancontact') != null ? array_push($apms, Configuration::get('PAYTPV_APM_bancontact')) : false;
+            Configuration::get('PAYTPV_APM_eps') != null ? array_push($apms, Configuration::get('PAYTPV_APM_eps')) : false;
+            Configuration::get('PAYTPV_APM_tele2') != null ? array_push($apms, Configuration::get('PAYTPV_APM_tele2')) : false;
+            Configuration::get('PAYTPV_APM_paysera') != null ? array_push($apms, Configuration::get('PAYTPV_APM_paysera')) : false;
+            Configuration::get('PAYTPV_APM_postfinance') != null ? array_push($apms, Configuration::get('PAYTPV_APM_postfinance')) : false;
+            Configuration::get('PAYTPV_APM_qiwi_wallet') != null ? array_push($apms, Configuration::get('PAYTPV_APM_qiwi_wallet')) : false;
+            Configuration::get('PAYTPV_APM_yandex_money') != null ? array_push($apms, Configuration::get('PAYTPV_APM_yandex_money')) : false;
+            Configuration::get('PAYTPV_APM_mts') != null ? array_push($apms, Configuration::get('PAYTPV_APM_mts')) : false;
+            Configuration::get('PAYTPV_APM_beeline') != null ? array_push($apms, Configuration::get('PAYTPV_APM_beeline')) : false;
+            Configuration::get('PAYTPV_APM_paysafecard') != null ? array_push($apms, Configuration::get('PAYTPV_APM_paysafecard')) : false;
+            Configuration::get('PAYTPV_APM_skrill') != null ? array_push($apms, Configuration::get('PAYTPV_APM_skrill')) : false;
+            Configuration::get('PAYTPV_APM_webmoney') != null ? array_push($apms, Configuration::get('PAYTPV_APM_webmoney')) : false;
+            Configuration::get('PAYTPV_APM_instant_credit') != null ? array_push($apms, Configuration::get('PAYTPV_APM_instant_credit')) : false;
+
+            if(empty($apms)) {
+                return $apms;
+            }
+
+            $cart = Context::getContext()->cart;
+            $datos_pedido = $this->terminalCurrency($cart);
+            $importe = $datos_pedido["importe"];
+            $currency_iso_code = $datos_pedido["currency_iso_code"];
+            $idterminal = $datos_pedido["idterminal"];
+            $paytpv_order_ref = str_pad($cart->id, 8, "0", STR_PAD_LEFT);
+            $merchantData = $this->getMerchantData($cart);
+            $ssl = Configuration::get('PS_SSL_ENABLED');
+            $values = array(
+                'id_cart' => $cart->id,
+                'key' => Context::getContext()->customer->secure_key
+            );
+            $URLOK = Context::getContext()->link->getModuleLink($this->name, 'urlok', $values, $ssl);
+            $URLKO = Context::getContext()->link->getModuleLink($this->name, 'urlko', $values, $ssl);
+
+            $apiRest = new PaycometApiRest($this->apikey);
+            $url_paytpv = array();
+
+            foreach ($apms as $methodId ) {
+                try {
+                    $executePurchaseResponse = $apiRest->executePurchase(
+                        $idterminal,
+                        $paytpv_order_ref,
+                        $importe,
+                        $currency_iso_code,
+                        $methodId,
+                        Tools::getRemoteAddr(),
+                        1,
+                        '',
+                        '',
+                        $URLOK,
+                        $URLKO,
+                        '0',
+                        '',
+                        '',
+                        1,
+                        [],
+                        '',
+                        '',
+                        $merchantData,
+                        1
+                    );
+
+                    if ($executePurchaseResponse->errorCode == 0) {
+                        $url_paytpv[$methodId]['url'] = $executePurchaseResponse->challengeUrl;
+                        $url_paytpv[$methodId]['method_name'] = $this->getAPMName($methodId);
+                        $url_paytpv[$methodId]['id'] = $methodId;
+                    } else {
+                        $url_paytpv_errors[] = $executePurchaseResponse->errorCode;
+                    }
+
+                } catch (exception $e) {
+                    $url_paytpv = $e->getCode();
+                }
+            }
+
+            return $url_paytpv;
+        }
+    }
+
+
+    private function getAPMName($methodId)
+    {
+        return [
+            10 => "Paypal",
+            11 => "Bizum",
+            12 => "iDEAL",
+            13 => "Klarna Payments",
+            14 => "Giropay",
+            15 => "MyBank",
+            16 => "Multibanco SIBS",
+            17 => "Trustly",
+            18 => "Przelewy24",
+            19 => "Bancontact",
+            20 => "EPS",
+            21 => "Tele2",
+            22 => "Paysera",
+            23 => "PostFinance",
+            24 => "QIWI Wallet",
+            25 => "Yandex Money",
+            26 => "MTS",
+            27 => "Beeline",
+            28 => "Paysafecard",
+            29 => "Skrill",
+            30 => "WebMoney	",
+            33 => "Instant Credit"
+        ][$methodId];
     }
 
     public function jetIframeForm()
@@ -2126,7 +2416,13 @@ class Paytpv extends PaymentModule
                 'PAYTPV_SESSIONTIME_SCORING_SCORE', 'PAYTPV_DCOUNTRY_SCORING', 'PAYTPV_DCOUNTRY_SCORING_VAL',
                 'PAYTPV_DCOUNTRY_SCORING_SCORE', 'PAYTPV_IPCHANGE_SCORING', 'PAYTPV_IPCHANGE_SCORING_SCORE',
                 'PAYTPV_BROWSER_SCORING', 'PAYTPV_BROWSER_SCORING_SCORE', 'PAYTPV_SO_SCORING',
-                'PAYTPV_SO_SCORING_SCORE', 'PAYTPV_DISABLEOFFERSAVECARD'
+                'PAYTPV_SO_SCORING_SCORE', 'PAYTPV_DISABLEOFFERSAVECARD', 
+                'PAYTPV_APM_paypal', 'PAYTPV_APM_BIZUM', 'PAYTPV_APM_ideal', 'PAYTPV_APM_klarna_payments',
+                'PAYTPV_APM_giropay', 'PAYTPV_APM_mybank', 'PAYTPV_APM_multibanco_sibs', 'PAYTPV_APM_trustly',
+                'PAYTPV_APM_przelewy24', 'PAYTPV_APM_bancontact', 'PAYTPV_APM_eps', 'PAYTPV_APM_tele2',
+                'PAYTPV_APM_paysera', 'PAYTPV_APM_postfinance', 'PAYTPV_APM_qiwi_wallet', 'PAYTPV_APM_yandex_money',
+                'PAYTPV_APM_mts', 'PAYTPV_APM_beeline', 'PAYTPV_APM_paysafecard', 'PAYTPV_APM_skrill',
+                'PAYTPV_APM_webmoney', 'PAYTPV_APM_instant_credit'
             )
         );
     }

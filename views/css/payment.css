@@ -125,3 +125,7 @@
 #storingStep .checkbox {
     display: block!important;
 }
+
+.paytpv input[type=checkbox] {
+    appearance: auto;
+ }
