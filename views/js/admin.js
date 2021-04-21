@@ -27,79 +27,31 @@ var max_term = 0;
 function checkAllTerminales()
 {
     for(i=0;i<jQuery(".term").length;i++) {  
-        checkterminales($("#terminales_"+i));
+        checkterminales($("#term_"+i));
     }
 }
 
 function checkterminales(element)
-{    
-    cont = jQuery(element).attr('id').replace('terminales_','');
-        
-    switch (jQuery(element).val()) {
-        case "0": // SEGURO            
-            var $radios = jQuery(element).parents(".panel").find('#tdfirst\\[\\]_on');
-            if ($radios.is(':checked') === false) {
-                $radios.prop('checked', true);
-            } else {
-                $radios.prop('checked', true);
-            }
-            jQuery("#tdmin_"+cont).parents(".form-group").hide();
-            jQuery(".term_ns_container_"+cont).parents(".form-group").hide();            
-            jQuery(".term_s_container_"+cont).parents(".form-group").show();            
-            
-            if (jQuery("#integration").val()==1) {
-                jQuery(".class_jetid.term_s_container_"+cont).parents(".form-group").show();
-            }else{                
-                jQuery(".class_jetid.term_s_container_"+cont).parents(".form-group").hide();
-            }
+{
+    cont = jQuery(element).attr('id').replace('term_','');          
+    jQuery(".term_s_container_"+cont).parents(".form-group").show();
 
-            jQuery(element).parents(".panel").find(".terminales_tdmin").parents('.form-group').hide();  
-            break;
-
-        case "1": // NO SEGURO
-            var $radios = jQuery(element).parents(".panel").find("#tdfirst\\[\\]"+"_off");
-            if ($radios.is(':checked') === false) {
-                $radios.prop('checked', true);
-            } else {
-                $radios.prop('checked', false);
-            }           
-            jQuery("#tdmin_"+cont).parents(".form-group").hide();
-            jQuery(".term_s_container_"+cont).parents(".form-group").hide();
-            jQuery(".term_ns_container_"+cont).parents(".form-group").show();
-            jQuery(element).parents(".panel").find(".terminales_tdmin").parents('.form-group').hide();
-            
-            if (jQuery("#integration").val()==1) {
-                jQuery(".class_jetid.term_ns_container_"+cont).parents(".form-group").show();
-            } else {
-                jQuery(".class_jetid.term_ns_container_"+cont).parents(".form-group").hide();
-            }           
-            break;
-
-        case "2": // AMBOS
-            jQuery("#tdmin_"+cont).parents(".form-group").show();
-            jQuery(".term_s_container_"+cont).parents(".form-group").show();
-            jQuery(".term_ns_container_"+cont).parents(".form-group").show();
-            if (jQuery("#integration").val()==1) {
-                jQuery(".class_jetid.term_s_container_"+cont).parents(".form-group").show();
-                jQuery(".class_jetid.term_ns_container_"+cont).parents(".form-group").show();
-            } else {
-                jQuery(".class_jetid.term_s_container_"+cont).parents(".form-group").hide();
-                jQuery(".class_jetid.term_ns_container_"+cont).parents(".form-group").hide();
-            }
-            jQuery(element).parents(".panel").find(".terminales_tdmin").parents('.form-group').show();
-            break;
-    }    
+    if (jQuery("#integration").val()==1) {
+        jQuery(".class_jetid.term_s_container_"+cont).parents(".form-group").show();
+    }else{
+        jQuery(".class_jetid.term_s_container_"+cont).parents(".form-group").hide();
+    }
 }
 
 function addTerminal()
-{    
+{
     if (max_term == 0 ) {     
         cont = jQuery(".term").length;
         max_term = cont;
     } else {
         cont = max_term+1;
     }
-    
+
     var $term = jQuery(".terminal:first").closest('.panel').clone()
             .find("input").val("").end()
             .find("select").val("").end()
@@ -110,32 +62,14 @@ function addTerminal()
             .find("#pass_0").attr("id","pass_"+cont).end()            
             .find("#jetid_0").attr("name","jetid["+cont+"]").end()
             .find("#jetid_0").attr("id","jeitd_"+cont).end()            
-            .find("#term_ns_0").attr("name","term_ns["+cont+"]").end()
-            .find("#term_ns_0").attr("id","term_ns_"+cont).end()            
-            .find(".term_ns_container_0").addClass("term_ns_container_"+cont).removeClass('term_ns_container_0').end()
-            .find("#pass_ns_0").attr("name","pass_ns["+cont+"]").end()
-            .find("#pass_ns_0").attr("id","pass_ns_"+cont).end()
-            .find("#jetid_ns_0").attr("name","jetid_ns["+cont+"]").end()
-            .find("#jetid_ns_0").attr("id","jeitd_ns_"+cont).end()            
-            .find("#terminales_0").attr("name","terminales["+cont+"]").end()
-            .find("#terminales_0").attr("id","terminales_"+cont).end()
-            .find("#tdfirst_0").attr("name","tdfirst["+cont+"]").end()
-            .find("#tdfirst_0").attr("id","tdfirst_"+cont).end()
             .find("#moneda_0").attr("name","moneda["+cont+"]").end()
             .find("#moneda_0").attr("id","moneda_"+cont).end()
-            .find("#tdmin_0").attr("name","tdmin["+cont+"]").end()
-            .find("#tdmin_0").attr("id","tdmin_"+cont).end()            
-            .find("#tdmin_container_0").attr("id","tdmin_container_"+cont).end()
-            .find("#term_s_container_0").attr("id","terms_s_container_"+cont).end()
-            .find("#term_ns_container_0").attr("id","term_ns_container_"+cont).end()            
             .find("#removeterminal").removeClass("hidden").show().end()
             .find("#addterminal").remove().end()
             .find("a").show().end().insertAfter( jQuery(".terminal:last").closest('.panel'));
-    
-    jQuery("#terminales_"+cont).val(0);
-    jQuery("#tdfirst_"+cont).val(1);
+
     jQuery("#moneda_"+cont+" option:first").attr('selected','selected');
-    checkterminales($("#terminales_"+cont));
+    checkterminales($("#term_"+cont));
     checkaddTerminal();
 
 }
@@ -253,7 +187,7 @@ $(document).ready(function()
         addTerminal(this);
     })
     jQuery('.removeTerminal').live('click', function() 
-    {               
+    {
         removeTerminal(this);
     })
 

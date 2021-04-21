@@ -20,18 +20,17 @@ Rellenaremos los datos según la configuracion disponible en PAYCOMET. https://w
 
 ### Integración: 
 
-#### Bankstore IFRAME/XML: La mejor opción para integrar el módulo y poder almacenar datos de tarjetas para futuras compras, además de ofrecer la posibilidad de suscribirse a productos.
+#### Bankstore IFRAME/XML: La mejor opción para integrar el módulo y poder almacenar datos de tarjetas para futuras compras.
 
-- Terminales disponibles: Seleccione el tipo de terminal contratado.
-- 3D Secure en la primera compra: Si la primera compra se realiza por terminal seguro. La opción NO sólo está disponible cuando el cliente tiene contratado un terminal no seguro. En el resto de casos la primera compra siempres se hará por 3D Secure.
-- Usar 3D Secure en compras superiores a: Para solicitar la verificación 3DSecure en compras que superen el importe indicado.
+- API Key: API Key generado en PAYCOMET.
+- Codigo cliente: El codigo cliente asignado al producto en PAYCOMET.
+- Número de terminal: El terminal asignado al producto en PAYCOMET.
 - Solicitar contraseña del comercio en compras con tarjetas almacenadas: Se pide la contraseña del usuario en el comercio.
 - Contraseña: La contraseña asignada al producto en PAYCOMET.
-- Numero de terminal: El terminal asignado al producto en PAYCOMET.
-- Codigo cliente: El codigo cliente asignado al producto en PAYCOMET.
-- Activar suscripciones: Si se desea que se muestre o no la opción de suscribirse en los carros de compra.
 
-IMPORTANTE: En la configuración del modulo se indican las URL OK, URL OK y URL de NOTIFICACION que deberán definirse en la configuración de PAYCOMET.
+IMPORTANTE: En la configuración del modulo se indica la URL de NOTIFICACION que deberá definirse en la configuración del producto de PAYCOMET.
+
+#### Bankstore JETIFRAME: Incopora el formulario de pago en el checkout
 
 
 ## Configuración del producto en PAYCOMET
@@ -58,4 +57,12 @@ Todas las suscripciones mostrarán el estado actual:
 - Eliminar Suscripción: Indica que es una suscripción activa y que se puede cancelar en cualquier momento.
 - CANCELADA: Cuando ha sido cancelada por el usuario
 - FINALIZADA: Cuando se ha cumplido todo el periodo de la suscripción
+
+## Release Notes
+
+> 7.7.0: 
+
+- **API Key [OBLIGATORIA]**: Debe dar de alta una API Key en su área de cliente de PAYCOMET e indicarla en el Plugin para poder operar. 
+- Métodos de Pago alternativos: Se añade la posibilidad de activar diferentes métodos de pago alternativos que deberá tener configurados en su área de cliente de PAYCOMET.
+
 

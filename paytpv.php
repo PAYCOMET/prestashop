@@ -53,7 +53,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.6.4';
+        $this->version = '7.7.0';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
 
@@ -209,7 +209,7 @@ class Paytpv extends PaymentModule
         $this->description = $this->l('This module allows you to accept card payments via www.paycomet.com');
 
         try {
-            if (!isset($this->clientcode) or !PaytpvTerminal::existTerminal()) {
+            if (!isset($this->apikey) || !isset($this->clientcode) or !PaytpvTerminal::existTerminal()) {
                 $this->warning = $this->l('Missing data when configuring the module PAYCOMET');
             }
         } catch (exception $e) {
@@ -276,6 +276,9 @@ class Paytpv extends PaymentModule
 
         // Show error when required fields.
         if (Tools::getIsset('btnSubmit')) {
+            if (empty(Tools::getValue('apikey'))) {
+                $this->postErrors[] = $this->l('API Key required');
+            }
             if (!Tools::getIsset('clientcode')) {
                 $this->postErrors[] = $this->l('Client Code required');
             }
@@ -292,56 +295,17 @@ class Paytpv extends PaymentModule
 
             // Check Terminal empty fields SECURE
             foreach (Tools::getValue('term') as $key => $term) {
-                if ((Tools::getValue('terminales')[$key] == 0 ||
-                    Tools::getValue('terminales')[$key] == 2) && ($term == "" || !is_numeric($term))) {
-                    $this->postErrors[] = $this->l('Terminal') . " " . ($key + 1) . "º. [3D SECURE] " .
+                if ($term == "" || !is_numeric($term)) {
+                    $this->postErrors[] = $this->l('Terminal') . " " . ($key + 1) . "º " .
                                         $this->l('Terminal number invalid');
                 }
-                if ((Tools::getValue('terminales')[$key] == 0 ||
-                    Tools::getValue('terminales')[$key] == 2) && Tools::getValue('pass')[$key] == "") {
-                    $this->postErrors[] = $this->l('Terminal') . " " . ($key + 1) . "º. [3D SECURE] " .
+                if (Tools::getValue('pass')[$key] == "") {
+                    $this->postErrors[] = $this->l('Terminal') . " " . ($key + 1) . "º " .
                                         $this->l('Password invalid');
                 }
-                if ((Tools::getValue('terminales')[$key] == 0 ||
-                    Tools::getValue('terminales')[$key] == 2) && Tools::getValue('jetid')[$key] == "" &&
-                    Tools::getValue('integration') == 1) {
-                    $this->postErrors[] = $this->l('Terminal') . " " . ($key + 1) . "º. [3D SECURE] " .
+                if (Tools::getValue('jetid')[$key] == "" && Tools::getValue('integration') == 1) {
+                    $this->postErrors[] = $this->l('Terminal') . " " . ($key + 1) . "º " .
                                             $this->l('JET ID number invalid');
-                }
-            }
-
-            // Check Terminal empty fields NO SECURE
-            foreach (Tools::getValue('term_ns') as $key => $term_ns) {
-                if ((Tools::getValue('terminales')[$key] == 1 ||
-                    Tools::getValue('terminales')[$key] == 2) && ($term_ns == "" || !is_numeric($term_ns))) {
-                        $this->postErrors[] = $this->l('Terminal') . " " . ($key + 1) . "º. [NO 3D SECURE] " .
-                                            $this->l('Terminal number invalid');
-                }
-                if ((Tools::getValue('terminales')[$key] == 1 ||
-                    Tools::getValue('terminales')[$key] == 2) && Tools::getValue('pass_ns')[$key] == "") {
-                    $this->postErrors[] = $this->l('Terminal') . " " . ($key + 1) . "º. [NO 3D SECURE] " .
-                                        $this->l('Password invalid');
-                }
-                if ((Tools::getValue('terminales')[$key] == 1 ||
-                    Tools::getValue('terminales')[$key] == 2) &&
-                    Tools::getValue('jetid_ns')[$key] == "" &&
-                    Tools::getValue('integration') == 1) {
-                        $this->postErrors[] = $this->l('Terminal') . " " . ($key + 1) . "º. [NO 3D SECURE] " .
-                                        $this->l('JET ID number invalid');
-                }
-            }
-
-            // Check 3Dmin and Currency
-            foreach (Tools::getValue('term_ns') as $key => $term_ns) {
-                if (Tools::getValue('terminales')[$key] == 2 &&
-                    (Tools::getValue('tdmin')[$key] != "" &&
-                    !is_numeric(Tools::getValue('tdmin')[$key]))) {
-                        $this->postErrors[] = $this->l('Terminal') . " " . ($key + 1) . "º. " .
-                                            $this->l('Use 3D Secure on purchases over invalid');
-                }
-                if (empty(Tools::getValue('moneda')[$key])) {
-                    $this->postErrors[] = $this->l('Terminal') . " " . ($key + 1) . "º. " .
-                                         $this->l('Currency required');
                 }
             }
 
@@ -379,39 +343,13 @@ class Paytpv extends PaymentModule
         // Validación de los datos en Paycomet
         foreach (array_keys(Tools::getValue("term")) as $key) {
             $term = (Tools::getValue('term')[$key] == '') ? "" : Tools::getValue('term')[$key];
-            $term_ns = (Tools::getValue('term_ns')[$key] == '') ? "" : Tools::getValue('term_ns')[$key];
-
-            switch (Tools::getValue("terminales")[$key]) {
-                case 0:  // Seguro
-                    $terminales_txt = $this->l('Secure');
-                    $resp = $api->validatePaycomet(
-                        Tools::getValue('clientcode'),
-                        $term,
-                        Tools::getValue("pass")[$key],
-                        "CES"
-                    );
-
-                    break;
-                case 1: // No Seguro
-                    $terminales_txt = $this->l('Non-Secure');
-                    $resp = $api->validatePaycomet(
-                        Tools::getValue('clientcode'),
-                        $term_ns,
-                        Tools::getValue("pass_ns")[$key],
-                        "NO-CES"
-                    );
-                    break;
-                case 2: // Ambos
-                    $terminales_txt = $this->l('Both');
-                    $resp = $api->validatePaycomet(
-                        Tools::getValue('clientcode'),
-                        $term,
-                        Tools::getValue("pass")[$key],
-                        "BOTH"
-                    );
-                    break;
-            }
-
+            $terminales_txt = $this->l('Secure');
+            $resp = $api->validatePaycomet(
+                Tools::getValue('clientcode'),
+                $term,
+                Tools::getValue("pass")[$key],
+                "CES"
+            );
 
             if ($resp["DS_RESPONSE"] != 1) {
                 $arrDatos["error"] = 1;
@@ -460,24 +398,13 @@ class Paytpv extends PaymentModule
             PaytpvTerminal::removeTerminals();
 
             foreach (array_keys(Tools::getValue("term")) as $key) {
-                $aux_tdmin =
-                (Tools::getValue('tdmin')[$key]=='' || Tools::getValue("terminales")[$key]!=2) ? 0 :
-                Tools::getValue('tdmin')[$key];
                 $aux_term = (Tools::getValue('term')[$key]=='')?"":Tools::getValue('term')[$key];
-                $aux_term_ns =
-                (Tools::getValue('term_ns')[$key]=='')?"":Tools::getValue('term_ns')[$key];
                 PaytpvTerminal::addTerminal(
                     $key+1,
-                    $aux_term,
-                    $aux_term_ns,
-                    Tools::getValue("pass")[$key],
-                    Tools::getValue("pass_ns")[$key],
-                    Tools::getValue("jetid")[$key],
-                    Tools::getValue("jetid_ns")[$key],
-                    Tools::getValue("moneda")[$key],
-                    Tools::getValue("terminales")[$key],
-                    Tools::getValue("tdfirst")[$key],
-                    $aux_tdmin
+                    trim($aux_term),
+                    trim(Tools::getValue("pass")[$key]),
+                    trim(Tools::getValue("jetid")[$key]),
+                    trim(Tools::getValue("moneda")[$key])
                 );
             }
 
@@ -725,8 +652,6 @@ class Paytpv extends PaymentModule
             "YEAR"
         );
 
-        //$acctInfoData["paymentAccAge"] = "";
-        //$acctInfoData["paymentAccInd"] = "";
 
         $firstAddressDelivery = PaytpvOrder::firstAddressDelivery(
             $this->context->customer->id,
@@ -1100,12 +1025,6 @@ class Paytpv extends PaymentModule
             $arrValues["term[".$key."]"] = $term["idterminal"];
             $arrValues["pass[".$key."]"] = $term["password"];
             $arrValues["jetid[".$key."]"] = $term["jetid"];
-            $arrValues["term_ns[".$key."]"] = $term["idterminal_ns"];
-            $arrValues["pass_ns[".$key."]"] = $term["password_ns"];
-            $arrValues["jetid_ns[".$key."]"] = $term["jetid_ns"];
-            $arrValues["terminales[".$key."]"] = $term["terminales"];
-            $arrValues["tdfirst[".$key."]"] = $term["tdfirst"];
-            $arrValues["tdmin[".$key."]"] = $term["tdmin"];
             $arrValues["moneda[".$key."]"] = $term["currency_iso_code"];
         }
         return $arrValues;
@@ -1161,7 +1080,7 @@ class Paytpv extends PaymentModule
                         'type' => 'text',
                         'label' => $this->l('API KEY'),
                         'name' => 'apikey',
-                        'hint' => $this->l('API KEY. You can create an API KEY in your PAYCOMET cliente area'),
+                        'hint' => $this->l('API KEY. You can create an API KEY in your PAYCOMET client area'),
                         'required' => false
                     ),
                 )
@@ -1174,7 +1093,7 @@ class Paytpv extends PaymentModule
                 array(
                     'col' => 1,
                     'type' => 'text',
-                    'label' => $this->l('Terminal Number Secure'),
+                    'label' => $this->l('Terminal Number'),
                     'name' => 'term['.$key.']',
                     'id' => 'term_' . $key,
                     'class' => 'term term_s_container_'.$key,
@@ -1186,7 +1105,7 @@ class Paytpv extends PaymentModule
                 array(
                     'col' => 2,
                     'type' => 'text',
-                    'label' => $this->l('Password Secure'),
+                    'label' => $this->l('Password'),
                     'name' => 'pass['.$key.']',
                     'id' => 'pass_' . $key,
                     'class' => 'term_s_container_'.$key,
@@ -1198,7 +1117,7 @@ class Paytpv extends PaymentModule
                 array(
                     'col' => 2,
                     'type' => 'text',
-                    'label' => $this->l('JET ID Secure'),
+                    'label' => $this->l('JET ID'),
                     'name' => 'jetid['.$key.']',
                     'id' => 'jetid_' . $key,
                     'class' => 'class_jetid term_s_container_'.$key,
@@ -1206,89 +1125,6 @@ class Paytpv extends PaymentModule
                         'Product JET ID Secure. Available in the PAYCOMET product configuration'
                     ),
                     'required' => true
-                ),
-                array(
-                    'col' => 1,
-                    'type' => 'text',
-                    'label' => $this->l('Terminal Number Non-Secure'),
-                    'name' => 'term_ns['.$key.']',
-                    'id' => 'term_ns_' . $key,
-                    'class' => 'term_ns_container_'.$key,
-                    'hint' => $this->l(
-                        'Product Terminal Number Non-Secure. Available in the PAYCOMET product configuration'
-                    ),
-                    'required' => true
-                ),
-                array(
-                    'col' => 2,
-                    'type' => 'text',
-                    'label' => $this->l('Password Non-Secure'),
-                    'name' => 'pass_ns['.$key.']',
-                    'id' => 'pass_ns_' . $key,
-                    'class' => 'term_ns_container_'.$key,
-                    'hint' => $this->l(
-                        'Product Password Non-Secure. Available in the PAYCOMET product configuration'
-                    ),
-                    'required' => true
-                ),
-                array(
-                    'col' => 2,
-                    'type' => 'text',
-                    'label' => $this->l('JET ID Non-Secure'),
-                    'name' => 'jetid_ns['.$key.']',
-                    'id' => 'jetid_ns_' . $key,
-                    'class' => 'class_jetid term_ns_container_'.$key,
-                    'hint' => $this->l('Product JET ID Non-Secure. Available in the PAYCOMET product configuration'),
-                    'required' => true
-                ),
-                array(
-                    'col' => 3,
-                    'type' => 'select',
-                    'label' => $this->l('Terminals available'),
-                    'desc' => $this->l('Product Terminals Available.'),
-                    'name' => 'terminales['.$key.']',
-                    'id' => 'terminales_' . $key,
-                    'class' => 'terminales',
-                    'options' => array(
-                        'query' => array(
-                            array(
-                                'id' => 0,
-                                'name' => $this->l('Secure')
-                            ),
-                            array(
-                                'id' => 1,
-                                'name' => $this->l('Non-Secure')
-                            ),
-                            array(
-                                'id' => 2,
-                                'name' => $this->l('Both')
-                            )
-                        ),
-                        'id' => 'id',
-                        'name' => 'name'
-                    )
-                ),
-                array(
-                    'type' => 'select',
-                    'label' => $this->l('Use 3D Secure'),
-                    'name' => 'tdfirst['.$key.']',
-                    'id' => 'tdfirst_' . $key,
-                    'desc' => $this->l('First purchase with 3D Secure.'),
-                    'class' => 'terminales_tdmin',
-                    'options' => array(
-                        'query' => array(
-                            array(
-                                'id' => 0,
-                                'name' => $this->l('No')
-                            ),
-                            array(
-                                'id' => 1,
-                                'name' => $this->l('Yes')
-                            ),
-                        ),
-                        'id' => 'id',
-                        'name' => 'name'
-                    )
                 ),
                 array(
                     'type' => 'select',
@@ -1302,14 +1138,6 @@ class Paytpv extends PaymentModule
                         'name' => 'name'
                     ),
                     'desc' => $this->l('PAYCOMET Terminal Currency.'),
-                ),
-                array(
-                    'col' => 1,
-                    'type' => 'text',
-                    'label' => $this->l('Use 3D Secure on purchases over'),
-                    'hint' => $this->l('Value from which purchases are made by 3DSecure. 0 for Not us'),
-                    'name' => 'tdmin['.$key.']',
-                    'id' => 'tdmin_' . $key,
                 )
             );
 
@@ -1433,18 +1261,17 @@ class Paytpv extends PaymentModule
         $arrFields[] = $options_form;
 
         //APMs
-
         if(Tools::getValue('apikey') != '' || $this->apikey) {
             $apms_form = array(
                 'form' => array(
                     'legend' => array(
-                        'title' => $this->l('Medios de pago alternativos'),
+                        'title' => $this->l('Alternative payment methods'),
                         'icon' => 'icon-credit-card',
                     ),
                     'input' => array(
                         array(
                             'type' => 'checkbox',
-                            'label' => $this->l('Medios de pago alternativos'),
+                            'label' => $this->l('Alternative payment methods'),
                             'name' => 'apms',
                             'values' => array(
                                 'query' => $this->getUserAlternativePaymentMethods(),
@@ -1456,9 +1283,8 @@ class Paytpv extends PaymentModule
                     )
                 )
             );
+            $arrFields[] = $apms_form;
         }
-
-        $arrFields[] = $apms_form;
 
         // Array Score
 
@@ -1695,19 +1521,30 @@ class Paytpv extends PaymentModule
     public function getUserAlternativePaymentMethods()
     {
         $apiRest = new PaycometApiRest($this->apikey);
-        $terminalId = Tools::getValue("term")[0] ? Tools::getValue("term")[0] : PaytpvTerminal::getTerminals()[0]['idterminal'];
+
+        $terminalId = 0;
+        if (Tools::getValue("term")[0]) {
+            $terminalId = Tools::getValue("term")[0];
+        } else if (PaytpvTerminal::getTerminals()) {
+            $terminalId = PaytpvTerminal::getTerminals()[0]['idterminal'];
+        }
         $paymentMethods = $apiRest->getUserPaymentMethods($terminalId);
         $apms = [];
 
-        foreach ($paymentMethods as $apm) {
-            if($apm->name == 'Tarjeta') {
-                continue;
+        // Si no hay error en la consulta a los metodos
+        if (!isset($paymentMethods->errorCode)) {
+            foreach ($paymentMethods as $apm) {
+                if($apm->name == 'Tarjeta') {
+                    continue;
+                }
+                $apms[] = [
+                    'id' => preg_replace('/\s+/', '_', strtolower($apm->name)),
+                    'name' => $apm->name,
+                    'val' => $apm->id,
+                    'logo_square' => $apm->logo_square,
+                    'logo_landscape' => $apm->logo_landscape,
+                ];
             }
-            $apms[] = [
-                'id' => preg_replace('/\s+/', '_', strtolower($apm->name)),
-                'name' => $apm->name,
-                'val' => $apm->id,
-            ];
         }
 
         return $apms;
@@ -1723,12 +1560,6 @@ class Paytpv extends PaymentModule
             $terminales[0]["idterminal"] = "";
             $terminales[0]["password"] = "";
             $terminales[0]["jetid"] = "";
-            $terminales[0]["idterminal_ns"] = "";
-            $terminales[0]["password_ns"] = "";
-            $terminales[0]["jetid_ns"] = "";
-            $terminales[0]["terminales"] = 0;
-            $terminales[0]["tdfirst"] = 1;
-            $terminales[0]["tdmin"] = 0;
             $terminales[0]["currency_iso_code"] = $currency->iso_code;
         }
 
@@ -1807,26 +1638,8 @@ class Paytpv extends PaymentModule
     public function getTemplateVarInfos()
     {
         $cart = $this->context->cart;
-        $datos_pedido = $this->terminalCurrency($cart);
-        $idterminal = $datos_pedido["idterminal"];
-        $idterminal_ns = $datos_pedido["idterminal_ns"];
+        $datos_pedido = $this->terminalCurrency($cart);        
         $jetid = $datos_pedido["jetid"];
-        $jetid_ns = $datos_pedido["jetid_ns"];
-
-        $importe_tienda = $cart->getOrderTotal(true, Cart::BOTH);
-
-        if ($idterminal > 0) {
-            $secure_pay = $this->isSecureTransaction($idterminal, $importe_tienda, 0) ? 1 : 0;
-        } else {
-            $secure_pay = $this->isSecureTransaction($idterminal_ns, $importe_tienda, 0) ? 1 : 0;
-        }
-
-        // Miramos a ver por que terminal enviamos la operacion
-        if ($secure_pay) {
-            $jetid_sel = $jetid;
-        } else {
-            $jetid_sel = $jetid_ns;
-        }
 
         $ssl = Configuration::get('PS_SSL_ENABLED');
         $values = array(
@@ -1874,7 +1687,7 @@ class Paytpv extends PaymentModule
             'paytpv_error' => $paytpv_error,
             'paytpv_integration' => $paytpv_integration,
             'account' => 0,
-            'jet_id' => $jetid_sel,
+            'jet_id' => $jetid,
             'jet_lang' => $language,
             'jet_paytpv' => $this->jet_paytpv,
             'paytpv_jetid_url' => Context::getContext()->link->getModuleLink($this->name, 'capture', array(), $ssl),
@@ -1967,10 +1780,9 @@ class Paytpv extends PaymentModule
 
                 foreach ($alternativePaymentMethods as $apm) {
                     $apmOption = new PaymentOption();
-                    $apmOption->setCallToActionText($this->trans('Pay with' . $apm['method_name'], array(), 'Modules.MyModule.Shop'))
-                        ->setLogo(_MODULE_DIR_ . 'paytpv/views/img/apms/' . $apm['id'] . '.png')
+                    $apmOption->setCallToActionText($this->trans($this->l('Pay with ') . $apm['method_name'], array(), 'Modules.MyModule.Shop'))
+                        ->setLogo(_MODULE_DIR_ . 'paytpv/views/img/apms/' . $apm['img_name'] . '.svg')
                         ->setAction($apm['url']);
-                    
                     array_push($payment_options, $apmOption);
                 }
             }
@@ -2058,8 +1870,10 @@ class Paytpv extends PaymentModule
 
                     if ($executePurchaseResponse->errorCode == 0) {
                         $url_paytpv[$methodId]['url'] = $executePurchaseResponse->challengeUrl;
-                        $url_paytpv[$methodId]['method_name'] = $this->getAPMName($methodId);
-                        $url_paytpv[$methodId]['id'] = $methodId;
+                        $method_name = $this->getAPMName($methodId);
+                        $method_img = strtolower($method_name);
+                        $url_paytpv[$methodId]['method_name'] = $method_name;
+                        $url_paytpv[$methodId]['img_name'] = $method_img;
                     } else {
                         $url_paytpv_errors[] = $executePurchaseResponse->errorCode;
                     }
@@ -2080,10 +1894,10 @@ class Paytpv extends PaymentModule
             10 => "Paypal",
             11 => "Bizum",
             12 => "iDEAL",
-            13 => "Klarna Payments",
+            13 => "Klarna",
             14 => "Giropay",
             15 => "MyBank",
-            16 => "Multibanco SIBS",
+            16 => "Multibanco",
             17 => "Trustly",
             18 => "Przelewy24",
             19 => "Bancontact",
@@ -2091,14 +1905,14 @@ class Paytpv extends PaymentModule
             21 => "Tele2",
             22 => "Paysera",
             23 => "PostFinance",
-            24 => "QIWI Wallet",
-            25 => "Yandex Money",
+            24 => "QIWI",
+            25 => "Yandex",
             26 => "MTS",
             27 => "Beeline",
             28 => "Paysafecard",
             29 => "Skrill",
-            30 => "WebMoney	",
-            33 => "Instant Credit"
+            30 => "WebMoney",
+            33 => "InstantCredit"
         ][$methodId];
     }
 
@@ -2133,15 +1947,12 @@ class Paytpv extends PaymentModule
             Tools::redirect('index');
         }
 
-        $total_pedido = $cart->getOrderTotal(true, Cart::BOTH);
-
         $datos_pedido = $this->terminalCurrency($cart);
         $importe = $datos_pedido["importe"];
         $currency_iso_code = $datos_pedido["currency_iso_code"];
         $idterminal = $datos_pedido["idterminal"];
-        $idterminal_ns = $datos_pedido["idterminal_ns"];
-        $pass = $datos_pedido["password"];
-        $pass_ns = $datos_pedido["password_ns"];
+
+        $secure_pay = true;
 
         $values = array(
             'id_cart' => $cart->id,
@@ -2155,21 +1966,6 @@ class Paytpv extends PaymentModule
         $URLKO = Context::getContext()->link->getModuleLink($this->name, 'urlko', $values, $ssl);
 
         $paytpv_order_ref = str_pad($cart->id, 8, "0", STR_PAD_LEFT);
-
-        if ($idterminal > 0) {
-            $secure_pay = $this->isSecureTransaction($idterminal, $total_pedido, 0) ? 1 : 0;
-        } else {
-            $secure_pay = $this->isSecureTransaction($idterminal_ns, $total_pedido, 0) ? 1 : 0;
-        }
-
-        // Miramos a ver por que terminal enviamos la operacion
-        if ($secure_pay) {
-            $idterminal_sel = $idterminal;
-            $pass_sel = $pass;
-        } else {
-            $idterminal_sel = $idterminal_ns;
-            $pass_sel = $pass_ns;
-        }
 
         $language = $this->getPaycometLang($this->context->language->language_code);
 
@@ -2185,7 +1981,7 @@ class Paytpv extends PaymentModule
                 $apiRest = new PaycometApiRest($this->apikey);
 
                 $payment =  [
-                    'terminal' => (int) $idterminal_sel,
+                    'terminal' => (int) $idterminal,
                     'order' => (string) $paytpv_order_ref,
                     'amount' => (string) $importe,
                     'currency' => (string) $currency_iso_code,
@@ -2203,7 +1999,7 @@ class Paytpv extends PaymentModule
                 $formResponse = $apiRest->form(
                     $OPERATION,
                     $language,
-                    $idterminal_sel,
+                    $idterminal,
                     '',
                     $payment
                 );
@@ -2218,35 +2014,7 @@ class Paytpv extends PaymentModule
                 $url_paytpv = $e->getCode();
             }
         } else {
-            // Cálculo Firma
-            $signature = hash('sha512', $this->clientcode . $idterminal_sel . $OPERATION . $paytpv_order_ref . $importe .
-                                        $currency_iso_code . md5($pass_sel));
-
-            $fields = array(
-                'MERCHANT_MERCHANTCODE' => $this->clientcode,
-                'MERCHANT_TERMINAL' => $idterminal_sel,
-                'OPERATION' => $OPERATION,
-                'LANGUAGE' => $language,
-                'MERCHANT_MERCHANTSIGNATURE' => $signature,
-                'MERCHANT_ORDER' => $paytpv_order_ref,
-                'MERCHANT_AMOUNT' => $importe,
-                'MERCHANT_CURRENCY' => $currency_iso_code,
-                'URLOK' => $URLOK,
-                'URLKO' => $URLKO,
-                '3DSECURE' => $secure_pay
-            );
-
-            if ($scoring != null) {
-                $fields["MERCHANT_SCORING"] = $scoring;
-            }
-
-            $query = http_build_query($fields);
-
-            $url_paytpv = $this->url_paytpv . "?" . $query;
-
-            $vhash = hash('sha512', md5($query . md5($pass_sel)));
-
-            $url_paytpv = $this->url_paytpv . "?" . $query . "&VHASH=" . $vhash;
+            $url_paytpv = "1004"; // Acceso no permitido
         }
 
         return $url_paytpv;
@@ -2276,11 +2044,8 @@ class Paytpv extends PaymentModule
         $arrDatos = array();
 
         $arrDatos["idterminal"] = $result["idterminal"];
-        $arrDatos["idterminal_ns"] = $result["idterminal_ns"];
         $arrDatos["password"] = $result["password"];
-        $arrDatos["password_ns"] = $result["password_ns"];
         $arrDatos["jetid"] = $result["jetid"];
-        $arrDatos["jetid_ns"] = $result["jetid_ns"];
         $arrDatos["currency_iso_code"] = $this->context->currency->iso_code;
         $arrDatos["importe"] = number_format($cart->getOrderTotal(true, Cart::BOTH) * 100, 0, '.', '');
 
@@ -2454,18 +2219,8 @@ class Paytpv extends PaymentModule
             $this->context->shop->id
         );
         $idterminal = $arrTerminal["idterminal"];
-        $idterminal_ns = $arrTerminal["idterminal_ns"];
         $pass = $arrTerminal["password"];
-        $pass_ns = $arrTerminal["password_ns"];
-        if ($idterminal > 0) {
-            $idterminal_sel = $idterminal;
-            $pass_sel = $pass;
-        } else {
-            $idterminal_sel = $idterminal_ns;
-            $pass_sel = $pass_ns;
-        }
 
-        include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WSClient.php');
         include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php');
 
         $result = PaytpvCustomer::getCustomerIduser($paytpv_iduser);
@@ -2479,21 +2234,12 @@ class Paytpv extends PaymentModule
             if ($this->apikey != '') {
                 $apiRest = new PaycometApiRest($this->apikey);
                 $result = $apiRest->removeUser(
-                    $idterminal_sel,
+                    $idterminal,
                     $paytpv_iduser,
                     $paytpv_tokenuser
                 );
             } else {
-                $client = new WSClient(
-                    array(
-                        'endpoint_paytpv' => $this->endpoint_paytpv,
-                        'clientcode' => $this->clientcode,
-                        'term' => $idterminal_sel,
-                        'pass' => $pass_sel
-                    )
-                );
-
-                $result = $client->removeUser($paytpv_iduser, $paytpv_tokenuser);
+                return false;
             }
 
             PaytpvCustomer::removeCustomerIduser((int) $this->context->customer->id, $paytpv_iduser);
@@ -2510,18 +2256,8 @@ class Paytpv extends PaymentModule
             $this->context->shop->id
         );
         $idterminal = $arrTerminal["idterminal"];
-        $idterminal_ns = $arrTerminal["idterminal_ns"];
         $pass = $arrTerminal["password"];
-        $pass_ns = $arrTerminal["password_ns"];
-        if ($idterminal > 0) {
-            $idterminal_sel = $idterminal;
-            $pass_sel = $pass;
-        } else {
-            $idterminal_sel = $idterminal_ns;
-            $pass_sel = $pass_ns;
-        }
 
-        include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WSClient.php');
         include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php');
 
         // Datos usuario
@@ -2537,44 +2273,13 @@ class Paytpv extends PaymentModule
             if ($this->apikey != '') {
                 $apiRest = new PaycometApiRest($this->apikey);
                 $removeSubscriptionResponse = $apiRest->removeSubscription(
-                    $idterminal_sel,
+                    $idterminal,
                     $paytpv_iduser,
                     $paytpv_tokenuser
                 );
                 $result["DS_RESPONSE"] = ($removeSubscriptionResponse->errorCode > 0)? 0 : 1;
             } else {
-                $client = new WSClient(
-                    array(
-                        'endpoint_paytpv' => $this->endpoint_paytpv,
-                        'clientcode' => $this->clientcode,
-                        'term' => $idterminal_sel,
-                        'pass' => $pass_sel
-                    )
-                );
-                $result = $client->removeSubscription($paytpv_iduser, $paytpv_tokenuser);
-            }
-
-            if ((int) $result['DS_RESPONSE'] != 1 && $arrTerminal["idterminal_ns"] > 0) {
-                if ($this->apikey != '') {
-                    $apiRest = new PaycometApiRest($this->apikey);
-                    $removeSubscriptionResponse = $apiRest->removeSubscription(
-                        $idterminal_ns,
-                        $paytpv_iduser,
-                        $paytpv_tokenuser
-                    );
-
-                    $result["DS_RESPONSE"] = ($removeSubscriptionResponse->errorCode > 0)? 0 : 1;
-                } else {
-                    $client = new WSClient(
-                        array(
-                            'endpoint_paytpv' => $this->endpoint_paytpv,
-                            'clientcode' => $this->clientcode,
-                            'term' => $idterminal_ns,
-                            'pass' => $pass_ns
-                        )
-                    );
-                    $result = $client->removeSubscription($paytpv_iduser, $paytpv_tokenuser);
-                }
+                $result["DS_RESPONSE"] = 0; // Error
             }
 
             if ((int) $result['DS_RESPONSE'] == 1) {
@@ -2593,18 +2298,8 @@ class Paytpv extends PaymentModule
             $this->context->shop->id
         );
         $idterminal = $arrTerminal["idterminal"];
-        $idterminal_ns = $arrTerminal["idterminal_ns"];
         $pass = $arrTerminal["password"];
-        $pass_ns = $arrTerminal["password_ns"];
-        if ($idterminal > 0) {
-            $idterminal_sel = $idterminal;
-            $pass_sel = $pass;
-        } else {
-            $idterminal_sel = $idterminal_ns;
-            $pass_sel = $pass_ns;
-        }
 
-        include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WSClient.php');
         include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php');
 
         // Datos usuario
@@ -2619,7 +2314,7 @@ class Paytpv extends PaymentModule
                 $apiRest = new PaycometApiRest($this->apikey);
                 try {
                     $removeSubscriptionResponse = $apiRest->removeSubscription(
-                        $idterminal_sel,
+                        $idterminal,
                         $paytpv_iduser,
                         $paytpv_tokenuser
                     );
@@ -2628,15 +2323,7 @@ class Paytpv extends PaymentModule
                     $result["DS_RESPONSE"] = 0;
                 }
             } else {
-                $client = new WSClient(
-                    array(
-                        'endpoint_paytpv' => $this->endpoint_paytpv,
-                        'clientcode' => $this->clientcode,
-                        'term' => $idterminal_sel,
-                        'pass' => $pass_sel
-                    )
-                );
-                $result = $client->removeSubscription($paytpv_iduser, $paytpv_tokenuser);
+                $result["DS_RESPONSE"] = 0; // Error
             }
             $response = array();
 
@@ -2738,20 +2425,9 @@ class Paytpv extends PaymentModule
         $arrTerminal = PaytpvTerminal::getTerminalByCurrency($currency_iso_code, $order->id_shop);
 
         $idterminal = $arrTerminal["idterminal"];
-        $idterminal_ns = $arrTerminal["idterminal_ns"];
         $pass = $arrTerminal["password"];
-        $pass_ns = $arrTerminal["password_ns"];
-        if ($idterminal > 0) {
-            $idterminal_sel = $idterminal;
-            $pass_sel = $pass;
-        } else {
-            $idterminal_sel = $idterminal_ns;
-            $pass_sel = $pass_ns;
-        }
 
-
-        // Refund amount
-        include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WSClient.php');
+        // Refund amount        
         include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php');
 
         $ip = Tools::getRemoteAddr();
@@ -2762,7 +2438,7 @@ class Paytpv extends PaymentModule
             $apiRest = new PaycometApiRest($this->apikey);
             $executeRefundReponse = $apiRest->executeRefund(
                 $paytpv_order_ref,
-                $idterminal_sel,
+                $idterminal,
                 $amount,
                 $currency_iso_code,
                 $authcode,
@@ -2778,76 +2454,14 @@ class Paytpv extends PaymentModule
                 $result['DS_MERCHANT_AUTHCODE'] = $executeRefundReponse->authCode;
             }
         } else {
-            $client = new WSClient(
-                array(
-                    'endpoint_paytpv' => $this->endpoint_paytpv,
-                    'clientcode' => Configuration::get('PAYTPV_CLIENTCODE', null, null, $order->id_shop),
-                    'term' => $idterminal_sel,
-                    'pass' => $pass_sel
-                )
-            );
-
-            // Refund amount of transaction
-            $result = $client->executeRefund(
-                '',
-                '',
-                $paytpv_order_ref,
-                $currency_iso_code,
-                $authcode,
-                $amount
-            );
+            $result["DS_RESPONSE"] = 0;
+            $result['DS_ERROR_ID'] = 1004;
         }
 
         $response = array();
 
         $response["error"] = 0;
         $response["txt"] = $this->l('OK');
-
-        // If idterminal_ns is not null make refund by other terminal
-        if ($result['DS_ERROR_ID'] == 130 && $arrTerminal["idterminal_ns"] > 0) {
-            if ($this->apikey != '') {
-                $notifyDirectPayment = 2;
-
-                $apiRest = new PaycometApiRest($this->apikey);
-                $executeRefundReponse = $apiRest->executeRefund(
-                    $paytpv_order_ref,
-                    $idterminal_ns,
-                    $amount,
-                    $currency_iso_code,
-                    $authcode,
-                    $ip,
-                    $notifyDirectPayment
-                );
-
-                $result["DS_RESPONSE"] = ($executeRefundReponse->errorCode > 0)? 0 : 1;
-                $result['DS_ERROR_ID'] = $executeRefundReponse->errorCode;
-
-                if ($executeRefundReponse->errorCode == 0) {
-                    $result['DS_MERCHANT_AUTHCODE'] = $executeRefundReponse->authCode;
-                }
-            } else {
-                $client = new WSClient(
-                    array(
-                        'endpoint_paytpv' => $this->endpoint_paytpv,
-                        'clientcode' => $this->clientcode,
-                        'term' => $idterminal_ns,
-                        'pass' => $pass_ns
-                    )
-                );
-
-                $result = $client->executeRefund(
-                    '',
-                    '',
-                    $paytpv_order_ref,
-                    $currency_iso_code,
-                    $authcode,
-                    $amount
-                );
-            }
-
-            $response["error"] = 0;
-            $response["txt"] = $this->l('OK');
-        }
 
         // If is a subscription and error y initial refund.
         if ($result['DS_ERROR_ID'] == 130) {
@@ -2860,7 +2474,7 @@ class Paytpv extends PaymentModule
                 $apiRest = new PaycometApiRest($this->apikey);
                 $executeRefundReponse = $apiRest->executeRefund(
                     $paytpv_order_ref,
-                    $idterminal_sel,
+                    $idterminal,
                     $amount,
                     $currency_iso_code,
                     $authcode,
@@ -2874,23 +2488,8 @@ class Paytpv extends PaymentModule
                     $result['DS_MERCHANT_AUTHCODE'] = $executeRefundReponse->authCode;
                 }
             } else {
-                $client = new WSClient(
-                    array(
-                        'endpoint_paytpv' => $this->endpoint_paytpv,
-                        'clientcode' => Configuration::get('PAYTPV_CLIENTCODE', null, null, $order->id_shop),
-                        'term' => $idterminal_sel,
-                        'pass' => $pass_sel
-                    )
-                );
-
-                $result = $client->executeRefund(
-                    '',
-                    '',
-                    $paytpv_order_ref,
-                    $currency_iso_code,
-                    $authcode,
-                    $amount
-                );
+                $result["DS_RESPONSE"] = 0;
+                $result['DS_ERROR_ID'] = 1004;
             }
 
             $response["error"] = 0;

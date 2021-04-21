@@ -102,7 +102,7 @@
                                 <img id='ajax_loader' src="{$base_dir|escape:'htmlall':'UTF-8':FALSE}modules/paytpv/views/img/clockpayblue.gif"></img>
                                 {l s='Loading payment form...' mod='paytpv'}
                             </p>
-                            <iframe id="paytpv_iframe" src="{$paytpv_iframe|escape:'htmlall':'UTF-8':FALSE}" name="paytpv" style="width: 100%; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-style: initial; border-color: initial; border-image: initial; height: {$iframe_height|escape:'htmlall':'UTF-8':FALSE}px;" marginheight="0" marginwidth="0" scrolling="no"></iframe>
+                            <iframe id="paytpv_iframe" src="{$paytpv_iframe|escape:'htmlall':'UTF-8':FALSE}" name="paytpv" style="width: 98%; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-style: initial; border-color: initial; border-image: initial; height: {$iframe_height|escape:'htmlall':'UTF-8':FALSE}px;" marginheight="0" marginwidth="0" scrolling="no"></iframe>
                         {else}
                             {include file='modules/paytpv/views/templates/hook/inc_payment_jetIframe.tpl'}
                         {/if}

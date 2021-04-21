@@ -114,15 +114,9 @@ class PayTpvInstall
                 `id` INT(2) UNSIGNED NOT NULL,
                 `id_shop` INT(2) UNSIGNED NOT NULL DEFAULT 1,
                 `idterminal` INT(6) UNSIGNED NULL,
-                `idterminal_ns` INT(6) UNSIGNED NULL,
                 `password` VARCHAR(30) NULL,
-                `password_ns` VARCHAR(30) NULL,
                 `jetid` VARCHAR(32),
-                `jetid_ns` VARCHAR(32),
                 `currency_iso_code` VARCHAR(3) NOT NULL,
-                `terminales` SMALLINT(1) NOT NULL DEFAULT 0,
-                `tdfirst` SMALLINT(1) NOT NULL DEFAULT 1,
-                `tdmin` DECIMAL(17,2),
                 PRIMARY KEY (`id`,`id_shop`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8')) {
             return false;
@@ -148,6 +142,27 @@ class PayTpvInstall
      */
     public function updateConfiguration()
     {
+
+        // Eliminamos columnas antiguas si es que existen
+        try {
+            Db::getInstance()->execute('ALTER TABLE `'._DB_PREFIX_.'paytpv_terminal` 
+            DROP COLUMN `idterminal_ns`,
+            DROP COLUMN `password_ns`,
+            DROP COLUMN `jetid_ns`,
+            DROP COLUMN `terminales`,
+            DROP COLUMN `tdfirst`,
+            DROP COLUMN `tdmin`
+            ');
+        } catch (exception $e) {
+        }
+
+        // Eliminamos datos de configuracion
+        try {
+            Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'paytpv_terminal`');
+        } catch (exception $e) {
+        }
+        return true;
+
     }
 
     /**
@@ -156,6 +171,8 @@ class PayTpvInstall
     public function deleteConfiguration()
     {
         // Valores a quitar si desinstalamos el módulo
+        Configuration::deleteByName('PAYTPV_APIKEY');
+        Configuration::deleteByName('PAYTPV_INTEGRATION');
         Configuration::deleteByName('PAYTPV_CLIENTCODE');
         Configuration::deleteByName('PAYTPV_3DFIRST');
         Configuration::deleteByName('PAYTPV_3DMIN');

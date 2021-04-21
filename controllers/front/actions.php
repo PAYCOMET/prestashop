@@ -122,16 +122,10 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
             Context::getContext()->currency = new Currency($id_currency);
         }
 
-        $total_pedido = $cart->getOrderTotal(true, Cart::BOTH);
-
         $datos_pedido = $paytpv->terminalCurrency($cart);
         $importe = $datos_pedido["importe"];
         $currency_iso_code = $datos_pedido["currency_iso_code"];
         $idterminal = $datos_pedido["idterminal"];
-        $idterminal_ns = $datos_pedido["idterminal_ns"];
-        $pass = $datos_pedido["password"];
-        $pass_ns = $datos_pedido["password_ns"];
-
 
         $values = array(
             'id_cart' => $cart->id,
@@ -148,11 +142,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
 
         $language = $paytpv->getPaycometLang($this->context->language->language_code);
 
-        if ($idterminal > 0) {
-            $secure_pay = $paytpv->isSecureTransaction($idterminal, $total_pedido, 0) ? 1 : 0;
-        } else {
-            $secure_pay = $paytpv->isSecureTransaction($idterminal_ns, $total_pedido, 0) ? 1 : 0;
-        }
+        $secure_pay = true;
 
         // Miramos a ver por que terminal enviamos la operacion
         if ($secure_pay) {
@@ -190,7 +180,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                     $apiRest = new PaycometApiRest($paytpv->apikey);
 
                     $payment =  [
-                        'terminal' => (int) $idterminal_sel,
+                        'terminal' => (int) $idterminal,
                         'order' => (string) $paytpv_order_ref,
                         'amount' => (string) $importe,
                         'currency' => (string) $currency_iso_code,
@@ -208,7 +198,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                     $formResponse = $apiRest->form(
                         $OPERATION,
                         $language,
-                        $idterminal_sel,
+                        $idterminal,
                         '',
                         $payment
                     );
@@ -221,42 +211,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                     $url_paytpv = "";
                 }
             } else {
-                // Cálculo Firma
-                $signature = hash('sha512', $paytpv->clientcode . $idterminal_sel . $OPERATION . $paytpv_order_ref .
-                $importe . $currency_iso_code . md5($pass_sel));
-
-                $score = $paytpv->transactionScore($cart);
-                $MERCHANT_SCORING = $score["score"];
-                $MERCHANT_DATA = $paytpv->getMerchantData($cart);
-
-                $fields = array(
-                    'MERCHANT_MERCHANTCODE' => $paytpv->clientcode,
-                    'MERCHANT_TERMINAL' => $idterminal_sel,
-                    'OPERATION' => $OPERATION,
-                    'LANGUAGE' => $language,
-                    'MERCHANT_MERCHANTSIGNATURE' => $signature,
-                    'MERCHANT_ORDER' => $paytpv_order_ref,
-                    'MERCHANT_AMOUNT' => $importe,
-                    'MERCHANT_CURRENCY' => $currency_iso_code,
-                    'URLOK' => $URLOK,
-                    'URLKO' => $URLKO,
-                    '3DSECURE' => $secure_pay
-                );
-
-                if ($MERCHANT_SCORING != null) {
-                    $fields["MERCHANT_SCORING"] = $MERCHANT_SCORING;
-                }
-                if ($MERCHANT_DATA != null) {
-                    $fields["MERCHANT_DATA"] = $MERCHANT_DATA;
-                }
-
-                $query = http_build_query($fields);
-
-                $url_paytpv = $paytpv->url_paytpv . "?" . $query;
-
-                $vhash = hash('sha512', md5($query . md5($pass_sel)));
-
-                $url_paytpv = $paytpv->url_paytpv . "?" . $query . "&VHASH=" . $vhash;
+                $url_paytpv = "";
             }
             $arrReturn["error"] = 0;
             $arrReturn["url"] = $url_paytpv;
@@ -320,16 +275,10 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
             Context::getContext()->currency = new Currency($id_currency);
         }
 
-        $total_pedido = $cart->getOrderTotal(true, Cart::BOTH);
-
         $datos_pedido = $paytpv->terminalCurrency($cart);
         $importe = $datos_pedido["importe"];
         $currency_iso_code = $datos_pedido["currency_iso_code"];
-        $idterminal = $datos_pedido["idterminal"];
-        $idterminal_ns = $datos_pedido["idterminal_ns"];
-        $pass = $datos_pedido["password"];
-        $pass_ns = $datos_pedido["password_ns"];
-
+        $idterminal = $datos_pedido["idterminal"];        
 
         $values = array(
             'id_cart' => $cart->id,
@@ -343,20 +292,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
 
         $paytpv_order_ref = str_pad($cart->id, 8, "0", STR_PAD_LEFT);
 
-        if ($idterminal > 0) {
-            $secure_pay = $paytpv->isSecureTransaction($idterminal, $total_pedido, 0) ? 1 : 0;
-        } else {
-            $secure_pay = $paytpv->isSecureTransaction($idterminal_ns, $total_pedido, 0) ? 1 : 0;
-        }
-
-        // Miramos a ver por que terminal enviamos la operacion
-        if ($secure_pay) {
-            $idterminal_sel = $idterminal;
-            $pass_sel = $pass;
-        } else {
-            $idterminal_sel = $idterminal_ns;
-            $pass_sel = $pass_ns;
-        }
+        $secure_pay = true;
 
         $arrReturn = array();
         $arrReturn["error"] = 1;
@@ -386,7 +322,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
             $language = $paytpv->getPaycometLang($this->context->language->language_code);
 
             $score = $paytpv->transactionScore($cart);
-            $MERCHANT_SCORING = $scoring = $score["score"];
+            $scoring = $score["score"];
 
             if ($paytpv->apikey != '') {
                 include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php');
@@ -399,7 +335,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                     $apiRest = new PaycometApiRest($paytpv->apikey);
 
                     $payment =  [
-                        'terminal' => (int) $idterminal_sel,
+                        'terminal' => (int) $idterminal,
                         'order' => (string) $paytpv_order_ref,
                         'amount' => (string) $importe,
                         'currency' => (string) $currency_iso_code,
@@ -422,7 +358,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                     $formResponse = $apiRest->form(
                         $OPERATION,
                         $language,
-                        $idterminal_sel,
+                        $idterminal,
                         '',
                         $payment,
                         $subscription
@@ -436,35 +372,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                     $url_paytpv = "";
                 }
             } else {
-                $signature = hash('sha512', $paytpv->clientcode . $idterminal_sel . $OPERATION . $paytpv_order_ref .
-                $importe . $currency_iso_code . md5($pass_sel));
-
-                $fields = array(
-                    'MERCHANT_MERCHANTCODE' => $paytpv->clientcode,
-                    'MERCHANT_TERMINAL' => $idterminal_sel,
-                    'OPERATION' => $OPERATION,
-                    'LANGUAGE' => $language,
-                    'MERCHANT_MERCHANTSIGNATURE' => $signature,
-                    'MERCHANT_ORDER' => $paytpv_order_ref,
-                    'MERCHANT_AMOUNT' => $importe,
-                    'MERCHANT_CURRENCY' => $currency_iso_code,
-                    'SUBSCRIPTION_STARTDATE' => $subscription_startdate,
-                    'SUBSCRIPTION_ENDDATE' => $subscription_enddate,
-                    'SUBSCRIPTION_PERIODICITY' => $susc_periodicity,
-                    'URLOK' => $URLOK,
-                    'URLKO' => $URLKO,
-                    '3DSECURE' => $secure_pay
-                );
-
-                if ($MERCHANT_SCORING != null) {
-                    $fields["MERCHANT_SCORING"] = $MERCHANT_SCORING;
-                }
-
-                $query = http_build_query($fields);
-
-                $vhash = hash('sha512', md5($query . md5($pass_sel)));
-
-                $url_paytpv = $paytpv->url_paytpv . "?" . $query . "&VHASH=" . $vhash;
+                $url_paytpv = "";
             }
 
             $arrReturn["error"] = 0;

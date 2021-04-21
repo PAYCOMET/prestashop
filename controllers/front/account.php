@@ -65,41 +65,19 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
 
             $arrTerminal = PaytpvTerminal::getTerminalByCurrency($this->context->currency->iso_code);
             $idterminal = $arrTerminal["idterminal"];
-            $idterminal_ns = $arrTerminal["idterminal_ns"];
-            $pass = $arrTerminal["password"];
-            $pass_ns = $arrTerminal["password_ns"];
             $jetid = $arrTerminal["jetid"];
-            $jetid_ns = $arrTerminal["jetid_ns"];
 
-            // PAGO SEGURO
-            if ($idterminal > 0) {
-                $secure_pay = $paytpv->isSecureTransaction($idterminal, 0, 0) ? 1 : 0;
-            } else {
-                $secure_pay = $paytpv->isSecureTransaction($idterminal_ns, 0, 0) ? 1 : 0;
-            }
-
-            // Miramos a ver por que terminal enviamos la operacion
-            if ($secure_pay) {
-                $idterminal_sel = $idterminal;
-                $pass_sel = $pass;
-                $jetid_sel = $jetid;
-            } else {
-                $idterminal_sel = $idterminal_ns;
-                $pass_sel = $pass_ns;
-                $jetid_sel = $jetid_ns;
-            }
             // SAVE BANKSTORE JET
             $token = Tools::getIsset("paytpvToken")?Tools::getValue("paytpvToken"):"";
 
             if ($token && Tools::strlen($token) == 64) {
-                include_once(_PS_MODULE_DIR_.'/paytpv/classes/WSClient.php');
                 include_once(_PS_MODULE_DIR_.'/paytpv/classes/PaycometApiRest.php');
 
                 if ($paytpv->apikey != '') {
                     $notify = 2;
                     $apiRest = new PaycometApiRest($paytpv->apikey);
                     $addUserResponse = $apiRest->addUser(
-                        $idterminal_sel,
+                        $idterminal,
                         $token,
                         $this->context->cart->id,
                         '',
@@ -113,23 +91,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                         $tokenUser = $addUserResponse->tokenUser;
                     }
                 } else {
-                    $client = new WSClient(
-                        array(
-                            'endpoint_paytpv' => $paytpv->endpoint_paytpv,
-                            'clientcode' => $paytpv->clientcode,
-                            'term' => $idterminal_sel,
-                            'pass' => $pass_sel,
-                            'jetid' => $jetid_sel
-                        )
-                    );
-
-                    $addUserResponse = $client->addUserToken($token);
-
-                    $addUserResponseErrorCode = $addUserResponse['DS_ERROR_ID'];
-                    if ($addUserResponse['DS_ERROR_ID'] == 0) {
-                        $idUser = $addUserResponse["DS_IDUSER"];
-                        $tokenUser = $addUserResponse["DS_TOKEN_USER"];
-                    }
+                    $addUserResponseErrorCode = 1004;
                 }
 
                 if (( int ) $addUserResponseErrorCode > 0) {
@@ -141,24 +103,25 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                         $infoUserResponse = $apiRest->infoUser(
                             $idUser,
                             $tokenUser,
-                            $idterminal_sel
+                            $idterminal
                         );
 
                         if ($infoUserResponse->errorCode == 0) {
                             $result['DS_MERCHANT_PAN'] = $infoUserResponse->pan;
                             $result['DS_CARD_BRAND'] = $infoUserResponse->cardBrand;
+
+                            $paytpv->saveCard(
+                                (int)$this->context->customer->id,
+                                $idUser,
+                                $tokenUser,
+                                $result['DS_MERCHANT_PAN'],
+                                $result['DS_CARD_BRAND']
+                            );
+
                         }
                     } else {
                         $result = $client->infoUser($idUser, $tokenUser);
                     }
-
-                    $paytpv->saveCard(
-                        (int)$this->context->customer->id,
-                        $idUser,
-                        $tokenUser,
-                        $result['DS_MERCHANT_PAN'],
-                        $result['DS_CARD_BRAND']
-                    );
                 }
             }
             // FIN SAVE BANKSTORE JET
@@ -182,10 +145,10 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                     $formResponse = $apiRest->form(
                         $operation,
                         $language,
-                        $idterminal_sel,
+                        $idterminal,
                         '',
                         [
-                            'terminal' => (int) $idterminal_sel,
+                            'terminal' => (int) $idterminal,
                             'order' => (string) $order,
                             'urlOk' => (string) $URLOK,
                             'urlKo' => (string) $URLKO
@@ -200,26 +163,8 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                     $url_paytpv = "";
                 }
             } else {
-                // Cálculo Firma
-                $signature = hash('sha512', $paytpv->clientcode.$idterminal_sel.$operation.$order.md5($pass_sel));
-                $fields = array(
-                    'MERCHANT_MERCHANTCODE' => $paytpv->clientcode,
-                    'MERCHANT_TERMINAL' => $idterminal_sel,
-                    'OPERATION' => $operation,
-                    'LANGUAGE' => $language,
-                    'MERCHANT_MERCHANTSIGNATURE' => $signature,
-                    'MERCHANT_ORDER' => $order,
-                    'URLOK' => $URLOK,
-                    'URLKO' => $URLKO,
-                    '3DSECURE' => $secure_pay
-                );
-                $query = http_build_query($fields);
-
-                $vhash = hash('sha512', md5($query.md5($pass_sel)));
-
-                $url_paytpv = $paytpv->url_paytpv . "?".$query . "&VHASH=".$vhash;
+                $url_paytpv = "";
             }
-            
             $paytpv_path = Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $paytpv->name . '/';
 
             $this->context->controller->addCSS($paytpv_path . 'views/css/account.css', 'all');
@@ -264,7 +209,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
             $this->context->smarty->assign('paytpv_integration', $paytpv_integration);
             $this->context->smarty->assign('account', 1);
 
-            $this->context->smarty->assign('jet_id', $jetid_sel);
+            $this->context->smarty->assign('jet_id', $jetid);
             
             $this->context->smarty->assign('jet_lang', $language);
 
