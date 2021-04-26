@@ -111,8 +111,8 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
 
             $arrTerminal = PaytpvTerminal::getTerminalByIdTerminal(Tools::getValue('TpvID'));
-            $idterminal = $arrTerminal["idterminal"];            
-            $pass = $arrTerminal["password"];            
+            $idterminal = $arrTerminal["idterminal"];
+            $pass = $arrTerminal["password"];
 
             $local_sign = hash('sha512', $paytpv->clientcode . $idterminal . Tools::getValue('TransactionType') .
                                  $ref . Tools::getValue('DateTime') . md5($pass));
@@ -375,7 +375,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
                     $displayName = $paytpv->displayName;
                     if (Tools::getIsset('MethodName')) {
-                        $displayName .= " [" . Tools::getValue('MethodName') . "]";
+                        $displayName .= " [" . Tools::getValue('MethodName') . "]";                        
                     }
 
                     $pagoRegistrado = $paytpv->validateOrder(
@@ -397,6 +397,29 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                         $id_suscription,
                         $cart->id_customer,
                         $id_order,
+                        $importe
+                    );
+                }
+                
+                // Para APMs. Si el estado esta en "Pendient de pago" lo pasamos a Pago Aceptado
+                if ($order->getCurrentState() == Configuration::get("PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT")) {
+                    
+                    $order->addOrderPayment($importe, null, Tools::getValue('AuthCode'));
+
+                    $history = new OrderHistory();
+                    $history->id_order = (int)$order->id;
+                    $history->changeIdOrderState(_PS_OS_PAYMENT_, (int)($order->id));
+                    $history->addWithemail();
+                    $history->save();
+                    
+                    $pagoRegistrado = true;
+                    
+                    PaytpvOrder::addOrder(
+                        0,
+                        0,
+                        0,
+                        $cart->id_customer,
+                        (int)$order->id,
                         $importe
                     );
                 }

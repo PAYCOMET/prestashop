@@ -137,9 +137,8 @@ class PaytpvTerminal extends ObjectModel
     public static function getTerminalByIdTerminal($idterminal)
     {
         $id_shop = Context::getContext()->shop->id;
-        
         $idterminal = ($idterminal>0) ? $idterminal:0;
-        $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where (idterminal=' . (int)$idterminal . ' and 
+        $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where idterminal=' . (int)$idterminal . ' and 
         id_shop=' . (int)$id_shop;
         $result2 = Db::getInstance()->getRow($sql);
 
@@ -147,7 +146,7 @@ class PaytpvTerminal extends ObjectModel
         $arrDatos["idterminal"] = $result2["idterminal"];
         $arrDatos["password"] = $result2["password"];
         $arrDatos["jetid"] = $result2["jetid"];
-        
+
         return $arrDatos;
     }
 }

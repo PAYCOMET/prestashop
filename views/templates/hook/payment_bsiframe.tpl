@@ -35,11 +35,6 @@
                     <form action="{$paytpv_jetid_url|escape:'htmlall':'UTF-8':FALSE}" method="POST" class="paytpv_jet" id="paycometPaymentForm" style="clear:left;">
                 {/if}
 
-
-                <p style="padding-top: 5px;">
-                    <a href="http://www.paycomet.com" target="_blank"><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/paytpv_logo.svg" width="135"></a>
-                </p>
-
                 {if ($msg_paytpv!="")}
                 <p>
                     <span class="message">{$msg_paytpv|escape:'htmlall':'UTF-8':FALSE}</span>
@@ -113,11 +108,6 @@
 
                             <div class="paytpv_wrapper mobile">
                                 <div class="footer_line">
-                                  <div class="footer_logo">
-                                      <a href="https://www.paycomet.com" target="_blank">
-                                      <img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/paytpv_logo.svg">
-                                    </a>
-                                  </div>
                                   <ul class="payment_icons">
                                     <li><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/visa.png" alt="Visa"></li>
                                     <li><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/visa_electron.png" alt="Visa Electron"></li>

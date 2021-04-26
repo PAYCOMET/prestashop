@@ -24,7 +24,7 @@
 
 .paytpv
 {
-    padding-left:17px;
+    padding-left:10px;
     display: block;
     border: 1px solid #d6d4d4;
     border-radius: 4px;
@@ -41,8 +41,8 @@
 }
 
 .alert {
-    padding: 5px 35px 2px 14px;
-    margin: 10px 20px 0px 0px;
+    padding: 5px 15px 2px 14px;
+    margin: 10px 10px 0px 0px;
     /* text-shadow: 0 1px 0 rgba(255,255,255,0.5); */
     background-color: #fcf8e3;
     border: 1px solid #fbeed5;
