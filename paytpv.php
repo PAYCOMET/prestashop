@@ -1945,7 +1945,6 @@ class Paytpv extends PaymentModule
     public function APMAsynchronous($methodId)
     {
         $arr = [
-            11,
             16 // Multibanco
         ];
         return (in_array($methodId,$arr));

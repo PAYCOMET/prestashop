@@ -408,7 +408,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
                     $history = new OrderHistory();
                     $history->id_order = (int)$order->id;
-                    $history->changeIdOrderState(_PS_OS_PAYMENT_, (int)($order->id));
+                    $history->changeIdOrderState(_PS_OS_PAYMENT_, (int)($order->id), true);
                     $history->addWithemail();
                     $history->save();
                     
