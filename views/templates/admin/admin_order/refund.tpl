@@ -28,7 +28,7 @@
 		<div class="panel card">
 			<div class="panel-heading card-header"><img src="{$base_url|escape:'htmlall':'UTF-8':FALSE}modules/{$module_name|escape:'htmlall':'UTF-8':FALSE}/logo.png" width="20" alt="" /> {l s='PAYCOMET Refund' mod='paytpv'}</div>
 			<div class="card-body">
-				<form method="post" class="card-body" action="{$smarty.server.REQUEST_URI|escape:'htmlall':'UTF-8':FALSE}"></form>
+				<form method="post" class="card-body" action="{$smarty.server.REQUEST_URI|escape:'htmlall':'UTF-8':FALSE}">
 					<input type="hidden" name="id_order" value="{$params.id_order|intval}" />
 					<p class=><b>{l s='Information:' mod='paytpv'}</b> {l s='Payment accepted' mod='paytpv'} [{$ref_paycomet|escape:'htmlall':'UTF-8':FALSE}]</p>
 					<p>{l s='"Standard refund" or "Return Products": performs a partial Refund in the Customer\'s credit card unless you select "Create a voucher"' mod='paytpv'}</p>
@@ -43,14 +43,14 @@
 					<p><b>{l s='Outstanding amount' mod='paytpv'}:</b> <span class="badge badge-info">{$amount|escape:'htmlall':'UTF-8':FALSE}</span></p>
 					{if $amount>0}
 						<p class="center">
-							<button type="submit" class="btn btn-default btn-primary ml-3" name="submitPayTpvRefund" onclick="if (!confirm('{l s='Are you sure?' mod='paytpv'}'))return false;">
+							<button type="submit" class="btn btn-default btn-primary" name="submitPayTpvRefund" onclick="if (!confirm('{l s='Are you sure?' mod='paytpv'}'))return false;">
 								<i class="icon-undo"></i>
 								{l s='Total Refund of the Payment' mod='paytpv'}  [{$amount|escape:'htmlall':'UTF-8':FALSE}]
 							</button>
 							{l s='Change order status to Refunded' mod='paytpv'}
 						</p>
 						<p class="input-group">
-							<input type="text" class="form-control" name="paytpPartialRefundAmount" size="10" value="">
+							<input type="text" class="col-sm-1 form-control" name="paytpPartialRefundAmount" size="10" value="">
 							<span class="input-group-btn">
 								<button type="submit" class="btn btn-default btn-primary ml-3" name="submitPayTpvPartialRefund" onclick="if (!confirm('{l s='Are you sure?' mod='paytpv'}'))return false;">
 									<i class="icon-undo"></i>

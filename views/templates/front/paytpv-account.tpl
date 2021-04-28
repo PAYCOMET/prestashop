@@ -124,7 +124,7 @@
                             {$suscription_pay = $suscriptions[suscription].SUSCRIPTION_PAY}
                             <ul >
                                 {section name=suscription_pay loop=$suscription_pay}
-                                <li class="suscription_pay" id="suscription_pay{$suscription_pay[suscription_pay].ID_SUSCRIPTION|escape:'htmlall':'UTF-8':FALSE}">
+                                <li class="suscription_pay" id="suscription_pay{$suscription_pay[suscription_pay].ID|escape:'htmlall':'UTF-8':FALSE}">
                                      <a href="{$link->getPageLink('order-detail',true,null,"id_order={$suscription_pay[suscription_pay].ID_ORDER}")|escape:'html':'UTF-8':FALSE}">{l s='Order' mod='paytpv'}: {$suscription_pay[suscription_pay].ORDER_REFERENCE|escape:'htmlall':'UTF-8':FALSE}</a>
                                      {l s='Amount' mod='paytpv'}: {$suscription_pay[suscription_pay].PRICE|escape:'htmlall':'UTF-8':FALSE} - {l s='Date' mod='paytpv'}: {$suscription_pay[suscription_pay].DATE_YYYYMMDD|escape:'htmlall':'UTF-8':FALSE}
 
