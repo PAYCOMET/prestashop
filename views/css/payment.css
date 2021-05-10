@@ -24,11 +24,12 @@
 
 .paytpv
 {
-    padding-left:17px;
+    padding-left:10px;
     display: block;
     border: 1px solid #d6d4d4;
     border-radius: 4px;
     padding-bottom: 10px;
+    margin-bottom: 10px;
 }
 .paytpv_tarjetas{
     padding: 5px 15px 15px 15px;
@@ -40,8 +41,8 @@
 }
 
 .alert {
-    padding: 5px 35px 2px 14px;
-    margin: 10px 20px 0px 0px;
+    padding: 5px 15px 2px 14px;
+    margin: 10px 10px 0px 0px;
     /* text-shadow: 0 1px 0 rgba(255,255,255,0.5); */
     background-color: #fcf8e3;
     border: 1px solid #fbeed5;
@@ -128,4 +129,24 @@
 
 .paytpv input[type=checkbox] {
     appearance: auto;
+ }
+
+p.payment_module a.paycometPayments {
+	cursor: pointer;
+    padding: 15px 40px 20px 99px;
 }
+p.payment_module a.paycometPayments:after {
+    display: block;
+    content: "\f054";
+    position: absolute;
+    right: 15px;
+    margin-top: -11px;
+    top: 50%;
+    font-family: "FontAwesome";
+    font-size: 25px;
+    height: 22px;
+    width: 14px;
+    color: #777;
+}
+
+ 

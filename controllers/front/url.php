@@ -84,22 +84,10 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
             $arrTerminal = PaytpvTerminal::getTerminalByIdTerminal(Tools::getValue('TpvID'));
             $idterminal = $arrTerminal["idterminal"];
-            $idterminal_ns = $arrTerminal["idterminal_ns"];
             $pass = $arrTerminal["password"];
-            $pass_ns = $arrTerminal["password_ns"];
 
-
-            if (Tools::getValue('TpvID') == $idterminal) {
-                $idterminal_sel = $idterminal;
-                $pass_sel = $pass;
-            }
-            if (Tools::getValue('TpvID') == $idterminal_ns) {
-                $idterminal_sel = $idterminal_ns;
-                $pass_sel = $pass_ns;
-            }
-
-            $local_sign = hash('sha512', $paytpv->clientcode . $idterminal_sel . Tools::getValue('TransactionType') .
-                                $ref . Tools::getValue('Amount') . Tools::getValue('Currency') . md5($pass_sel) .
+            $local_sign = hash('sha512', $paytpv->clientcode . $idterminal . Tools::getValue('TransactionType') .
+                                $ref . Tools::getValue('Amount') . Tools::getValue('Currency') . md5($pass) .
                                 Tools::getValue('BankDateTime') . Tools::getValue('Response'));
 
             // Check Signature
@@ -124,20 +112,10 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
             $arrTerminal = PaytpvTerminal::getTerminalByIdTerminal(Tools::getValue('TpvID'));
             $idterminal = $arrTerminal["idterminal"];
-            $idterminal_ns = $arrTerminal["idterminal_ns"];
             $pass = $arrTerminal["password"];
-            $pass_ns = $arrTerminal["password_ns"];
 
-            if (Tools::getValue('TpvID') == $idterminal) {
-                $idterminal_sel = $idterminal;
-                $pass_sel = $pass;
-            }
-            if (Tools::getValue('TpvID') == $idterminal_ns) {
-                $idterminal_sel = $idterminal_ns;
-                $pass_sel = $pass_ns;
-            }
-            $local_sign = hash('sha512', $paytpv->clientcode . $idterminal_sel . Tools::getValue('TransactionType') .
-                                 $ref . Tools::getValue('DateTime') . md5($pass_sel));
+            $local_sign = hash('sha512', $paytpv->clientcode . $idterminal . Tools::getValue('TransactionType') .
+                                 $ref . Tools::getValue('DateTime') . md5($pass));
 
             // Check Signature
             if ($sign != $local_sign) {
@@ -150,35 +128,24 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                 $infoUserResponse = $apiRest->infoUser(
                     Tools::getValue('IdUser'),
                     Tools::getValue('TokenUser'),
-                    $idterminal_sel
+                    $idterminal
                 );
 
                 $result = array();
                 $result['DS_MERCHANT_PAN'] = $infoUserResponse->pan;
                 $result['DS_CARD_BRAND'] = $infoUserResponse->cardBrand;
-            } else {
-                include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WSClient.php');
-                $client = new WSClient(
-                    array(
-                        'endpoint_paytpv' => $paytpv->endpoint_paytpv,
-                        'clientcode' => $paytpv->clientcode,
-                        'term' => $idterminal_sel,
-                        'pass' => $pass_sel,
-                    )
+
+                $paytpv->saveCard(
+                    $id_customer,
+                    Tools::getValue('IdUser'),
+                    Tools::getValue('TokenUser'),
+                    $result['DS_MERCHANT_PAN'],
+                    $result['DS_CARD_BRAND']
                 );
-
-                $result = $client->infoUser(Tools::getValue('IdUser'), Tools::getValue('TokenUser'));
+                die('Usuario Registrado');
+            } else {
+                die('Error 1004');
             }
-
-            $paytpv->saveCard(
-                $id_customer,
-                Tools::getValue('IdUser'),
-                Tools::getValue('TokenUser'),
-                $result['DS_MERCHANT_PAN'],
-                $result['DS_CARD_BRAND']
-            );
-
-            die('Usuario Registrado');
 
             // (create_subscription)
         } elseif (Tools::getValue('TransactionType') === "9") {
@@ -200,22 +167,10 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
             $arrTerminal = PaytpvTerminal::getTerminalByIdTerminal(Tools::getValue('TpvID'));
             $idterminal = $arrTerminal["idterminal"];
-            $idterminal_ns = $arrTerminal["idterminal_ns"];
             $pass = $arrTerminal["password"];
-            $pass_ns = $arrTerminal["password_ns"];
 
-            if (Tools::getValue('TpvID') == $idterminal) {
-                $idterminal_sel = $idterminal;
-                $pass_sel = $pass;
-            }
-            if (Tools::getValue('TpvID') == $idterminal_ns) {
-                $idterminal_sel = $idterminal_ns;
-                $pass_sel = $pass_ns;
-            }
-
-
-            $local_sign = hash('sha512', $paytpv->clientcode . $idterminal_sel . Tools::getValue('TransactionType') .
-                Tools::getValue('Order') . Tools::getValue('Amount') . Tools::getValue('Currency') . md5($pass_sel) .
+            $local_sign = hash('sha512', $paytpv->clientcode . $idterminal . Tools::getValue('TransactionType') .
+                Tools::getValue('Order') . Tools::getValue('Amount') . Tools::getValue('Currency') . md5($pass) .
                 Tools::getValue('BankDateTime') . Tools::getValue('Response'));
 
             // Check Signature
@@ -263,17 +218,17 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             // EXIST ORDER
             if ($id_order) {
                 $order = new Order($id_order);
-
-                $sql = 'SELECT COUNT(oh.`id_order_history`) AS nb
-                        FROM `' . _DB_PREFIX_ . 'order_history` oh
-                        WHERE oh.`id_order` = ' . (int) $id_order . '
-                AND oh.id_order_state = ' . Configuration::get('PS_OS_PAYMENT');
-                $n = Db::getInstance()->getValue($sql);
-                $pagoRegistrado = $n > 0;
+                $pagoRegistrado = $paytpv->isOrderPaid($id_order);
 
                 // If a subscription payment
                 // SUSCRIPCION
                 if (Tools::getValue('TransactionType') === "9" && $suscripcion == 2) {
+                    // Evitar duplicidades.
+                    $notifDuplicada = $paytpv->isPaymentProcesed(Tools::getValue('AuthCode'));
+                    if ($notifDuplicada) {
+                        die('Notif Duplicada');
+                    }
+
                     $cart_problem_txt = "";
 
                     $new_cart = $cart->duplicate();
@@ -299,7 +254,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                             $apiRest = new PaycometApiRest($paytpv->apikey);
                             $executeRefundReponse = $apiRest->executeRefund(
                                 Tools::getValue('Order'),
-                                $idterminal_sel,
+                                $idterminal,
                                 Tools::getValue('Amount'),
                                 Tools::getValue('Currency'),
                                 Tools::getValue('AuthCode'),
@@ -310,24 +265,9 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                             $result['DS_RESPONSE'] = $executeRefundReponse->errorCode;
                             $result['DS_MERCHANT_AUTHCODE'] = $executeRefundReponse->authCode;
                         } else {
-                            include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WSClient.php');
-                            $client = new WSClient(
-                                array(
-                                    'endpoint_paytpv' => $paytpv->endpoint_paytpv,
-                                    'clientcode' => $paytpv->clientcode,
-                                    'term' => $idterminal_sel,
-                                    'pass' => $pass_sel,
-                                )
-                            );
-
-                            $result = $client->executeRefund(
-                                $paytpv_iduser,
-                                $paytpv_tokenuser,
-                                Tools::getValue('Order'),
-                                Tools::getValue('Currency'),
-                                Tools::getValue('AuthCode'),
-                                Tools::getValue('Amount')
-                            );
+                            $result = array();
+                            $result['DS_RESPONSE'] = 1004;
+                            $result['DS_MERCHANT_AUTHCODE'] ="";
                         }
 
                         $refund = 1;
@@ -458,6 +398,27 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                         $importe
                     );
                 }
+                // Para APMs. Si el estado esta en "Pendient de pago" lo pasamos a Pago Aceptado
+                if ($order->getCurrentState() == Configuration::get("PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT")) {
+                    $order->addOrderPayment($importe, null, Tools::getValue('AuthCode'));
+
+                    $history = new OrderHistory();
+                    $history->id_order = (int)$order->id;
+                    $history->changeIdOrderState(_PS_OS_PAYMENT_, (int)($order->id), true);
+                    $history->addWithemail();
+                    $history->save();
+
+                    $pagoRegistrado = true;
+
+                    PaytpvOrder::addOrder(
+                        0,
+                        0,
+                        0,
+                        $cart->id_customer,
+                        (int)$order->id,
+                        $importe
+                    );
+                }
                 // NO ORDER
             } else {
                 $displayName = $paytpv->displayName;
@@ -498,35 +459,24 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                             $infoUserResponse = $apiRest->infoUser(
                                 $paytpv_iduser,
                                 $paytpv_tokenuser,
-                                $idterminal_sel
+                                $idterminal
                             );
 
                             $result = array();
                             $result['DS_MERCHANT_PAN'] = $infoUserResponse->pan;
                             $result['DS_CARD_BRAND'] = $infoUserResponse->cardBrand;
-                        } else {
-                            include_once(_PS_MODULE_DIR_ . '/paytpv/classes/WSClient.php');
 
-                            $client = new WSClient(
-                                array(
-                                    'endpoint_paytpv' => $paytpv->endpoint_paytpv,
-                                    'clientcode' => $paytpv->clientcode,
-                                    'term' => $idterminal_sel,
-                                    'pass' => $pass_sel,
-                                )
+                            $result = $paytpv->saveCard(
+                                $cart->id_customer,
+                                Tools::getValue('IdUser'),
+                                Tools::getValue('TokenUser'),
+                                $result['DS_MERCHANT_PAN'],
+                                $result['DS_CARD_BRAND']
                             );
-                            $result = $client->infoUser($paytpv_iduser, $paytpv_tokenuser);
-                        }
 
-                        $result = $paytpv->saveCard(
-                            $cart->id_customer,
-                            Tools::getValue('IdUser'),
-                            Tools::getValue('TokenUser'),
-                            $result['DS_MERCHANT_PAN'],
-                            $result['DS_CARD_BRAND']
-                        );
-                        $paytpv_iduser = $result["paytpv_iduser"];
-                        $paytpv_tokenuser = $result["paytpv_tokenuser"];
+                            $paytpv_iduser = $result["paytpv_iduser"];
+                            $paytpv_tokenuser = $result["paytpv_tokenuser"];
+                        }
                     }
 
                     // SUSCRIPCION

@@ -34,7 +34,7 @@
             <ul>
                 <li>
                     <label for="expiry_date">{l s='Expiration' mod='paytpv'}</label>
-                    <input maxlength="5" placeholder="{l s='MM/YY' mod='paytpv'}" id="expiry_date" pattern="{literal}[0-9]{2}/+[0-9]{2}{/literal}" type="text" onChange="buildED();" onfocus="buildED();">
+                    <input maxlength="5" placeholder="{l s='MM/AA' mod='paytpv'}" id="expiry_date" pattern="{literal}[0-9]{2}/+[0-9]{2}{/literal}" type="text" onChange="buildED();" onfocus="buildED();">
                     <input type="hidden" data-paycomet="dateMonth" maxlength="2"  value="">
                     <input type="hidden" data-paycomet="dateYear" maxlength="2" value="">
                 </li>

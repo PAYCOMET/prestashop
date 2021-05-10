@@ -25,9 +25,6 @@
     <form action="{$paytpv_jetid_url|escape:'htmlall':'UTF-8':FALSE}" method="POST" class="paytpv_jet paycomet_jet" id="paycometPaymentForm" style="clear:left;">
     <div class="row">
         <div class="paytpv">
-
-            <p style="padding-top: 5px;"><a href="http://www.paycomet.com" target="_blank"><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/paytpv_logo.svg" width="135"></a></p>
-
             {if ($msg_paytpv!="")}
             <p>
                 <span class="message">{$msg_paytpv|escape:'htmlall':'UTF-8':FALSE}</span>

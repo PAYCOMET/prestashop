@@ -35,11 +35,6 @@
                     <form action="{$paytpv_jetid_url|escape:'htmlall':'UTF-8':FALSE}" method="POST" class="paytpv_jet" id="paycometPaymentForm" style="clear:left;">
                 {/if}
 
-
-                <p style="padding-top: 5px;">
-                    <a href="http://www.paycomet.com" target="_blank"><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/paytpv_logo.svg" width="135"></a>
-                </p>
-
                 {if ($msg_paytpv!="")}
                 <p>
                     <span class="message">{$msg_paytpv|escape:'htmlall':'UTF-8':FALSE}</span>
@@ -102,7 +97,7 @@
                                 <img id='ajax_loader' src="{$base_dir|escape:'htmlall':'UTF-8':FALSE}modules/paytpv/views/img/clockpayblue.gif"></img>
                                 {l s='Loading payment form...' mod='paytpv'}
                             </p>
-                            <iframe id="paytpv_iframe" src="{$paytpv_iframe|escape:'htmlall':'UTF-8':FALSE}" name="paytpv" style="width: 100%; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-style: initial; border-color: initial; border-image: initial; height: {$iframe_height|escape:'htmlall':'UTF-8':FALSE}px;" marginheight="0" marginwidth="0" scrolling="no"></iframe>
+                            <iframe id="paytpv_iframe" src="{$paytpv_iframe|escape:'htmlall':'UTF-8':FALSE}" name="paytpv" style="width: 98%; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-style: initial; border-color: initial; border-image: initial; height: {$iframe_height|escape:'htmlall':'UTF-8':FALSE}px;" marginheight="0" marginwidth="0" scrolling="no"></iframe>
                         {else}
                             {include file='modules/paytpv/views/templates/hook/inc_payment_jetIframe.tpl'}
                         {/if}
@@ -113,11 +108,6 @@
 
                             <div class="paytpv_wrapper mobile">
                                 <div class="footer_line">
-                                  <div class="footer_logo">
-                                      <a href="https://www.paycomet.com" target="_blank">
-                                      <img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/paytpv_logo.svg">
-                                    </a>
-                                  </div>
                                   <ul class="payment_icons">
                                     <li><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/visa.png" alt="Visa"></li>
                                     <li><img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/visa_electron.png" alt="Visa Electron"></li>
