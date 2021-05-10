@@ -48,8 +48,14 @@ class PaytpvApmModuleFrontController extends ModuleFrontController
 
         // Generar Pedido en los metodos Asincronos
         if ($paytpv->APMAsynchronous($methodId)) {
-            $displayName = $paytpv->displayName . " [" . $paytpv->getAPMName($methodId) . "]";            
-            $paytpv->validateOrder($id_cart, Configuration::get("PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT"), 0, $displayName, '');
+            $displayName = $paytpv->displayName . " [" . $paytpv->getAPMName($methodId) . "]";
+            $paytpv->validateOrder(
+                $id_cart,
+                Configuration::get("PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT"),
+                0,
+                $displayName,
+                ''
+            );
         }
         Tools::redirect($url);
         exit;

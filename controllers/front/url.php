@@ -142,9 +142,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                     $result['DS_MERCHANT_PAN'],
                     $result['DS_CARD_BRAND']
                 );
-
                 die('Usuario Registrado');
-
             } else {
                 die('Error 1004');
             }
@@ -225,7 +223,6 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                 // If a subscription payment
                 // SUSCRIPCION
                 if (Tools::getValue('TransactionType') === "9" && $suscripcion == 2) {
-
                     // Evitar duplicidades.
                     $notifDuplicada = $paytpv->isPaymentProcesed(Tools::getValue('AuthCode'));
                     if ($notifDuplicada) {
@@ -376,7 +373,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
                     $displayName = $paytpv->displayName;
                     if (Tools::getIsset('MethodName')) {
-                        $displayName .= " [" . Tools::getValue('MethodName') . "]";                        
+                        $displayName .= " [" . Tools::getValue('MethodName') . "]";
                     }
 
                     $pagoRegistrado = $paytpv->validateOrder(
@@ -479,7 +476,6 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
                             $paytpv_iduser = $result["paytpv_iduser"];
                             $paytpv_tokenuser = $result["paytpv_tokenuser"];
-
                         }
                     }
 

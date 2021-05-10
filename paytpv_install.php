@@ -162,7 +162,6 @@ class PayTpvInstall
         } catch (exception $e) {
         }
         return true;
-
     }
 
     /**

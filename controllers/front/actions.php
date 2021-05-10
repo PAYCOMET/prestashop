@@ -70,7 +70,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
         die('1');
     }
 
-    
+
 
     /**
      * Remove card
@@ -143,16 +143,6 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
         $language = $paytpv->getPaycometLang($this->context->language->language_code);
 
         $secure_pay = true;
-
-        // Miramos a ver por que terminal enviamos la operacion
-        if ($secure_pay) {
-            $idterminal_sel = $idterminal;
-            $pass_sel = $pass;
-        } else {
-            $idterminal_sel = $idterminal_ns;
-            $pass_sel = $pass_ns;
-        }
-
 
         $arrReturn = array();
         $arrReturn["error"] = 1;
@@ -278,7 +268,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
         $datos_pedido = $paytpv->terminalCurrency($cart);
         $importe = $datos_pedido["importe"];
         $currency_iso_code = $datos_pedido["currency_iso_code"];
-        $idterminal = $datos_pedido["idterminal"];        
+        $idterminal = $datos_pedido["idterminal"];
 
         $values = array(
             'id_cart' => $cart->id,

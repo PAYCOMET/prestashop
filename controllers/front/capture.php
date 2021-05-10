@@ -47,8 +47,8 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
         $datos_pedido = $paytpv->terminalCurrency($this->context->cart);
         $importe = $datos_pedido["importe"];
         $currency_iso_code = $datos_pedido["currency_iso_code"];
-        $idterminal = $datos_pedido["idterminal"];        
-        
+        $idterminal = $datos_pedido["idterminal"];
+
         // BANKSTORE JET
 
         $token = Tools::getIsset('paytpvToken') ? Tools::getValue('paytpvToken') : "";
@@ -173,7 +173,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
         }
 
         if ($paytpv->apikey != '') {
-            $merchantData = $paytpv->getMerchantData($this->context->cart);            
+            $merchantData = $paytpv->getMerchantData($this->context->cart);
             $userInteraction = '1';
             $methodId = '1';
             $notifyDirectPayment = 1;

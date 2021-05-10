@@ -117,10 +117,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                                 $result['DS_MERCHANT_PAN'],
                                 $result['DS_CARD_BRAND']
                             );
-
                         }
-                    } else {
-                        $result = $client->infoUser($idUser, $tokenUser);
                     }
                 }
             }
@@ -203,14 +200,14 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                     true
                 )
             );
-            
+
 
             $this->context->smarty->assign('newpage_payment', $paytpv->newpage_payment);
             $this->context->smarty->assign('paytpv_integration', $paytpv_integration);
             $this->context->smarty->assign('account', 1);
 
             $this->context->smarty->assign('jet_id', $jetid);
-            
+
             $this->context->smarty->assign('jet_lang', $language);
 
             $this->context->smarty->assign('jet_paytpv', $paytpv->jet_paytpv);
