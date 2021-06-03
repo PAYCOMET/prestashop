@@ -43,6 +43,11 @@ class PaytpvUrlokModuleFrontController extends ModuleFrontController
 
         // Vienen los parametros por GET
         if ($id_cart > 0 && $id_cart > 0) {
+            // Si no recibimos $key
+            if (!isset($key) || $key == "") {
+                $cart = new Cart($id_cart);
+                $key = $cart->secure_key;
+            }
             $values = array(
                 'id_cart' => $id_cart,
                 'id_module' => (int) $this->module->id,

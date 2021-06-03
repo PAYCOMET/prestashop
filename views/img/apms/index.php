@@ -1,4 +1,6 @@
-{*
+<?php
+
+/*
 * 2007-2015 PrestaShop
 *
 * NOTICE OF LICENSE
@@ -20,16 +22,14 @@
 *  @author     PAYCOMET <info@paycomet.com>
 *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*}
+*/
 
+				    	
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+header("Location: ../");
 
-<div class="row">
-    <div class="col-xs-12 col-md-6">
-        <p class="payment_module">
-            <a class="bankwire" href="{$link->getModuleLink('paytpv', 'payment')|escape:'htmlall':'UTF-8'}" title="{l s='Pay with Card' mod='paytpv'}"rel="nofollow">
-                <img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/paytpv_logo.svg" width="100">
-                {l s='Pay with Card' mod='paytpv'}
-            </a>
-        </p>
-    </div>
-</div>
+exit;

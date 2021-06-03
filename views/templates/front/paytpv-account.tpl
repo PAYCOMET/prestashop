@@ -84,7 +84,7 @@
 
         <div class="payment_module paytpv_iframe" id="nueva_tarjeta" style="display:none">
             {if ($paytpv_integration==0)}
-                <iframe src="{$url_paytpv|escape:'htmlall':'UTF-8':FALSE}" id="paytpv_iframe" name="paytpv" style="width: 670px; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-style: initial; border-color: initial; border-image: initial; height: 360px; " marginheight="0" marginwidth="0" scrolling="no"></iframe>                
+                <iframe src="{$url_paytpv|escape:'htmlall':'UTF-8':FALSE}" id="paytpv_iframe" name="paytpv" style="min-width: 360px; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-style: initial; border-color: initial; border-image: initial; height: 360px; " marginheight="0" marginwidth="0" scrolling="no"></iframe>                
             {else}
                 <form action="{$paytpv_jetid_url|escape:'htmlall':'UTF-8'}" method="POST" class="paytpv_jet" id="paycometPaymentForm">
                     {include file='modules/paytpv/views/templates/hook/inc_payment_jetIframe.tpl'}
@@ -124,7 +124,7 @@
                             {$suscription_pay = $suscriptions[suscription].SUSCRIPTION_PAY}
                             <ul >
                                 {section name=suscription_pay loop=$suscription_pay}
-                                <li class="suscription_pay" id="suscription_pay{$suscription_pay[suscription_pay].ID_SUSCRIPTION|escape:'htmlall':'UTF-8':FALSE}">
+                                <li class="suscription_pay" id="suscription_pay{$suscription_pay[suscription_pay].ID|escape:'htmlall':'UTF-8':FALSE}">
                                      <a href="{$link->getPageLink('order-detail',true,null,"id_order={$suscription_pay[suscription_pay].ID_ORDER}")|escape:'html':'UTF-8':FALSE}">{l s='Order' mod='paytpv'}: {$suscription_pay[suscription_pay].ORDER_REFERENCE|escape:'htmlall':'UTF-8':FALSE}</a>
                                      {l s='Amount' mod='paytpv'}: {$suscription_pay[suscription_pay].PRICE|escape:'htmlall':'UTF-8':FALSE} - {l s='Date' mod='paytpv'}: {$suscription_pay[suscription_pay].DATE_YYYYMMDD|escape:'htmlall':'UTF-8':FALSE}
 
