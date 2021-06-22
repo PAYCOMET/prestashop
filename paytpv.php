@@ -53,7 +53,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.1';
+        $this->version = '7.7.2';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
 
@@ -386,7 +386,9 @@ class Paytpv extends PaymentModule
                     case 1130:  // No se encuentra el producto
                     case 1003:  // Credenciales inválidas
                     case 127:   // Parámetro no válido.
-                        $arrDatos["error_txt"] = $this->l('Check that the Client Code, Terminal and Password are correct.');
+                        $arrDatos["error_txt"] = $this->l(
+                            'Check that the Client Code, Terminal and Password are correct.'
+                        );
                         break;
                     case 1337:  // Ruta de notificación no configurada
                         $arrDatos["error_txt"] = $this->l('Notification URL is not defined in the product configuration of your account PAYCOMET account.');
@@ -398,8 +400,9 @@ class Paytpv extends PaymentModule
                         . Context::getContext()->link->getModuleLink($this->name, 'url', array(), $ssl);
                         break;
                     case 1339:  // Configuración de terminales incorrecta
-                        $arrDatos["error_txt"] = $this->l('Your Product in PAYCOMET account is not set up with the Available Terminals option: ')
-                        . $terminales_txt;
+                        $arrDatos["error_txt"] = $this->l(
+                            'Your Product in PAYCOMET account is not set up with the Available Terminals option: '
+                        ) . $terminales_txt;
                         break;
                 }
             }
@@ -462,10 +465,22 @@ class Paytpv extends PaymentModule
             Configuration::updateValue('PAYTPV_APM_instant_credit', Tools::getValue('apms_instant_credit'));
 
             // Instan Credit
-            Configuration::updateValue('PAYTPV_APM_instant_credit_simuladorCoutas', Tools::getValue('apms_instant_credit_simuladorCoutas'));
-            Configuration::updateValue('PAYTPV_APM_instant_credit_hashToken', Tools::getValue('apms_instant_credit_hashToken'));
-            Configuration::updateValue('PAYTPV_APM_instant_credit_minFin', Tools::getValue('apms_instant_credit_minFin'));
-            Configuration::updateValue('PAYTPV_APM_instant_credit_maxFin', Tools::getValue('apms_instant_credit_maxFin'));
+            Configuration::updateValue(
+                'PAYTPV_APM_instant_credit_simuladorCoutas',
+                Tools::getValue('apms_instant_credit_simuladorCoutas')
+            );
+            Configuration::updateValue(
+                'PAYTPV_APM_instant_credit_hashToken',
+                Tools::getValue('apms_instant_credit_hashToken')
+            );
+            Configuration::updateValue(
+                'PAYTPV_APM_instant_credit_minFin',
+                Tools::getValue('apms_instant_credit_minFin')
+            );
+            Configuration::updateValue(
+                'PAYTPV_APM_instant_credit_maxFin',
+                Tools::getValue('apms_instant_credit_maxFin')
+            );
             
 
             // Datos Scoring
@@ -798,15 +813,21 @@ class Paytpv extends PaymentModule
 
         $Merchant_EMV3DS = array();
 
-        $Merchant_EMV3DS["customer"]["id"] =
-            isset($this->context->customer->id) ? $this->context->customer->id : '';
-        $Merchant_EMV3DS["customer"]["name"] =
-            isset($this->context->customer->firstname) ? $this->context->customer->firstname : '';
-        $Merchant_EMV3DS["customer"]["surname"] =
-            isset($this->context->customer->lastname) ? $this->context->customer->lastname : '';
-        $Merchant_EMV3DS["customer"]["email"] =
-            isset($this->context->customer->email) ? $this->context->customer->email : '';
+        if (isset($this->context->customer->id) && $this->context->customer->id > 0) {
+            $Merchant_EMV3DS["customer"]["id"] = $this->context->customer->id;
+        }
 
+        if (isset($this->context->customer->firstname) && $this->context->customer->firstname != "") {
+            $Merchant_EMV3DS["customer"]["name"] = $this->context->customer->firstname;
+        }
+
+        if (isset($this->context->customer->surname) && $this->context->customer->surname != "") {
+            $Merchant_EMV3DS["customer"]["surname"] = $this->context->customer->lastname;
+        }
+
+        if (isset($this->context->customer->email) && $this->context->customer->email != "") {
+            $Merchant_EMV3DS["customer"]["email"] = $this->context->customer->email;
+        }
 
         // Billing info
         $billing = new Address((int) $cart->id_address_invoice);
@@ -1048,7 +1069,7 @@ class Paytpv extends PaymentModule
         $arrValues["apms_instant_credit"] = $config["PAYTPV_APM_instant_credit"];
 
         // Instant Credit
-        $arrValues["apms_instant_credit_simuladorCoutas"] = $config["PAYTPV_APM_instant_credit_simuladorCoutas"];        
+        $arrValues["apms_instant_credit_simuladorCoutas"] = $config["PAYTPV_APM_instant_credit_simuladorCoutas"];
         $arrValues["apms_instant_credit_hashToken"] = $config["PAYTPV_APM_instant_credit_hashToken"];
         $arrValues["apms_instant_credit_minFin"] = $config["PAYTPV_APM_instant_credit_minFin"];
         $arrValues["apms_instant_credit_maxFin"] = $config["PAYTPV_APM_instant_credit_maxFin"];
@@ -1303,6 +1324,7 @@ class Paytpv extends PaymentModule
 
         //APMs
         if (Tools::getValue('apikey') != '' || $this->apikey) {
+            $arrAPMs = $this->getUserAlternativePaymentMethods();
             $apms_form = array(
                 'form' => array(
                     'legend' => array(
@@ -1315,7 +1337,7 @@ class Paytpv extends PaymentModule
                             'label' => $this->l('Alternative payment methods'),
                             'name' => 'apms',
                             'values' => array(
-                                'query' => $this->getUserAlternativePaymentMethods(),
+                                'query' => $arrAPMs,
                                 'id' => 'id',
                                 'name' => 'name'
                             ),
@@ -1324,62 +1346,68 @@ class Paytpv extends PaymentModule
                     )
                 )
             );
-            
+
             $arrFields[] = $apms_form;
 
-            $instantCredit_form = array(
-                'form' => array(
-                    'legend' => array(
-                        'title' => $this->l('Instant Credit'),
-                        'icon' => 'icon-cogs'
-                    ),
-                    'input' => array(
-                        array(
-                            'type' => 'switch',
-                            'label' => 'Simulador de coutas',
-                            'name' => 'apms_instant_credit_simuladorCoutas',
-                            'is_bool' => true,
-                            'hint' => 'Mostrar el simulador de coutas.',
-                            'values' => array(
-                                array(
-                                    'id' => 'active_on',
-                                    'value' => true,
-                                    'label' => 'Activado',
+
+            $arrMethods = array();
+            foreach ($arrAPMs as $key => $apm_data) {
+                $arrMethods[] = $apm_data["val"];
+            }
+
+            // Instant Credit
+            if (in_array(33, $arrMethods)) {
+                $instantCredit_form = array(
+                    'form' => array(
+                        'legend' => array(
+                            'title' => $this->l('Instant Credit'),
+                            'icon' => 'icon-cogs'
+                        ),
+                        'input' => array(
+                            array(
+                                'type' => 'switch',
+                                'label' => 'Simulador de coutas',
+                                'name' => 'apms_instant_credit_simuladorCoutas',
+                                'is_bool' => true,
+                                'hint' => 'Mostrar el simulador de coutas.',
+                                'values' => array(
+                                    array(
+                                        'id' => 'active_on',
+                                        'value' => true,
+                                        'label' => 'Activado',
+                                    ),
+                                    array(
+                                        'id' => 'active_off',
+                                        'value' => false,
+                                        'label' => 'Desactivado',
+                                    )
                                 ),
-                                array(
-                                    'id' => 'active_off',
-                                    'value' => false,
-                                    'label' => 'Desactivado',
-                                )
                             ),
-                        ),
-                        array(
-                            'type' => 'text',
-                            'label' => $this->l('HASH TOKEN'),
-                            'name' => 'apms_instant_credit_hashToken',
-                            'required' => false
-                        ),
-                        array(
-                            'type' => 'text',
-                            'label' => $this->l('Financiación mínima'),
-                            'name' => 'apms_instant_credit_minFin',
-                            'required' => true
-                        ),
-                        array(
-                            'type' => 'text',
-                            'label' => $this->l('Financiación maxima'),
-                            'name' => 'apms_instant_credit_maxFin',
-                            'required' => true
-                        ),
-                    )
-                ),
-            );
+                            array(
+                                'type' => 'text',
+                                'label' => $this->l('HASH TOKEN'),
+                                'name' => 'apms_instant_credit_hashToken',
+                                'required' => false
+                            ),
+                            array(
+                                'type' => 'text',
+                                'label' => $this->l('Minimum financing'),
+                                'name' => 'apms_instant_credit_minFin',
+                                'required' => true
+                            ),
+                            array(
+                                'type' => 'text',
+                                'label' => $this->l('Maximum financing'),
+                                'name' => 'apms_instant_credit_maxFin',
+                                'required' => true
+                            ),
+                        )
+                    ),
+                );
 
-            $arrFields[] = $instantCredit_form;
-
+                $arrFields[] = $instantCredit_form;
+            }
         }
-
-        
 
         // Array Score
 
@@ -1795,7 +1823,7 @@ class Paytpv extends PaymentModule
         );
     }
 
-    public function getTemplateVars($method)
+    public function getTemplateVars()
     {
         $cart = $this->context->cart;
         $total = $cart->getOrderTotal(true, Cart::BOTH);
@@ -1805,10 +1833,12 @@ class Paytpv extends PaymentModule
             'this_path_instantcredit' => $this->_path,
             'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name . '/',
             'simuladorCuotas' => $this->simuladorCuotas,
-            'urlSimulador' => $this->context->link->getModuleLink($this->name, 'simulador', array('importe_financiar' => $total)),
+            'urlSimulador' => $this->context->link->getModuleLink(
+                $this->name,
+                'simulador',
+                array('importe_financiar' => $total)
+            ),
         );
-
-
     }
 
     public function hookPaymentOptions()
@@ -1904,9 +1934,17 @@ class Paytpv extends PaymentModule
             )
             ->setLogo(_MODULE_DIR_ . 'paytpv/views/img/apms/' . $apm['img_name'] . '.svg')
             ->setAction($apm['url']);
-            
+
+            // PESRONALIZACIONES APMS
             switch ($methodId) {
-                case 33:
+                case 33: // Instant Credti
+                    $apmOption->setCallToActionText(
+                        $this->trans(
+                            $this->l('Instant installment payment'),
+                            array(),
+                            'Modules.MyModule.Shop'
+                        )
+                    );
                     $this->context->smarty->assign(
                         $apm["templateVars"]
                     );
@@ -1919,7 +1957,7 @@ class Paytpv extends PaymentModule
             }
             array_push($payment_options, $apmOption);
         }
-        
+
         array_unshift($payment_options, $newOption);
 
         return $payment_options;
@@ -2031,8 +2069,7 @@ class Paytpv extends PaymentModule
 
             foreach ($apms as $methodId) {
                 try {
-
-                    if (!$this->validateMethod($methodId,$cart)) {
+                    if (!$this->validateMethod($methodId, $cart)) {
                         continue;
                     }
 
@@ -2073,10 +2110,13 @@ class Paytpv extends PaymentModule
 
                         $url_paytpv[$methodId]['url'] = $url_apm;
                         $method_name = $this->getAPMName($methodId);
-                        $method_img = Tools::strtolower($method_name);
+                        $method_img = str_replace(" ", "", Tools::strtolower($method_name));
                         $url_paytpv[$methodId]['method_name'] = $method_name;
                         $url_paytpv[$methodId]['img_name'] = $method_img;
-                        $url_paytpv[$methodId]['templateVars'] = $this->getAPMTemplateVars($methodId,$cart->getOrderTotal(true, Cart::BOTH));
+                        $url_paytpv[$methodId]['templateVars'] = $this->getAPMTemplateVars(
+                            $methodId,
+                            $cart->getOrderTotal(true, Cart::BOTH)
+                        );
                     }
                 } catch (exception $e) {
                     $url_paytpv = $e->getCode();
@@ -2086,31 +2126,43 @@ class Paytpv extends PaymentModule
         }
     }
 
-    public function validateMethod($methodId,$cart){
+    public function validateMethod($methodId, $cart)
+    {
+        $valid = false;
         switch ($methodId) {
-            default:
-                return true;
-                break;
             case 33: // Instant Credit
-                if ($cart->getOrderTotal(true, Cart::BOTH) >= $this->paytpv_apm_instant_credit_minFin &&
-                    $cart->getOrderTotal(true, Cart::BOTH) <= $this->paytpv_apm_instant_credit_maxFin) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                break; 
+                if (($this->paytpv_apm_instant_credit_minFin == 0 ||
+                    $cart->getOrderTotal(true, Cart::BOTH) >= $this->paytpv_apm_instant_credit_minFin ) &&
+                    ($this->paytpv_apm_instant_credit_maxFin == 0 ||
+                    $cart->getOrderTotal(true, Cart::BOTH) <= $this->paytpv_apm_instant_credit_maxFin )) {
+                    $valid = true;
+                } else {
+                    $valid = false;
+                }
+                break;
+            default:
+                $valid = true;
+                break;
         }
+        return $valid;
     }
 
-    public function getAPMTemplateVars($methodId, $total) {
+    public function getAPMTemplateVars($methodId, $total)
+    {
         $arrTemplateVars = array();
-        switch ($methodId){
+        switch ($methodId) {
             case 33: // Instant Credit
-                $arrTemplateVars["urlSimulador"] = $this->context->link->getModuleLink($this->name, 'simulador', array('importe_financiar' => $total));
+                $arrTemplateVars["urlSimulador"] = $this->context->link->getModuleLink(
+                    $this->name,
+                    'simulador',
+                    array('importe_financiar' => $total)
+                );
                 $arrTemplateVars["simuladorCuotas"] = $this->paytpv_apm_instant_credit_simulador;
+                $arrTemplateVars["importe_financiar"] = $total;
+                $arrTemplateVars["hashToken"] = $this->paytpv_apm_instant_credit_hashToken;
 
                 $method_name = $this->getAPMName($methodId);
-                $method_img = Tools::strtolower($method_name);
+                $method_img = str_replace(" ", "", Tools::strtolower($method_name));
 
                 $arrTemplateVars["logo"] = _MODULE_DIR_ . 'paytpv/views/img/apms/' . $method_img . '.svg';
 
@@ -2138,7 +2190,7 @@ class Paytpv extends PaymentModule
             20 => "EPS",
             21 => "Tele2",
             22 => "Paysera",
-            23 => "PostFinance",
+            23 => "Post Finance",
             24 => "QIWI",
             25 => "Yandex",
             26 => "MTS",
@@ -2146,7 +2198,7 @@ class Paytpv extends PaymentModule
             28 => "Paysafecard",
             29 => "Skrill",
             30 => "WebMoney",
-            33 => "InstantCredit"
+            33 => "Instant Credit"
         ][$methodId];
     }
 
@@ -2419,9 +2471,9 @@ class Paytpv extends PaymentModule
             $this->html .= $this->display(__FILE__, 'order_suscription_customer_info.tpl');
         }
 
-
         return $this->html;
     }
+
     private function getConfigValues()
     {
         $arrPaycomet = array('PAYTPV_CLIENTCODE', 'PAYTPV_INTEGRATION', 'PAYTPV_APIKEY', 'PAYTPV_NEWPAGEPAYMENT',
@@ -2443,10 +2495,9 @@ class Paytpv extends PaymentModule
         'PAYTPV_APM_instant_credit_hashToken', 'PAYTPV_APM_instant_credit_minFin',
         'PAYTPV_APM_instant_credit_maxFin');
 
-        $arrConfig = array_merge($arrPaycomet,$arrApms,$arrInstantCredit);
+        $arrConfig = array_merge($arrPaycomet, $arrApms, $arrInstantCredit);
 
         return Configuration::getMultiple($arrConfig);
-
     }
 
     public function saveCard(

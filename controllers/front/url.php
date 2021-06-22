@@ -56,8 +56,21 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
         // Obtencion de datos
         if (Tools::getValue('paycomet_data') == "1") {
-            $arrDatos = array("module_v" => $paytpv->version, "ps_v" => _PS_VERSION_);
-            exit(json_encode($arrDatos));
+            $arrTerminal = PaytpvTerminal::getTerminalByIdTerminal(Tools::getValue('terminal'));
+            $idterminal = $arrTerminal["idterminal"];
+            $pass = $arrTerminal["password"];
+
+            $apiKey = ($paytpv->apikey != '')?1:0;
+
+            if (Tools::getValue('clientcode') && Tools::getValue('clientcode') == $paytpv->clientcode &&
+            Tools::getValue('terminal') && Tools::getValue('terminal')==$idterminal) {
+                $arrDatos = array(
+                    "module_v" => $paytpv->version,
+                    "ps_v" => _PS_VERSION_,
+                    "ak" => $apiKey
+                );
+                exit(json_encode($arrDatos));
+            }
         }
 
         // Notify response

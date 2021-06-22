@@ -60,6 +60,10 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.2: 
+
+- Simulador de cuotas APM Instant Credit
+
 > 7.7.1: 
 
 - Mejoras controlador URLOK
