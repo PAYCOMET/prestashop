@@ -53,7 +53,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.1';
+        $this->version = '7.7.2';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
 
@@ -137,69 +137,97 @@ class Paytpv extends PaymentModule
         if (isset($config['PAYTPV_DISABLEOFFERSAVECARD'])) {
             $this->disableoffersavecard = $config['PAYTPV_DISABLEOFFERSAVECARD'];
         }
+        
+        if (array_key_exists('PAYTPV_APM_bizum', $config)) {
+            $this->paytpv_apm_bizum = $config['PAYTPV_APM_bizum'];
+        }
         if (array_key_exists('PAYTPV_APM_paypal', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_paypal'];
+            $this->paytpv_apm_paypal = $config['PAYTPV_APM_paypal'];
         }
         if (array_key_exists('PAYTPV_APM_klarna_payments', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_klarna_payments'];
+            $this->paytpv_apm_klarna = $config['PAYTPV_APM_klarna_payments'];
         }
         if (array_key_exists('PAYTPV_APM_ideal', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_ideal'];
+            $this->paytpv_apm_giropay = $config['PAYTPV_APM_ideal'];
         }
         if (array_key_exists('PAYTPV_APM_giropay', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_giropay'];
+            $this->paytpv_apm_giropay = $config['PAYTPV_APM_giropay'];
         }
         if (array_key_exists('PAYTPV_APM_mybank', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_mybank'];
+            $this->paytpv_apm_mybank = $config['PAYTPV_APM_mybank'];
         }
         if (array_key_exists('PAYTPV_APM_multibanco_sibs', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_multibanco_sibs'];
+            $this->paytpv_apm_multibanco = $config['PAYTPV_APM_multibanco_sibs'];
         }
         if (array_key_exists('PAYTPV_APM_trustly', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_trustly'];
+            $this->paytpv_apm_trustly = $config['PAYTPV_APM_trustly'];
         }
         if (array_key_exists('PAYTPV_APM_przelewy24', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_przelewy24'];
+            $this->paytpv_apm_przelewy24 = $config['PAYTPV_APM_przelewy24'];
         }
         if (array_key_exists('PAYTPV_APM_bancontact', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_bancontact'];
+            $this->paytpv_apm_bancontact = $config['PAYTPV_APM_bancontact'];
         }
         if (array_key_exists('PAYTPV_APM_eps', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_eps'];
+            $this->paytpv_apm_eps = $config['PAYTPV_APM_eps'];
         }
         if (array_key_exists('PAYTPV_APM_tele2', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_tele2'];
+            $this->paytpv_apm_tele2 = $config['PAYTPV_APM_tele2'];
         }
         if (array_key_exists('PAYTPV_APM_paysera', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_paysera'];
+            $this->paytpv_apm_paysera = $config['PAYTPV_APM_paysera'];
         }
         if (array_key_exists('PAYTPV_APM_postfinance', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_postfinance'];
+            $this->paytpv_apm_postfinance = $config['PAYTPV_APM_postfinance'];
         }
         if (array_key_exists('PAYTPV_APM_qiwi_wallet', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_qiwi_wallet'];
+            $this->paytpv_apm_qiwi = $config['PAYTPV_APM_qiwi_wallet'];
         }
         if (array_key_exists('PAYTPV_APM_yandex_money', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_yandex_money'];
+            $this->paytpv_apm_yandex = $config['PAYTPV_APM_yandex_money'];
         }
         if (array_key_exists('PAYTPV_APM_mts', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_mts'];
+            $this->paytpv_apm_mts = $config['PAYTPV_APM_mts'];
         }
         if (array_key_exists('PAYTPV_APM_beeline', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_beeline'];
+            $this->paytpv_apm_beeline = $config['PAYTPV_APM_beeline'];
         }
         if (array_key_exists('PAYTPV_APM_paysafecard', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_paysafecard'];
+            $this->paytpv_apm_paysafecard = $config['PAYTPV_APM_paysafecard'];
         }
         if (array_key_exists('PAYTPV_APM_skrill', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_skrill'];
+            $this->paytpv_apm_skrill = $config['PAYTPV_APM_skrill'];
         }
         if (array_key_exists('PAYTPV_APM_webmoney', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_webmoney'];
+            $this->paytpv_apm_webmoney = $config['PAYTPV_APM_webmoney'];
         }
+
+        // Instant Credit ---------------------------------------------
+        if (array_key_exists('PAYTPV_APM_instant_credit_simuladorCoutas', $config)) {
+            $this->paytpv_apm_instant_credit_simulador = $config['PAYTPV_APM_instant_credit_simuladorCoutas'];
+        }
+
         if (array_key_exists('PAYTPV_APM_instant_credit', $config)) {
-            $this->firstpurchase_scoring = $config['PAYTPV_APM_instant_credit'];
+            $this->paytpv_apm_instant_credit = $config['PAYTPV_APM_instant_credit'];
         }
+
+        if (array_key_exists('PAYTPV_APM_instant_credit_hashToken', $config)) {
+            $this->paytpv_apm_instant_credit_hashToken = $config['PAYTPV_APM_instant_credit_hashToken'];
+        }
+
+        if (!empty($config['PAYTPV_APM_instant_credit_minFin'])) {
+            $this->paytpv_apm_instant_credit_minFin = $config['PAYTPV_APM_instant_credit_minFin'];
+        } else {
+            $this->paytpv_apm_instant_credit_minFin = 0;
+        }
+
+        if (!empty($config['PAYTPV_APM_instant_credit_maxFin'])) {
+            $this->paytpv_apm_instant_credit_maxFin = $config['PAYTPV_APM_instant_credit_maxFin'];
+        } else {
+            $this->paytpv_apm_instant_credit_maxFin = 0;
+        }
+        // Fin Instant Credit ------------------------------------------------------------
+
 
 
         parent::__construct();
@@ -358,7 +386,9 @@ class Paytpv extends PaymentModule
                     case 1130:  // No se encuentra el producto
                     case 1003:  // Credenciales inválidas
                     case 127:   // Parámetro no válido.
-                        $arrDatos["error_txt"] = $this->l('Check that the Client Code, Terminal and Password are correct.');
+                        $arrDatos["error_txt"] = $this->l(
+                            'Check that the Client Code, Terminal and Password are correct.'
+                        );
                         break;
                     case 1337:  // Ruta de notificación no configurada
                         $arrDatos["error_txt"] = $this->l('Notification URL is not defined in the product configuration of your account PAYCOMET account.');
@@ -370,8 +400,9 @@ class Paytpv extends PaymentModule
                         . Context::getContext()->link->getModuleLink($this->name, 'url', array(), $ssl);
                         break;
                     case 1339:  // Configuración de terminales incorrecta
-                        $arrDatos["error_txt"] = $this->l('Your Product in PAYCOMET account is not set up with the Available Terminals option: ')
-                        . $terminales_txt;
+                        $arrDatos["error_txt"] = $this->l(
+                            'Your Product in PAYCOMET account is not set up with the Available Terminals option: '
+                        ) . $terminales_txt;
                         break;
                 }
             }
@@ -410,7 +441,7 @@ class Paytpv extends PaymentModule
 
             //APMs
 
-            Configuration::updateValue('PAYTPV_APM_BIZUM', Tools::getValue('apms_bizum'));
+            Configuration::updateValue('PAYTPV_APM_bizum', Tools::getValue('apms_bizum'));
             Configuration::updateValue('PAYTPV_APM_paypal', Tools::getValue('apms_paypal'));
             Configuration::updateValue('PAYTPV_APM_klarna_payments', Tools::getValue('apms_klarna_payments'));
             Configuration::updateValue('PAYTPV_APM_ideal', Tools::getValue('apms_ideal'));
@@ -432,6 +463,25 @@ class Paytpv extends PaymentModule
             Configuration::updateValue('PAYTPV_APM_skrill', Tools::getValue('apms_skrill'));
             Configuration::updateValue('PAYTPV_APM_webmoney', Tools::getValue('apms_webmoney'));
             Configuration::updateValue('PAYTPV_APM_instant_credit', Tools::getValue('apms_instant_credit'));
+
+            // Instan Credit
+            Configuration::updateValue(
+                'PAYTPV_APM_instant_credit_simuladorCoutas',
+                Tools::getValue('apms_instant_credit_simuladorCoutas')
+            );
+            Configuration::updateValue(
+                'PAYTPV_APM_instant_credit_hashToken',
+                Tools::getValue('apms_instant_credit_hashToken')
+            );
+            Configuration::updateValue(
+                'PAYTPV_APM_instant_credit_minFin',
+                Tools::getValue('apms_instant_credit_minFin')
+            );
+            Configuration::updateValue(
+                'PAYTPV_APM_instant_credit_maxFin',
+                Tools::getValue('apms_instant_credit_maxFin')
+            );
+            
 
             // Datos Scoring
 
@@ -763,15 +813,21 @@ class Paytpv extends PaymentModule
 
         $Merchant_EMV3DS = array();
 
-        $Merchant_EMV3DS["customer"]["id"] =
-            isset($this->context->customer->id) ? $this->context->customer->id : '';
-        $Merchant_EMV3DS["customer"]["name"] =
-            isset($this->context->customer->firstname) ? $this->context->customer->firstname : '';
-        $Merchant_EMV3DS["customer"]["surname"] =
-            isset($this->context->customer->lastname) ? $this->context->customer->lastname : '';
-        $Merchant_EMV3DS["customer"]["email"] =
-            isset($this->context->customer->email) ? $this->context->customer->email : '';
+        if (isset($this->context->customer->id) && $this->context->customer->id > 0) {
+            $Merchant_EMV3DS["customer"]["id"] = $this->context->customer->id;
+        }
 
+        if (isset($this->context->customer->firstname) && $this->context->customer->firstname != "") {
+            $Merchant_EMV3DS["customer"]["name"] = $this->context->customer->firstname;
+        }
+
+        if (isset($this->context->customer->surname) && $this->context->customer->surname != "") {
+            $Merchant_EMV3DS["customer"]["surname"] = $this->context->customer->lastname;
+        }
+
+        if (isset($this->context->customer->email) && $this->context->customer->email != "") {
+            $Merchant_EMV3DS["customer"]["email"] = $this->context->customer->email;
+        }
 
         // Billing info
         $billing = new Address((int) $cart->id_address_invoice);
@@ -989,7 +1045,7 @@ class Paytpv extends PaymentModule
         $arrValues["ip_change_scoring"] = $config["PAYTPV_IPCHANGE_SCORING"];
 
         //APMs
-        $arrValues["apms_bizum"] = $config["PAYTPV_APM_BIZUM"];
+        $arrValues["apms_bizum"] = $config["PAYTPV_APM_bizum"];
         $arrValues["apms_paypal"] = $config["PAYTPV_APM_paypal"];
         $arrValues["apms_klarna_payments"] = $config["PAYTPV_APM_klarna_payments"];
         $arrValues["apms_ideal"] = $config["PAYTPV_APM_ideal"];
@@ -1011,6 +1067,12 @@ class Paytpv extends PaymentModule
         $arrValues["apms_skrill"] = $config["PAYTPV_APM_skrill"];
         $arrValues["apms_webmoney"] = $config["PAYTPV_APM_webmoney"];
         $arrValues["apms_instant_credit"] = $config["PAYTPV_APM_instant_credit"];
+
+        // Instant Credit
+        $arrValues["apms_instant_credit_simuladorCoutas"] = $config["PAYTPV_APM_instant_credit_simuladorCoutas"];
+        $arrValues["apms_instant_credit_hashToken"] = $config["PAYTPV_APM_instant_credit_hashToken"];
+        $arrValues["apms_instant_credit_minFin"] = $config["PAYTPV_APM_instant_credit_minFin"];
+        $arrValues["apms_instant_credit_maxFin"] = $config["PAYTPV_APM_instant_credit_maxFin"];
 
         $arrValues["ip_change_scoring_score"] = $config["PAYTPV_IPCHANGE_SCORING_SCORE"];
         $arrValues["browser_scoring"] = $config["PAYTPV_BROWSER_SCORING"];
@@ -1262,6 +1324,7 @@ class Paytpv extends PaymentModule
 
         //APMs
         if (Tools::getValue('apikey') != '' || $this->apikey) {
+            $arrAPMs = $this->getUserAlternativePaymentMethods();
             $apms_form = array(
                 'form' => array(
                     'legend' => array(
@@ -1274,7 +1337,7 @@ class Paytpv extends PaymentModule
                             'label' => $this->l('Alternative payment methods'),
                             'name' => 'apms',
                             'values' => array(
-                                'query' => $this->getUserAlternativePaymentMethods(),
+                                'query' => $arrAPMs,
                                 'id' => 'id',
                                 'name' => 'name'
                             ),
@@ -1283,7 +1346,67 @@ class Paytpv extends PaymentModule
                     )
                 )
             );
+
             $arrFields[] = $apms_form;
+
+
+            $arrMethods = array();
+            foreach ($arrAPMs as $key => $apm_data) {
+                $arrMethods[] = $apm_data["val"];
+            }
+
+            // Instant Credit
+            if (in_array(33, $arrMethods)) {
+                $instantCredit_form = array(
+                    'form' => array(
+                        'legend' => array(
+                            'title' => $this->l('Instant Credit'),
+                            'icon' => 'icon-cogs'
+                        ),
+                        'input' => array(
+                            array(
+                                'type' => 'switch',
+                                'label' => 'Simulador de coutas',
+                                'name' => 'apms_instant_credit_simuladorCoutas',
+                                'is_bool' => true,
+                                'hint' => 'Mostrar el simulador de coutas.',
+                                'values' => array(
+                                    array(
+                                        'id' => 'active_on',
+                                        'value' => true,
+                                        'label' => 'Activado',
+                                    ),
+                                    array(
+                                        'id' => 'active_off',
+                                        'value' => false,
+                                        'label' => 'Desactivado',
+                                    )
+                                ),
+                            ),
+                            array(
+                                'type' => 'text',
+                                'label' => $this->l('HASH TOKEN'),
+                                'name' => 'apms_instant_credit_hashToken',
+                                'required' => false
+                            ),
+                            array(
+                                'type' => 'text',
+                                'label' => $this->l('Minimum financing'),
+                                'name' => 'apms_instant_credit_minFin',
+                                'required' => true
+                            ),
+                            array(
+                                'type' => 'text',
+                                'label' => $this->l('Maximum financing'),
+                                'name' => 'apms_instant_credit_maxFin',
+                                'required' => true
+                            ),
+                        )
+                    ),
+                );
+
+                $arrFields[] = $instantCredit_form;
+            }
         }
 
         // Array Score
@@ -1700,6 +1823,24 @@ class Paytpv extends PaymentModule
         );
     }
 
+    public function getTemplateVars()
+    {
+        $cart = $this->context->cart;
+        $total = $cart->getOrderTotal(true, Cart::BOTH);
+
+        return array(
+            'this_path' => $this->_path,
+            'this_path_instantcredit' => $this->_path,
+            'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name . '/',
+            'simuladorCuotas' => $this->simuladorCuotas,
+            'urlSimulador' => $this->context->link->getModuleLink(
+                $this->name,
+                'simulador',
+                array('importe_financiar' => $total)
+            ),
+        );
+    }
+
     public function hookPaymentOptions()
     {
         $payment_options = [];
@@ -1782,7 +1923,7 @@ class Paytpv extends PaymentModule
         }
 
         $alternativePaymentMethods = $this->getUserApmsForPayment();
-        foreach ($alternativePaymentMethods as $apm) {
+        foreach ($alternativePaymentMethods as $methodId => $apm) {
             $apmOption = new PaymentOption();
             $apmOption->setCallToActionText(
                 $this->trans(
@@ -1793,6 +1934,27 @@ class Paytpv extends PaymentModule
             )
             ->setLogo(_MODULE_DIR_ . 'paytpv/views/img/apms/' . $apm['img_name'] . '.svg')
             ->setAction($apm['url']);
+
+            // PESRONALIZACIONES APMS
+            switch ($methodId) {
+                case 33: // Instant Credti
+                    $apmOption->setCallToActionText(
+                        $this->trans(
+                            $this->l('Instant installment payment'),
+                            array(),
+                            'Modules.MyModule.Shop'
+                        )
+                    );
+                    $this->context->smarty->assign(
+                        $apm["templateVars"]
+                    );
+                    $apmOption->setAdditionalInformation(
+                        $this->fetch('module:paytpv/views/templates/hook/apms/payment_instantcredit.tpl')
+                    );
+                    break;
+                default:
+                    break;
+            }
             array_push($payment_options, $apmOption);
         }
 
@@ -1809,8 +1971,8 @@ class Paytpv extends PaymentModule
             if (Configuration::get('PAYTPV_APM_klarna_payments') != null) {
                 array_push($apms, Configuration::get('PAYTPV_APM_klarna_payments'));
             }
-            if (Configuration::get('PAYTPV_APM_BIZUM') != null) {
-                array_push($apms, Configuration::get('PAYTPV_APM_BIZUM'));
+            if (Configuration::get('PAYTPV_APM_bizum') != null) {
+                array_push($apms, Configuration::get('PAYTPV_APM_bizum'));
             }
             if (Configuration::get('PAYTPV_APM_paypal') != null) {
                 array_push($apms, Configuration::get('PAYTPV_APM_paypal'));
@@ -1907,6 +2069,10 @@ class Paytpv extends PaymentModule
 
             foreach ($apms as $methodId) {
                 try {
+                    if (!$this->validateMethod($methodId, $cart)) {
+                        continue;
+                    }
+
                     $payment =  [
                         'terminal' => (int) $idterminal,
                         'order' => (string) $paytpv_order_ref,
@@ -1944,9 +2110,13 @@ class Paytpv extends PaymentModule
 
                         $url_paytpv[$methodId]['url'] = $url_apm;
                         $method_name = $this->getAPMName($methodId);
-                        $method_img = Tools::strtolower($method_name);
+                        $method_img = str_replace(" ", "", Tools::strtolower($method_name));
                         $url_paytpv[$methodId]['method_name'] = $method_name;
                         $url_paytpv[$methodId]['img_name'] = $method_img;
+                        $url_paytpv[$methodId]['templateVars'] = $this->getAPMTemplateVars(
+                            $methodId,
+                            $cart->getOrderTotal(true, Cart::BOTH)
+                        );
                     }
                 } catch (exception $e) {
                     $url_paytpv = $e->getCode();
@@ -1954,6 +2124,53 @@ class Paytpv extends PaymentModule
             }
             return $url_paytpv;
         }
+    }
+
+    public function validateMethod($methodId, $cart)
+    {
+        $valid = false;
+        switch ($methodId) {
+            case 33: // Instant Credit
+                if (($this->paytpv_apm_instant_credit_minFin == 0 ||
+                    $cart->getOrderTotal(true, Cart::BOTH) >= $this->paytpv_apm_instant_credit_minFin ) &&
+                    ($this->paytpv_apm_instant_credit_maxFin == 0 ||
+                    $cart->getOrderTotal(true, Cart::BOTH) <= $this->paytpv_apm_instant_credit_maxFin )) {
+                    $valid = true;
+                } else {
+                    $valid = false;
+                }
+                break;
+            default:
+                $valid = true;
+                break;
+        }
+        return $valid;
+    }
+
+    public function getAPMTemplateVars($methodId, $total)
+    {
+        $arrTemplateVars = array();
+        switch ($methodId) {
+            case 33: // Instant Credit
+                $arrTemplateVars["urlSimulador"] = $this->context->link->getModuleLink(
+                    $this->name,
+                    'simulador',
+                    array('importe_financiar' => $total)
+                );
+                $arrTemplateVars["simuladorCuotas"] = $this->paytpv_apm_instant_credit_simulador;
+                $arrTemplateVars["importe_financiar"] = $total;
+                $arrTemplateVars["hashToken"] = $this->paytpv_apm_instant_credit_hashToken;
+
+                $method_name = $this->getAPMName($methodId);
+                $method_img = str_replace(" ", "", Tools::strtolower($method_name));
+
+                $arrTemplateVars["logo"] = _MODULE_DIR_ . 'paytpv/views/img/apms/' . $method_img . '.svg';
+
+                break;
+            default:
+                break;
+        }
+        return $arrTemplateVars;
     }
 
 
@@ -1973,7 +2190,7 @@ class Paytpv extends PaymentModule
             20 => "EPS",
             21 => "Tele2",
             22 => "Paysera",
-            23 => "PostFinance",
+            23 => "Post Finance",
             24 => "QIWI",
             25 => "Yandex",
             26 => "MTS",
@@ -1981,7 +2198,7 @@ class Paytpv extends PaymentModule
             28 => "Paysafecard",
             29 => "Skrill",
             30 => "WebMoney",
-            33 => "InstantCredit"
+            33 => "Instant Credit"
         ][$methodId];
     }
 
@@ -2254,28 +2471,33 @@ class Paytpv extends PaymentModule
             $this->html .= $this->display(__FILE__, 'order_suscription_customer_info.tpl');
         }
 
-
         return $this->html;
     }
+
     private function getConfigValues()
     {
-        return Configuration::getMultiple(
-            array(
-                'PAYTPV_CLIENTCODE', 'PAYTPV_INTEGRATION', 'PAYTPV_APIKEY', 'PAYTPV_NEWPAGEPAYMENT',
-                'PAYTPV_IFRAME_HEIGHT', 'PAYTPV_SUSCRIPTIONS', 'PAYTPV_REG_ESTADO', 'PAYTPV_FIRSTPURCHASE_SCORING',
-                'PAYTPV_FIRSTPURCHASE_SCORING_SCO', 'PAYTPV_SESSIONTIME_SCORING', 'PAYTPV_SESSIONTIME_SCORING_VAL',
-                'PAYTPV_SESSIONTIME_SCORING_SCORE', 'PAYTPV_DCOUNTRY_SCORING', 'PAYTPV_DCOUNTRY_SCORING_VAL',
-                'PAYTPV_DCOUNTRY_SCORING_SCORE', 'PAYTPV_IPCHANGE_SCORING', 'PAYTPV_IPCHANGE_SCORING_SCORE',
-                'PAYTPV_BROWSER_SCORING', 'PAYTPV_BROWSER_SCORING_SCORE', 'PAYTPV_SO_SCORING',
-                'PAYTPV_SO_SCORING_SCORE', 'PAYTPV_DISABLEOFFERSAVECARD',
-                'PAYTPV_APM_paypal', 'PAYTPV_APM_BIZUM', 'PAYTPV_APM_ideal', 'PAYTPV_APM_klarna_payments',
-                'PAYTPV_APM_giropay', 'PAYTPV_APM_mybank', 'PAYTPV_APM_multibanco_sibs', 'PAYTPV_APM_trustly',
-                'PAYTPV_APM_przelewy24', 'PAYTPV_APM_bancontact', 'PAYTPV_APM_eps', 'PAYTPV_APM_tele2',
-                'PAYTPV_APM_paysera', 'PAYTPV_APM_postfinance', 'PAYTPV_APM_qiwi_wallet', 'PAYTPV_APM_yandex_money',
-                'PAYTPV_APM_mts', 'PAYTPV_APM_beeline', 'PAYTPV_APM_paysafecard', 'PAYTPV_APM_skrill',
-                'PAYTPV_APM_webmoney', 'PAYTPV_APM_instant_credit'
-            )
-        );
+        $arrPaycomet = array('PAYTPV_CLIENTCODE', 'PAYTPV_INTEGRATION', 'PAYTPV_APIKEY', 'PAYTPV_NEWPAGEPAYMENT',
+        'PAYTPV_IFRAME_HEIGHT', 'PAYTPV_SUSCRIPTIONS', 'PAYTPV_REG_ESTADO', 'PAYTPV_FIRSTPURCHASE_SCORING',
+        'PAYTPV_FIRSTPURCHASE_SCORING_SCO', 'PAYTPV_SESSIONTIME_SCORING', 'PAYTPV_SESSIONTIME_SCORING_VAL',
+        'PAYTPV_SESSIONTIME_SCORING_SCORE', 'PAYTPV_DCOUNTRY_SCORING', 'PAYTPV_DCOUNTRY_SCORING_VAL',
+        'PAYTPV_DCOUNTRY_SCORING_SCORE', 'PAYTPV_IPCHANGE_SCORING', 'PAYTPV_IPCHANGE_SCORING_SCORE',
+        'PAYTPV_BROWSER_SCORING', 'PAYTPV_BROWSER_SCORING_SCORE', 'PAYTPV_SO_SCORING',
+        'PAYTPV_SO_SCORING_SCORE', 'PAYTPV_DISABLEOFFERSAVECARD');
+
+        $arrApms = array('PAYTPV_APM_paypal', 'PAYTPV_APM_bizum', 'PAYTPV_APM_ideal', 'PAYTPV_APM_klarna_payments',
+        'PAYTPV_APM_giropay', 'PAYTPV_APM_mybank', 'PAYTPV_APM_multibanco_sibs', 'PAYTPV_APM_trustly',
+        'PAYTPV_APM_przelewy24', 'PAYTPV_APM_bancontact', 'PAYTPV_APM_eps', 'PAYTPV_APM_tele2',
+        'PAYTPV_APM_paysera', 'PAYTPV_APM_postfinance', 'PAYTPV_APM_qiwi_wallet', 'PAYTPV_APM_yandex_money',
+        'PAYTPV_APM_mts', 'PAYTPV_APM_beeline', 'PAYTPV_APM_paysafecard', 'PAYTPV_APM_skrill',
+        'PAYTPV_APM_webmoney', 'PAYTPV_APM_instant_credit');
+
+        $arrInstantCredit = array('PAYTPV_APM_instant_credit_simuladorCoutas',
+        'PAYTPV_APM_instant_credit_hashToken', 'PAYTPV_APM_instant_credit_minFin',
+        'PAYTPV_APM_instant_credit_maxFin');
+
+        $arrConfig = array_merge($arrPaycomet, $arrApms, $arrInstantCredit);
+
+        return Configuration::getMultiple($arrConfig);
     }
 
     public function saveCard(
