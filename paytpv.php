@@ -53,7 +53,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.2';
+        $this->version = '7.7.3';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
 
@@ -1812,6 +1812,7 @@ class Paytpv extends PaymentModule
             'jet_id' => $jetid,
             'jet_lang' => $language,
             'jet_paytpv' => $this->jet_paytpv,
+            'paytpv_module' => Context::getContext()->link->getModuleLink($this->name, 'actions', array(), $ssl),
             'paytpv_jetid_url' => Context::getContext()->link->getModuleLink($this->name, 'capture', array(), $ssl),
             'base_dir' => __PS_BASE_URI__,
             'capture_url' => Context::getContext()->link->getModuleLink($this->name, 'capture', $values, $ssl),
