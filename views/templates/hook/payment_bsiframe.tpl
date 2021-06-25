@@ -145,7 +145,7 @@
         </div>
     </div>
 
-    <input type="hidden" name="paytpv_module" id="paytpv_module" value="{$link->getModuleLink('paytpv', 'actions',[], true)|escape:'htmlall':'UTF-8'}">
+    <input type="hidden" name="paytpv_module" id="paytpv_module" value="{$paytpv_module|escape:'htmlall':'UTF-8':FALSE}">
     <input type="hidden" name="newpage_payment" id="newpage_payment" value="{$newpage_payment|escape:'htmlall':'UTF-8':FALSE}">
     <input type="hidden" name="paytpv_integration" id="paytpv_integration" value="{$paytpv_integration|escape:'htmlall':'UTF-8':FALSE}">
 

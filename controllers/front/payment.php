@@ -122,6 +122,16 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
             )
         );
 
+        $this->context->smarty->assign(
+            'paytpv_module',
+            Context::getContext()->link->getModuleLink(
+                $this->module->name,
+                'actions',
+                array(),
+                $ssl
+            )
+        );
+
         $tmpl_vars = array();
         $tmpl_vars['capture_url'] = Context::getContext()->link->getModuleLink(
             $this->module->name,
