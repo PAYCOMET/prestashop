@@ -50,7 +50,7 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
 
 
         // Valor de compra
-        $id_currency = (int) Configuration::get('PS_CURRENCY_DEFAULT');
+        $id_currency = Context::getContext()->cart->id_currency;
 
         $currency = new Currency((int) $id_currency);
         $importe_tienda = Context::getContext()->cart->getOrderTotal(true, Cart::BOTH);

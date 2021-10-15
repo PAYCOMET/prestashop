@@ -49,7 +49,7 @@
                         <div class="pad">
                           <div style="display:inline-table;">
                             <div class="operation">
-                                <h4 class="cost_num">{l s='Total Amount' mod='paytpv'}:<b>{$total_amount|escape:'htmlall':'UTF-8':FALSE} {$currency_symbol|escape:'htmlall':'UTF-8':FALSE}</b></h4>
+                                <h4 class="cost_num">{l s='Total Amount' mod='paytpv'}: <b>{$total_amount|escape:'htmlall':'UTF-8':FALSE} {$currency_symbol|escape:'htmlall':'UTF-8':FALSE}</b></h4>
                             </div>
                           </div>
                         </div>
