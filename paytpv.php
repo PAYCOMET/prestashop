@@ -53,7 +53,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.3';
+        $this->version = '7.7.4';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
 
@@ -137,12 +137,12 @@ class Paytpv extends PaymentModule
         if (isset($config['PAYTPV_DISABLEOFFERSAVECARD'])) {
             $this->disableoffersavecard = $config['PAYTPV_DISABLEOFFERSAVECARD'];
         }
-        
+
+        if (array_key_exists('PAYTPV_APM_tarjeta', $config)) {
+            $this->paytpv_apm_tarjeta = $config['PAYTPV_APM_tarjeta'];
+        }
         if (array_key_exists('PAYTPV_APM_bizum', $config)) {
             $this->paytpv_apm_bizum = $config['PAYTPV_APM_bizum'];
-        }
-        if (array_key_exists('PAYTPV_APM_paypal', $config)) {
-            $this->paytpv_apm_paypal = $config['PAYTPV_APM_paypal'];
         }
         if (array_key_exists('PAYTPV_APM_klarna_payments', $config)) {
             $this->paytpv_apm_klarna = $config['PAYTPV_APM_klarna_payments'];
@@ -391,12 +391,16 @@ class Paytpv extends PaymentModule
                         );
                         break;
                     case 1337:  // Ruta de notificación no configurada
-                        $arrDatos["error_txt"] = $this->l('Notification URL is not defined in the product configuration of your account PAYCOMET account.');
+                        $arrDatos["error_txt"] = $this->l(
+                            'Notification URL is not defined in the product
+                             configuration of your account PAYCOMET account.'
+                        );
                         break;
                     case 28:    // Curl
                     case 1338:  // Ruta de notificación no responde correctamente
                         $ssl = Configuration::get('PS_SSL_ENABLED');
-                        $arrDatos["error_txt"] = $this->l('The notification URL defined in the product configuration of your PAYCOMET account does not respond correctly. Verify that it has been defined as: ')
+                        $arrDatos["error_txt"] = $this->l('The notification URL defined in the product configuration
+                         of your PAYCOMET account does not respond correctly. Verify that it has been defined as: ')
                         . Context::getContext()->link->getModuleLink($this->name, 'url', array(), $ssl);
                         break;
                     case 1339:  // Configuración de terminales incorrecta
@@ -440,9 +444,11 @@ class Paytpv extends PaymentModule
             }
 
             //APMs
-
+            Configuration::updateValue(
+                'PAYTPV_APM_tarjeta',
+                Tools::getIsset('apms_tarjeta') ? Tools::getValue('apms_tarjeta') : 0
+            );
             Configuration::updateValue('PAYTPV_APM_bizum', Tools::getValue('apms_bizum'));
-            Configuration::updateValue('PAYTPV_APM_paypal', Tools::getValue('apms_paypal'));
             Configuration::updateValue('PAYTPV_APM_klarna_payments', Tools::getValue('apms_klarna_payments'));
             Configuration::updateValue('PAYTPV_APM_ideal', Tools::getValue('apms_ideal'));
             Configuration::updateValue('PAYTPV_APM_giropay', Tools::getValue('apms_giropay'));
@@ -1045,8 +1051,9 @@ class Paytpv extends PaymentModule
         $arrValues["ip_change_scoring"] = $config["PAYTPV_IPCHANGE_SCORING"];
 
         //APMs
+        // Tarjeta activa siempre que no la haya deshabilitado el cliente
+        $arrValues["apms_tarjeta"] = ((string)$config["PAYTPV_APM_tarjeta"] == "0")?0:1;
         $arrValues["apms_bizum"] = $config["PAYTPV_APM_bizum"];
-        $arrValues["apms_paypal"] = $config["PAYTPV_APM_paypal"];
         $arrValues["apms_klarna_payments"] = $config["PAYTPV_APM_klarna_payments"];
         $arrValues["apms_ideal"] = $config["PAYTPV_APM_ideal"];
         $arrValues["apms_giropay"] = $config["PAYTPV_APM_giropay"];
@@ -1323,90 +1330,86 @@ class Paytpv extends PaymentModule
         $arrFields[] = $options_form;
 
         //APMs
-        if (Tools::getValue('apikey') != '' || $this->apikey) {
-            $arrAPMs = $this->getUserAlternativePaymentMethods();
-            $apms_form = array(
+        $arrAPMs = $this->getPaymentMethods();
+        $apms_form = array(
+            'form' => array(
+                'legend' => array(
+                    'title' => $this->l('payment methods'),
+                    'icon' => 'icon-credit-card',
+                ),
+                'input' => array(
+                    array(
+                        'type' => 'checkbox',
+                        'name' => 'apms',
+                        'values' => array(
+                            'query' => $arrAPMs,
+                            'id' => 'id',
+                            'name' => 'name'
+                        )
+                    ),
+                )
+            )
+        );
+
+        $arrFields[] = $apms_form;
+
+
+        $arrMethods = array();
+        foreach ($arrAPMs as $key => $apm_data) {
+            $arrMethods[] = $apm_data["val"];
+        }
+
+        // Instant Credit
+        if (in_array(33, $arrMethods)) {
+            $instantCredit_form = array(
                 'form' => array(
                     'legend' => array(
-                        'title' => $this->l('Alternative payment methods'),
-                        'icon' => 'icon-credit-card',
+                        'title' => $this->l('Instant Credit'),
+                        'icon' => 'icon-cogs'
                     ),
                     'input' => array(
                         array(
-                            'type' => 'checkbox',
-                            'label' => $this->l('Alternative payment methods'),
-                            'name' => 'apms',
+                            'type' => 'switch',
+                            'label' => 'Simulador de coutas',
+                            'name' => 'apms_instant_credit_simuladorCoutas',
+                            'is_bool' => true,
+                            'hint' => 'Mostrar el simulador de coutas.',
                             'values' => array(
-                                'query' => $arrAPMs,
-                                'id' => 'id',
-                                'name' => 'name'
+                                array(
+                                    'id' => 'active_on',
+                                    'value' => true,
+                                    'label' => 'Activado',
+                                ),
+                                array(
+                                    'id' => 'active_off',
+                                    'value' => false,
+                                    'label' => 'Desactivado',
+                                )
                             ),
-                            'hint' => $this->l('Paycomet Alternative Payment Methods')
+                        ),
+                        array(
+                            'type' => 'text',
+                            'label' => $this->l('HASH TOKEN'),
+                            'name' => 'apms_instant_credit_hashToken',
+                            'required' => false
+                        ),
+                        array(
+                            'type' => 'text',
+                            'label' => $this->l('Minimum financing'),
+                            'name' => 'apms_instant_credit_minFin',
+                            'required' => true
+                        ),
+                        array(
+                            'type' => 'text',
+                            'label' => $this->l('Maximum financing'),
+                            'name' => 'apms_instant_credit_maxFin',
+                            'required' => true
                         ),
                     )
-                )
+                ),
             );
 
-            $arrFields[] = $apms_form;
-
-
-            $arrMethods = array();
-            foreach ($arrAPMs as $key => $apm_data) {
-                $arrMethods[] = $apm_data["val"];
-            }
-
-            // Instant Credit
-            if (in_array(33, $arrMethods)) {
-                $instantCredit_form = array(
-                    'form' => array(
-                        'legend' => array(
-                            'title' => $this->l('Instant Credit'),
-                            'icon' => 'icon-cogs'
-                        ),
-                        'input' => array(
-                            array(
-                                'type' => 'switch',
-                                'label' => 'Simulador de coutas',
-                                'name' => 'apms_instant_credit_simuladorCoutas',
-                                'is_bool' => true,
-                                'hint' => 'Mostrar el simulador de coutas.',
-                                'values' => array(
-                                    array(
-                                        'id' => 'active_on',
-                                        'value' => true,
-                                        'label' => 'Activado',
-                                    ),
-                                    array(
-                                        'id' => 'active_off',
-                                        'value' => false,
-                                        'label' => 'Desactivado',
-                                    )
-                                ),
-                            ),
-                            array(
-                                'type' => 'text',
-                                'label' => $this->l('HASH TOKEN'),
-                                'name' => 'apms_instant_credit_hashToken',
-                                'required' => false
-                            ),
-                            array(
-                                'type' => 'text',
-                                'label' => $this->l('Minimum financing'),
-                                'name' => 'apms_instant_credit_minFin',
-                                'required' => true
-                            ),
-                            array(
-                                'type' => 'text',
-                                'label' => $this->l('Maximum financing'),
-                                'name' => 'apms_instant_credit_maxFin',
-                                'required' => true
-                            ),
-                        )
-                    ),
-                );
-
-                $arrFields[] = $instantCredit_form;
-            }
+            $arrFields[] = $instantCredit_form;
         }
 
         // Array Score
@@ -1640,33 +1643,39 @@ class Paytpv extends PaymentModule
         return $arrFields;
     }
 
-    public function getUserAlternativePaymentMethods()
+    public function getPaymentMethods()
     {
-        $apiRest = new PaycometApiRest($this->apikey);
 
-        $terminalId = 0;
-        if (Tools::getValue("term")[0]) {
-            $terminalId = Tools::getValue("term")[0];
-        } elseif (PaytpvTerminal::getTerminals()) {
-            $terminalId = PaytpvTerminal::getTerminals()[0]['idterminal'];
-        }
-        $paymentMethods = $apiRest->getUserPaymentMethods($terminalId);
-        $apms = [];
+        if (Configuration::get("PAYTPV_APIKEY") != "") {
+            $apiRest = new PaycometApiRest(Configuration::get("PAYTPV_APIKEY"));
 
-        // Si no hay error en la consulta a los metodos
-        if (!isset($paymentMethods->errorCode)) {
-            foreach ($paymentMethods as $apm) {
-                if ($apm->name == 'Tarjeta') {
-                    continue;
-                }
-                $apms[] = [
-                    'id' => preg_replace('/\s+/', '_', Tools::strtolower($apm->name)),
-                    'name' => $apm->name,
-                    'val' => $apm->id,
-                    'logo_square' => $apm->logo_square,
-                    'logo_landscape' => $apm->logo_landscape,
-                ];
+            $terminalId = 0;
+            if (Tools::getValue("term")[0]) {
+                $terminalId = Tools::getValue("term")[0];
+            } elseif (PaytpvTerminal::getTerminals()) {
+                $terminalId = PaytpvTerminal::getTerminals()[0]['idterminal'];
             }
+            $paymentMethods = $apiRest->getUserPaymentMethods($terminalId);
+            $apms = [];
+
+            // Si no hay error en la consulta a los metodos
+            if (!isset($paymentMethods->errorCode)) {
+                foreach ($paymentMethods as $apm) {
+                    $apms[] = [
+                        'id' => preg_replace('/\s+/', '_', Tools::strtolower($apm->name)),
+                        'name' => $apm->name,
+                        'val' => $apm->id,
+                        'logo_square' => $apm->logo_square,
+                        'logo_landscape' => $apm->logo_landscape,
+                    ];
+                }
+            }
+        } else {
+            $apms[] = [
+                "id"=>"tarjeta",
+                "name" => "Tarjeta",
+                "val"=> 1
+            ];
         }
 
         return $apms;
@@ -1925,6 +1934,10 @@ class Paytpv extends PaymentModule
 
         $alternativePaymentMethods = $this->getUserApmsForPayment();
         foreach ($alternativePaymentMethods as $methodId => $apm) {
+            if ($methodId == 1) {
+                continue; // El pago con tarjeta va aparte
+            }
+
             $apmOption = new PaymentOption();
             $apmOption->setCallToActionText(
                 $this->trans(
@@ -1959,7 +1972,10 @@ class Paytpv extends PaymentModule
             array_push($payment_options, $apmOption);
         }
 
-        array_unshift($payment_options, $newOption);
+        // Si no hay pago con tarjeta mostramos solo Apms
+        if (isset($alternativePaymentMethods[1])) {
+            array_unshift($payment_options, $newOption);
+        }
 
         return $payment_options;
     }
@@ -1969,14 +1985,14 @@ class Paytpv extends PaymentModule
         if ($this->apikey != '') {
             $apms = [];
 
+            if (Configuration::get('PAYTPV_APM_tarjeta') !== "0") {
+                array_push($apms, 1);
+            }
             if (Configuration::get('PAYTPV_APM_klarna_payments') != null) {
                 array_push($apms, Configuration::get('PAYTPV_APM_klarna_payments'));
             }
             if (Configuration::get('PAYTPV_APM_bizum') != null) {
                 array_push($apms, Configuration::get('PAYTPV_APM_bizum'));
-            }
-            if (Configuration::get('PAYTPV_APM_paypal') != null) {
-                array_push($apms, Configuration::get('PAYTPV_APM_paypal'));
             }
             if (Configuration::get('PAYTPV_APM_ideal') != null) {
                 array_push($apms, Configuration::get('PAYTPV_APM_ideal'));
@@ -2178,7 +2194,7 @@ class Paytpv extends PaymentModule
     public function getAPMName($methodId)
     {
         return [
-            10 => "Paypal",
+            1 => "Tarjeta",
             11 => "Bizum",
             12 => "iDEAL",
             13 => "Klarna",
@@ -2421,7 +2437,10 @@ class Paytpv extends PaymentModule
         if (strstr(Tools::strtolower($order->payment), "multibanco")) {
             $result_txt = $this->l('Your order will be sent as soon as we receive your payment.');
         } else {
-            $result_txt = $this->l('Thank you for trusting us. Your purchase has been formalized correctly and we will process your order soon.');
+            $result_txt = $this->l(
+                'Thank you for trusting us.
+                 Your purchase has been formalized correctly and we will process your order soon.'
+            );
         }
 
         $this->context->smarty->assign('shop_name', $this->context->shop->name);
@@ -2485,7 +2504,7 @@ class Paytpv extends PaymentModule
         'PAYTPV_BROWSER_SCORING', 'PAYTPV_BROWSER_SCORING_SCORE', 'PAYTPV_SO_SCORING',
         'PAYTPV_SO_SCORING_SCORE', 'PAYTPV_DISABLEOFFERSAVECARD');
 
-        $arrApms = array('PAYTPV_APM_paypal', 'PAYTPV_APM_bizum', 'PAYTPV_APM_ideal', 'PAYTPV_APM_klarna_payments',
+        $arrApms = array('PAYTPV_APM_tarjeta', 'PAYTPV_APM_bizum', 'PAYTPV_APM_ideal', 'PAYTPV_APM_klarna_payments',
         'PAYTPV_APM_giropay', 'PAYTPV_APM_mybank', 'PAYTPV_APM_multibanco_sibs', 'PAYTPV_APM_trustly',
         'PAYTPV_APM_przelewy24', 'PAYTPV_APM_bancontact', 'PAYTPV_APM_eps', 'PAYTPV_APM_tele2',
         'PAYTPV_APM_paysera', 'PAYTPV_APM_postfinance', 'PAYTPV_APM_qiwi_wallet', 'PAYTPV_APM_yandex_money',

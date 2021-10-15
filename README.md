@@ -60,6 +60,11 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.4: 
+
+- Se elimina Paypal de los APMs.
+- Posibidad deshabilitar pago con tarjeta para mostrar solo pago con APMs.
+
 > 7.7.3: 
 
 - Mejoras de código.
