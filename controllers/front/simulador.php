@@ -28,7 +28,9 @@ class PaytpvSimuladorModuleFrontController extends ModuleFrontController
 
     public function initContent()
     {
-        $urlSimulador = "https://instantcredit.net/simulator/ic-simulator-2.0.1.js";
+        $paytpv = $this->module;
+
+        $urlSimulatorJs = $paytpv->getICSimulatorUrl();
 
         parent::initContent();
 
@@ -42,7 +44,7 @@ class PaytpvSimuladorModuleFrontController extends ModuleFrontController
                              <div class=\"ic-configuration\" style=\"display:none;\">" . $hashToken . "</div>
                                 <div class=\"ic-simulator\" amount=\"" . $importe_financiar . "\"></div>
                             </body>
-                            <script src=\"" . $urlSimulador . "\"></script>
+                            <script src=\"" . $urlSimulatorJs . "\"></script>
                          </html>";
             header_remove();
             header("content-type: text/html");

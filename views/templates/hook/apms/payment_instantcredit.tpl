@@ -70,7 +70,7 @@
         {if $simuladorCuotas == 1}
             <div class="ic-configuration" style="display:none;">{$hashToken|escape:'html':'UTF-8'}</div>
             <div class="ic-simulator" amount="{$importe_financiar|escape:'html':'UTF-8'}"></div>
-            <script src="https://instantcredit.net/simulator/ic-simulator.js" charset="UTF-8"></script>
+            <script src="{$urlSimulatorJs|escape:'html':'UTF-8'}" charset="UTF-8"></script>
         {/if}
 </div>
 
