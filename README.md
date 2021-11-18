@@ -60,6 +60,14 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.6 : 
+
+- Mejoras de código
+
+> 7.7.5: 
+
+- Instant Credit: Posibilidad de configurar el simulador en Test
+
 > 7.7.4: 
 
 - Se elimina Paypal de los APMs.
