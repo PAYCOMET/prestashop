@@ -34,18 +34,6 @@ class PayTpvInstall
      */
     public function createTables()
     {
-        if (!Db::getInstance()->Execute('
-            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'paytpvregistro` (
-              `id_registro` int(10) unsigned NOT NULL AUTO_INCREMENT,
-              `id_customer` int(10) unsigned NOT NULL,
-              `id_cart` int(10) unsigned NOT NULL,
-              `amount` decimal(13,6) unsigned NOT NULL,
-              `date_add` datetime NOT NULL,
-              `error_code` varchar(64) character set utf8 NOT NULL,
-              PRIMARY KEY  (`id_registro`)
-            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 AUTO_INCREMENT=1')) {
-            return false;
-        }
 
         if (!Db::getInstance()->Execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'paytpv_order_info` (
