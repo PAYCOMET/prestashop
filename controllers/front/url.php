@@ -45,8 +45,6 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
         $result = 666;
         $paytpv = $this->module;
 
-        $reg_estado = $paytpv->reg_estado;
-
         $suscripcion = 0;
 
         // Check Notification
@@ -553,10 +551,6 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                         // ********************************************************************************************
                     }
 
-                    if ($suscripcion and $reg_estado == 1) {
-                        ClassRegistro::removeByCartID($id_cart);
-                    }
-
                 // Token Payment or APM
                 } else {
                     $result = PaytpvCustomer::getCustomerIduser($datos_order["paytpv_iduser"]);
@@ -593,16 +587,6 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             } elseif ($pagoRegistrado) {
                 die('Pago registrado');
             }
-        } else {
-            //se anota el pedido como no pagado
-            if (Tools::getIsset($reg_estado) && $reg_estado == 1) {
-                ClassRegistro::add($cart->id_customer, $id_cart, $importe, $result);
-            }
-
-            /*if ($sign != $local_sign){
-                header("HTTP/1.0 466 Invalid Signature");
-                die('HAcking Attenpt!!');
-            }*/
         }
         die('Error');
     }
