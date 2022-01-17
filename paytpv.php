@@ -52,7 +52,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.7';
+        $this->version = '7.7.8';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
 
@@ -140,8 +140,8 @@ class Paytpv extends PaymentModule
         if (array_key_exists('PAYTPV_APM_bizum', $config)) {
             $this->paytpv_apm_bizum = $config['PAYTPV_APM_bizum'];
         }
-        if (array_key_exists('PAYTPV_APM_klarna_payments', $config)) {
-            $this->paytpv_apm_klarna = $config['PAYTPV_APM_klarna_payments'];
+        if (array_key_exists('PAYTPV_APM_klarna_paynow', $config)) {
+            $this->paytpv_apm_klarna = $config['PAYTPV_APM_klarna_paynow'];
         }
         if (array_key_exists('PAYTPV_APM_ideal', $config)) {
             $this->paytpv_apm_giropay = $config['PAYTPV_APM_ideal'];
@@ -449,7 +449,7 @@ class Paytpv extends PaymentModule
                 Tools::getIsset('apms_tarjeta') ? Tools::getValue('apms_tarjeta') : 0
             );
             Configuration::updateValue('PAYTPV_APM_bizum', Tools::getValue('apms_bizum'));
-            Configuration::updateValue('PAYTPV_APM_klarna_payments', Tools::getValue('apms_klarna_payments'));
+            Configuration::updateValue('PAYTPV_APM_klarna_paynow', Tools::getValue('apms_klarna_paynow'));
             Configuration::updateValue('PAYTPV_APM_ideal', Tools::getValue('apms_ideal'));
             Configuration::updateValue('PAYTPV_APM_giropay', Tools::getValue('apms_giropay'));
             Configuration::updateValue('PAYTPV_APM_mybank', Tools::getValue('apms_mybank'));
@@ -1053,7 +1053,7 @@ class Paytpv extends PaymentModule
         // Tarjeta activa siempre que no la haya deshabilitado el cliente
         $arrValues["apms_tarjeta"] = ((string)$config["PAYTPV_APM_tarjeta"] == "0")?0:1;
         $arrValues["apms_bizum"] = $config["PAYTPV_APM_bizum"];
-        $arrValues["apms_klarna_payments"] = $config["PAYTPV_APM_klarna_payments"];
+        $arrValues["apms_klarna_paynow"] = $config["PAYTPV_APM_klarna_paynow"];
         $arrValues["apms_ideal"] = $config["PAYTPV_APM_ideal"];
         $arrValues["apms_giropay"] = $config["PAYTPV_APM_giropay"];
         $arrValues["apms_mybank"] = $config["PAYTPV_APM_mybank"];
@@ -2008,8 +2008,8 @@ class Paytpv extends PaymentModule
             if (Configuration::get('PAYTPV_APM_tarjeta') !== "0") {
                 array_push($apms, 1);
             }
-            if (Configuration::get('PAYTPV_APM_klarna_payments') != null) {
-                array_push($apms, Configuration::get('PAYTPV_APM_klarna_payments'));
+            if (Configuration::get('PAYTPV_APM_klarna_paynow') != null) {
+                array_push($apms, Configuration::get('PAYTPV_APM_klarna_paynow'));
             }
             if (Configuration::get('PAYTPV_APM_bizum') != null) {
                 array_push($apms, Configuration::get('PAYTPV_APM_bizum'));
@@ -2536,7 +2536,7 @@ class Paytpv extends PaymentModule
         'PAYTPV_BROWSER_SCORING', 'PAYTPV_BROWSER_SCORING_SCORE', 'PAYTPV_SO_SCORING',
         'PAYTPV_SO_SCORING_SCORE', 'PAYTPV_DISABLEOFFERSAVECARD');
 
-        $arrApms = array('PAYTPV_APM_tarjeta', 'PAYTPV_APM_bizum', 'PAYTPV_APM_ideal', 'PAYTPV_APM_klarna_payments',
+        $arrApms = array('PAYTPV_APM_tarjeta', 'PAYTPV_APM_bizum', 'PAYTPV_APM_ideal', 'PAYTPV_APM_klarna_paynow',
         'PAYTPV_APM_giropay', 'PAYTPV_APM_mybank', 'PAYTPV_APM_multibanco_sibs', 'PAYTPV_APM_trustly',
         'PAYTPV_APM_przelewy24', 'PAYTPV_APM_bancontact', 'PAYTPV_APM_eps', 'PAYTPV_APM_tele2',
         'PAYTPV_APM_paysera', 'PAYTPV_APM_postfinance', 'PAYTPV_APM_qiwi_wallet', 'PAYTPV_APM_yandex_money',
