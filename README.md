@@ -60,6 +60,10 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.8: 
+
+- Fix APM Klarna
+
 > 7.7.7: 
 
 - Mejoras de código
