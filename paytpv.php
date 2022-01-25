@@ -872,6 +872,7 @@ class Paytpv extends PaymentModule
                     Tools::substr(preg_replace('/[^0-9]/', '', $billing->phone), 0, 15);
 
                 $Merchant_EMV3DS["customer"]["homePhone"] = $arrDatosHomePhone;
+                $Merchant_EMV3DS["customer"]["mobilePhone"] = $arrDatosHomePhone;
             }
 
             if ($billing->phone) {
