@@ -874,13 +874,13 @@ class Paytpv extends PaymentModule
                 $Merchant_EMV3DS["customer"]["homePhone"] = $arrDatosHomePhone;
             }
 
-            if ($billing->phone_mobile) {
+            if ($billing->phone) {
                 $arrDatosMobilePhone = array();
 
                 $arrDatosMobilePhone["cc"] =
                     Tools::substr(preg_replace('/[^0-9]/', '', $billing_address_country->call_prefix), 0, 3);
                 $arrDatosMobilePhone["subscriber"] =
-                    Tools::substr(preg_replace('/[^0-9]/', '', $billing->phone_mobile), 0, 15);
+                    Tools::substr(preg_replace('/[^0-9]/', '', $billing->phone), 0, 15);
 
                 $Merchant_EMV3DS["customer"]["mobilePhone"] = $arrDatosMobilePhone;
             } elseif ($billing->phone) {
