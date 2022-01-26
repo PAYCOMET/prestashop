@@ -52,7 +52,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.8';
+        $this->version = '7.7.9';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
 
@@ -831,7 +831,7 @@ class Paytpv extends PaymentModule
             $Merchant_EMV3DS["customer"]["name"] = $this->context->customer->firstname;
         }
 
-        if (isset($this->context->customer->surname) && $this->context->customer->surname != "") {
+        if (isset($this->context->customer->lastname) && $this->context->customer->lastname != "") {
             $Merchant_EMV3DS["customer"]["surname"] = $this->context->customer->lastname;
         }
 
@@ -872,6 +872,7 @@ class Paytpv extends PaymentModule
                     Tools::substr(preg_replace('/[^0-9]/', '', $billing->phone), 0, 15);
 
                 $Merchant_EMV3DS["customer"]["homePhone"] = $arrDatosHomePhone;
+                $Merchant_EMV3DS["customer"]["mobilePhone"] = $arrDatosHomePhone;
             }
 
             if ($billing->phone_mobile) {
@@ -933,7 +934,6 @@ class Paytpv extends PaymentModule
         $Merchant_EMV3DS["addrMatch"] = ($cart->id_address_invoice == $cart->id_address_delivery) ? "Y" : "N";
 
         $Merchant_EMV3DS["challengeWindowSize"] = 05;
-
         return $Merchant_EMV3DS;
     }
 
@@ -1032,8 +1032,8 @@ class Paytpv extends PaymentModule
         $config = $this->getConfigValues();
         $arrValues = array();
 
-        $arrValues["clientcode"] = $config["PAYTPV_CLIENTCODE"];
-        $arrValues["apikey"] = $config["PAYTPV_APIKEY"];
+        $arrValues["clientcode"] = trim($config["PAYTPV_CLIENTCODE"]);
+        $arrValues["apikey"] = trim($config["PAYTPV_APIKEY"]);
         $arrValues["integration"] = $config["PAYTPV_INTEGRATION"];
         $arrValues["newpage_payment"] = $config["PAYTPV_NEWPAGEPAYMENT"];
         $arrValues["iframe_height"] = ($config["PAYTPV_IFRAME_HEIGHT"]!="")?$config["PAYTPV_IFRAME_HEIGHT"] : 440;
@@ -1091,9 +1091,9 @@ class Paytpv extends PaymentModule
 
 
         foreach ($this->terminales_paytpv as $key => $term) {
-            $arrValues["term[".$key."]"] = $term["idterminal"];
-            $arrValues["pass[".$key."]"] = $term["password"];
-            $arrValues["jetid[".$key."]"] = $term["jetid"];
+            $arrValues["term[".$key."]"] = trim($term["idterminal"]);
+            $arrValues["pass[".$key."]"] = trim($term["password"]);
+            $arrValues["jetid[".$key."]"] = trim($term["jetid"]);
             $arrValues["moneda[".$key."]"] = $term["currency_iso_code"];
         }
         return $arrValues;
