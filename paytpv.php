@@ -875,22 +875,14 @@ class Paytpv extends PaymentModule
                 $Merchant_EMV3DS["customer"]["mobilePhone"] = $arrDatosHomePhone;
             }
 
-            if ($billing->phone) {
+            if ($billing->phone_mobile) {
+
                 $arrDatosMobilePhone = array();
 
                 $arrDatosMobilePhone["cc"] =
                     Tools::substr(preg_replace('/[^0-9]/', '', $billing_address_country->call_prefix), 0, 3);
                 $arrDatosMobilePhone["subscriber"] =
-                    Tools::substr(preg_replace('/[^0-9]/', '', $billing->phone), 0, 15);
-
-                $Merchant_EMV3DS["customer"]["mobilePhone"] = $arrDatosMobilePhone;
-            } elseif ($billing->phone) {
-                $arrDatosMobilePhone = array();
-
-                $arrDatosMobilePhone["cc"] =
-                    Tools::substr(preg_replace('/[^0-9]/', '', $billing_address_country->call_prefix), 0, 3);
-                $arrDatosMobilePhone["subscriber"] =
-                    Tools::substr(preg_replace('/[^0-9]/', '', $billing->phone), 0, 15);
+                    Tools::substr(preg_replace('/[^0-9]/', '', $billing->phone_mobile), 0, 15);
 
                 $Merchant_EMV3DS["customer"]["mobilePhone"] = $arrDatosMobilePhone;
             }
@@ -943,7 +935,6 @@ class Paytpv extends PaymentModule
         $Merchant_EMV3DS["addrMatch"] = ($cart->id_address_invoice == $cart->id_address_delivery) ? "Y" : "N";
 
         $Merchant_EMV3DS["challengeWindowSize"] = 05;
-
         return $Merchant_EMV3DS;
     }
 
