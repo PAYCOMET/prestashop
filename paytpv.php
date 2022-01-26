@@ -876,7 +876,6 @@ class Paytpv extends PaymentModule
             }
 
             if ($billing->phone_mobile) {
-
                 $arrDatosMobilePhone = array();
 
                 $arrDatosMobilePhone["cc"] =
