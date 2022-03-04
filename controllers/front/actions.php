@@ -172,6 +172,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                     $payment =  [
                         'terminal' => (int) $idterminal,
                         'order' => (string) $paytpv_order_ref,
+                        'methods' => [1],
                         'amount' => (string) $importe,
                         'currency' => (string) $currency_iso_code,
                         'userInteraction' => (int) $userInteraction,
