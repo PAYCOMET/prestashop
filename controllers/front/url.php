@@ -85,7 +85,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             $esURLOK = false;
 
             $context = Context::getContext();
-            $id_cart = (int) Tools::substr($ref, 0, 8);
+            $id_cart = (int) $ref;
             $cart = new Cart($id_cart);
 
             if (Context::getContext()->shop->id != $cart->id_shop) {
@@ -170,7 +170,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             $ref = $datos[0];
 
             $context = Context::getContext();
-            $id_cart = (int) Tools::substr($ref, 0, 8);
+            $id_cart = (int) $ref;
             $cart = new Cart($id_cart);
             if (Context::getContext()->shop->id != $cart->id_shop) {
                 $context->shop->id = $cart->id_shop;
@@ -193,7 +193,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             $importe  = number_format(Tools::getValue('Amount') / 100, 2, ".", "");
 
             // Check if is a suscription payment
-            $id_cart = (int) Tools::substr($ref, 0, 8);
+            $id_cart = (int) $ref;
             $id_order = Order::getOrderByCartId((int) $id_cart);
 
             // if exits cart order is a suscription payment
@@ -205,7 +205,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
         if ($result == 0) {
             $context = Context::getContext();
-            $id_cart = (int) Tools::substr($ref, 0, 8);
+            $id_cart = (int) $ref;
             $cart = new Cart($id_cart);
             $customer = new Customer((int) $cart->id_customer);
 
