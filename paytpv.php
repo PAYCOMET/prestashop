@@ -52,9 +52,8 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.10';
+        $this->version = '7.7.11';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
-
 
         $this->is_eu_compatible = 1;
         $this->ps_versions_compliancy = array('min' => '1.7');
@@ -428,7 +427,6 @@ class Paytpv extends PaymentModule
             Configuration::updateValue('PAYTPV_IFRAME_HEIGHT', Tools::getValue('iframe_height'));
             Configuration::updateValue('PAYTPV_SUSCRIPTIONS', Tools::getValue('suscriptions'));
             Configuration::updateValue('PAYTPV_INTEGRATION', Tools::getValue('integration'));
-
             // Save Paytpv Terminals
             PaytpvTerminal::removeTerminals();
 
@@ -439,7 +437,8 @@ class Paytpv extends PaymentModule
                     trim($aux_term),
                     trim(Tools::getValue("pass")[$key]),
                     trim(Tools::getValue("jetid")[$key]),
-                    trim(Tools::getValue("moneda")[$key])
+                    trim(Tools::getValue("moneda")[$key]),
+                    Tools::getValue("dcc")[$key]
                 );
             }
 
@@ -1095,6 +1094,7 @@ class Paytpv extends PaymentModule
             $arrValues["pass[".$key."]"] = trim($term["password"]);
             $arrValues["jetid[".$key."]"] = trim($term["jetid"]);
             $arrValues["moneda[".$key."]"] = $term["currency_iso_code"];
+            $arrValues["dcc[".$key."]"] = $term["dcc"];
         }
         return $arrValues;
     }
@@ -1207,6 +1207,24 @@ class Paytpv extends PaymentModule
                         'name' => 'name'
                     ),
                     'desc' => $this->l('PAYCOMET Terminal Currency.'),
+                ),
+                array(
+                    'type' => 'switch',
+                    'label' => $this->l('DCC'),
+                    'name' => 'dcc['.$key.']',
+                    'id' => 'dcc_' . $key,
+                    'values' => array(
+                        array(
+                            'id' => 'active_on',
+                            'value' => 0,
+                            'label' => $this->l('No')
+                        ),
+                        array(
+                            'id' => 'active_off',
+                            'value' => 1,
+                            'label' => $this->l('Yes')
+                        )
+                    ),
                 )
             );
 
@@ -1670,7 +1688,7 @@ class Paytpv extends PaymentModule
             $apiRest = new PaycometApiRest(Configuration::get("PAYTPV_APIKEY"));
 
             $terminalId = 0;
-            if (Tools::getValue("term")[0]) {
+            if (isset(Tools::getValue("term")[0])) {
                 $terminalId = Tools::getValue("term")[0];
             } elseif (PaytpvTerminal::getTerminals()) {
                 $terminalId = PaytpvTerminal::getTerminals()[0]['idterminal'];
@@ -1712,6 +1730,7 @@ class Paytpv extends PaymentModule
             $terminales[0]["password"] = "";
             $terminales[0]["jetid"] = "";
             $terminales[0]["currency_iso_code"] = $currency->iso_code;
+            $terminales[0]["dcc"] = 0;
         }
 
         return $terminales;
@@ -2081,6 +2100,7 @@ class Paytpv extends PaymentModule
             $importe = $datos_pedido["importe"];
             $currency_iso_code = $datos_pedido["currency_iso_code"];
             $idterminal = $datos_pedido["idterminal"];
+            $dcc = $datos_pedido["dcc"];
             $paytpv_order_ref = str_pad($cart->id, 8, "0", STR_PAD_LEFT);
             $merchantData = $this->getMerchantData($cart);
             $ssl = Configuration::get('PS_SSL_ENABLED');
@@ -2096,7 +2116,7 @@ class Paytpv extends PaymentModule
 
             $ssl = Configuration::get('PS_SSL_ENABLED');
 
-            $OPERATION = 1;
+            $OPERATION = ($dcc == 1)?116 : 1;
             $userInteraction = 1;
             $secure_pay = 1;
             $language = $this->getPaycometLang($this->context->language->language_code);
@@ -2292,6 +2312,7 @@ class Paytpv extends PaymentModule
 
         $datos_pedido = $this->terminalCurrency($cart);
         $importe = $datos_pedido["importe"];
+        $dcc = $datos_pedido["dcc"];
         $currency_iso_code = $datos_pedido["currency_iso_code"];
         $idterminal = $datos_pedido["idterminal"];
 
@@ -2315,7 +2336,7 @@ class Paytpv extends PaymentModule
         $score = $this->transactionScore($cart);
         $scoring = $score["score"];
 
-        $OPERATION = 1;
+        $OPERATION = ($dcc == 1)?116 : 1;
         if ($this->apikey != '') {
             $userInteraction = 1;
             $merchantData = $this->getMerchantData($cart);
@@ -2390,6 +2411,7 @@ class Paytpv extends PaymentModule
         $arrDatos["idterminal"] = $result["idterminal"];
         $arrDatos["password"] = $result["password"];
         $arrDatos["jetid"] = $result["jetid"];
+        $arrDatos["dcc"] = $result["dcc"];
         $arrDatos["currency_iso_code"] = $this->context->currency->iso_code;
         $arrDatos["importe"] = number_format($cart->getOrderTotal(true, Cart::BOTH) * 100, 0, '.', '');
 
