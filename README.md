@@ -71,6 +71,7 @@ Todas las suscripciones mostrarán el estado actual:
 > 7.7.9: 
 
 - Fix APM Klarna
+- Trim para la configuración
 
 > 7.7.8: 
 
