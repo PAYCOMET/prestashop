@@ -105,6 +105,7 @@ class PayTpvInstall
                 `password` VARCHAR(30) NULL,
                 `jetid` VARCHAR(32),
                 `currency_iso_code` VARCHAR(3) NOT NULL,
+                `dcc` INT(2) UNSIGNED NOT NULL DEFAULT 0,
                 PRIMARY KEY (`id`,`id_shop`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8')) {
             return false;

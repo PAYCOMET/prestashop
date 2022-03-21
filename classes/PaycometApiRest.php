@@ -282,6 +282,7 @@ class PaycometApiRest
 
     public function removeSubscription(
         $terminal,
+        $order,
         $idUser,
         $tokenUser
     ) {
@@ -293,7 +294,7 @@ class PaycometApiRest
             ]
         ];
 
-        return $this->executeRequest('/v1/subscription/remove', $params);
+        return $this->executeRequest('/v1/subscription/' . $order . '/remove', $params);
     }
 
     public function executeRefund(

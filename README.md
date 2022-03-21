@@ -60,6 +60,10 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.11: 
+
+- Se añade opción de terminal DCC
+
 > 7.7.10: 
 
 - Mejoras de código 

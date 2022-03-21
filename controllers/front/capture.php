@@ -48,6 +48,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
         $importe = $datos_pedido["importe"];
         $currency_iso_code = $datos_pedido["currency_iso_code"];
         $idterminal = $datos_pedido["idterminal"];
+        $dcc = $datos_pedido["dcc"];
 
         // BANKSTORE JET
 
@@ -220,6 +221,47 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     $salida = $URLOK;
                 // Error
                 } else {
+                    $salida = $URLKO;
+                }
+            } elseif ($dcc == 1) {
+                $OPERATION = 116;
+                
+                try {
+                    $payment =  [
+                        'terminal' => (int) $idterminal,
+                        'order' => (string) $paytpv_order_ref,
+                        'methods' => [1],
+                        'amount' => (string) $importe,
+                        'currency' => (string) $currency_iso_code,
+                        'userInteraction' => (int) $userInteraction,
+                        'secure' => (int) $secure_pay,
+                        'merchantData' => $merchantData,
+                        'idUser' => $data["IDUSER"],
+                        'tokenUser' => $data['TOKEN_USER'],
+                        'urlOk' => $URLOK,
+                        'urlKo' => $URLKO
+                    ];
+
+                    if ($scoring != null) {
+                        $payment['scoring'] = (int) $scoring;
+                    }
+
+                    $formResponse = $apiRest->form(
+                        $OPERATION,
+                        'ES',
+                        $idterminal,
+                        '',
+                        $payment
+                    );
+
+                    // Hay challenge
+                    if ($formResponse->errorCode == 0) {
+                        $salida = $formResponse->challengeUrl;
+                    // Error
+                    } else {
+                        $salida = $URLKO;
+                    }
+                } catch (exception $e) {
                     $salida = $URLKO;
                 }
             } else {
