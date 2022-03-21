@@ -76,7 +76,8 @@ class PaytpvApmModuleFrontController extends ModuleFrontController
         VALUES(' . $id . ',' . 2 . ',"' . "Waiting for Local Payment Method Payment" . '","' . "payment".'")';
         Db::getInstance()->Execute($sql);
         $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'order_state
-        VALUES(' . $id . ',' . 0 . ',' . 0 . ',"' . "ps_checkout". '","' . "#34209E" . '",' . 1 . ',' . 0 . ',' . 0 . ',' . 0 . ',' . 0 . ',' . 0 . ',' . 0 . ',' . 0 . ',' . 0 .')';
+        VALUES(' . $id . ',' . 0 . ',' . 0 . ',"' . "ps_checkout". '","' . "#34209E" . '",' . 1 . ',' . 0 . ',' . 0 . ',
+        ' . 0 . ',' . 0 . ',' . 0 . ',' . 0 . ',' . 0 . ',' . 0 .')';
         Db::getInstance()->Execute($sql);
         Configuration::updateValue('PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT', $id);
     }
