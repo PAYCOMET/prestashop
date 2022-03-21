@@ -48,6 +48,9 @@ class PaytpvApmModuleFrontController extends ModuleFrontController
 
         // Generar Pedido en los metodos Asincronos
         if ($paytpv->APMAsynchronous($methodId)) {
+            if (Configuration::get("PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT") == '') {
+                $this->createSatusWaitingLocalPayment();
+            }
             $displayName = $paytpv->displayName . " [" . $paytpv->getAPMName($methodId) . "]";
             $paytpv->validateOrder(
                 $id_cart,
@@ -59,5 +62,22 @@ class PaytpvApmModuleFrontController extends ModuleFrontController
         }
         Tools::redirect($url);
         exit;
+    }
+
+    public function createSatusWaitingLocalPayment()
+    {
+        $sql = 'select max(id_order_state) max_id from ' . _DB_PREFIX_ . 'order_state_lang';
+        $result = Db::getInstance()->getRow($sql);
+        $id = $result["max_id"] + 1;
+        $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'order_state_lang
+        VALUES(' . $id . ',' . 1 . ',"' . "Esperando el pago con un método de pago local" . '","' . "payment".'")';
+        Db::getInstance()->Execute($sql);
+        $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'order_state_lang
+        VALUES(' . $id . ',' . 2 . ',"' . "Waiting for Local Payment Method Payment" . '","' . "payment".'")';
+        Db::getInstance()->Execute($sql);
+        $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'order_state
+        VALUES(' . $id . ',' . 0 . ',' . 0 . ',"' . "ps_checkout". '","' . "#34209E" . '",' . 1 . ',' . 0 . ',' . 0 . ',' . 0 . ',' . 0 . ',' . 0 . ',' . 0 . ',' . 0 . ',' . 0 .')';
+        Db::getInstance()->Execute($sql);
+        Configuration::updateValue('PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT', $id);
     }
 }

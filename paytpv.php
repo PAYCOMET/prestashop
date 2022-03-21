@@ -2100,7 +2100,6 @@ class Paytpv extends PaymentModule
             $importe = $datos_pedido["importe"];
             $currency_iso_code = $datos_pedido["currency_iso_code"];
             $idterminal = $datos_pedido["idterminal"];
-            $dcc = $datos_pedido["dcc"];
             $paytpv_order_ref = str_pad($cart->id, 8, "0", STR_PAD_LEFT);
             $merchantData = $this->getMerchantData($cart);
             $ssl = Configuration::get('PS_SSL_ENABLED');
@@ -2116,7 +2115,7 @@ class Paytpv extends PaymentModule
 
             $ssl = Configuration::get('PS_SSL_ENABLED');
 
-            $OPERATION = ($dcc == 1)?116 : 1;
+            $OPERATION = 1;
             $userInteraction = 1;
             $secure_pay = 1;
             $language = $this->getPaycometLang($this->context->language->language_code);
@@ -2688,12 +2687,15 @@ class Paytpv extends PaymentModule
         } else {
             $paytpv_iduser = $result["paytpv_iduser"];
             $paytpv_tokenuser = $result["paytpv_tokenuser"];
+            $order = new Order((int) $result["id_order"]);
+            $order_ref = str_pad($order->id_cart, 8, "0", STR_PAD_LEFT);
 
             if ($this->apikey != '') {
                 $apiRest = new PaycometApiRest($this->apikey);
                 try {
                     $removeSubscriptionResponse = $apiRest->removeSubscription(
                         $idterminal,
+                        $order_ref,
                         $paytpv_iduser,
                         $paytpv_tokenuser
                     );
