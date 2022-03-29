@@ -60,6 +60,10 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.12: 
+
+- Se añade apm Klarna Payments
+
 > 7.7.11: 
 
 - Se añade opción de terminal DCC
