@@ -761,6 +761,7 @@ class Paytpv extends PaymentModule
 
 
         $i = 0;
+        $amount = 0;
         foreach ($cart->getProducts() as $key => $product) {
 
             if (is_int($product["quantity"])) {
