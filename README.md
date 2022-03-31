@@ -60,6 +60,10 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.13: 
+
+- Se añade email al concepto de las operaciones
+
 > 7.7.12: 
 
 - Se añade apm Klarna Payments

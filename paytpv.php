@@ -52,7 +52,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.12';
+        $this->version = '7.7.13';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -2174,6 +2174,9 @@ class Paytpv extends PaymentModule
             $userInteraction = 1;
             $secure_pay = 1;
             $language = $this->getPaycometLang($this->context->language->language_code);
+            $productDescription = '';
+        
+            if (isset($this->context->customer->email)) $productDescription = $this->context->customer->email;
 
             $score = $this->transactionScore($cart);
             $scoring = $score["score"];
@@ -2192,6 +2195,7 @@ class Paytpv extends PaymentModule
                         'currency' => (string) $currency_iso_code,
                         'userInteraction' => (int) $userInteraction,
                         'secure' => (int) $secure_pay,
+                        'productDescription' => $productDescription,
                         'merchantData' => $merchantData,
                         'urlOk' => $URLOK,
                         'urlKo' => $URLKO
@@ -2387,6 +2391,9 @@ class Paytpv extends PaymentModule
         $paytpv_order_ref = str_pad($cart->id, 8, "0", STR_PAD_LEFT);
 
         $language = $this->getPaycometLang($this->context->language->language_code);
+        $productDescription = '';
+        
+        if (isset($this->context->customer->email)) $productDescription = $this->context->customer->email;
 
         $score = $this->transactionScore($cart);
         $scoring = $score["score"];
@@ -2407,6 +2414,7 @@ class Paytpv extends PaymentModule
                     'currency' => (string) $currency_iso_code,
                     'userInteraction' => (int) $userInteraction,
                     'secure' => (int) $secure_pay,
+                    'productDescription' => $productDescription,
                     'merchantData' => $merchantData,
                     'urlOk' => $URLOK,
                     'urlKo' => $URLKO
