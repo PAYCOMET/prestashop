@@ -163,6 +163,9 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
 
                 $userInteraction = '1';
                 $merchantData = $paytpv->getMerchantData($cart);
+                $productDescription = '';
+        
+                if (isset($this->context->customer->email)) $productDescription = $this->context->customer->email;
 
                 $score = $paytpv->transactionScore($cart);
                 $scoring = $score["score"];
@@ -179,6 +182,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                         'userInteraction' => (int) $userInteraction,
                         'secure' => (int) $secure_pay,
                         'merchantData' => $merchantData,
+                        'productDescription' => $productDescription,
                         'urlOk' => $URLOK,
                         'urlKo' => $URLKO
                     ];
@@ -283,6 +287,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
         $URLKO = Context::getContext()->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
 
         $paytpv_order_ref = str_pad($cart->id, 8, "0", STR_PAD_LEFT);
+        
 
         $secure_pay = true;
 
@@ -320,6 +325,9 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                 include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php');
 
                 $merchantData = $paytpv->getMerchantData($cart);
+                $productDescription = '';
+        
+                if (isset($this->context->customer->email)) $productDescription = $this->context->customer->email;
 
                 $userInteraction = '1';
 
@@ -334,6 +342,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                         'userInteraction' => (int) $userInteraction,
                         'secure' => (int) $secure_pay,
                         'merchantData' => $merchantData,
+                        'productDescription' => $productDescription,
                         'urlOk' => $URLOK,
                         'urlKo' => $URLKO
                     ];
