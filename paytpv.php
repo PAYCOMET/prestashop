@@ -277,8 +277,9 @@ class Paytpv extends PaymentModule
             !$this->registerHook('displayShoppingCart') ||
             !$this->registerHook('paymentOptions') ||
             !$this->registerHook('actionFrontControllerSetMedia') ||
-            !$this->registerHook('header')
-            || !$this->registerHook('displayOrderConfirmation')
+            !$this->registerHook('header') || 
+            !$this->registerHook('displayOrderConfirmation') || 
+            !$this->registerHook('displayOrderDetail')
         ) {
             return false;
         }
@@ -2187,52 +2188,25 @@ class Paytpv extends PaymentModule
                         continue;
                     }
 
-                    $payment =  [
-                        'terminal' => (int) $idterminal,
-                        'order' => (string) $paytpv_order_ref,
-                        'amount' => (string) $importe,
-                        'methods' => [$methodId],
-                        'currency' => (string) $currency_iso_code,
-                        'userInteraction' => (int) $userInteraction,
-                        'secure' => (int) $secure_pay,
-                        'productDescription' => $productDescription,
-                        'merchantData' => $merchantData,
-                        'urlOk' => $URLOK,
-                        'urlKo' => $URLKO
-                    ];
-
-                    if ($scoring != null) {
-                        $payment['scoring'] = (int) $scoring;
-                    }
-
-                    $formResponse = $apiRest->form(
-                        $OPERATION,
-                        $language,
-                        $idterminal,
-                        '',
-                        $payment
+                    $values = array(
+                        'url' => '',
+                        'id_cart' => $cart->id,
+                        'methodId' => $methodId,
+                        'key' => Context::getContext()->customer->secure_key
                     );
 
-                    if ($formResponse->errorCode == 0) {
-                        $values = array(
-                            'url' => $formResponse->challengeUrl,
-                            'id_cart' => $cart->id,
-                            'methodId' => $methodId,
-                            'key' => Context::getContext()->customer->secure_key
-                        );
+                    $url_apm = Context::getContext()->link->getModuleLink($this->name, 'apm', $values, $ssl);
 
-                        $url_apm = Context::getContext()->link->getModuleLink($this->name, 'apm', $values, $ssl);
+                    $url_paytpv[$methodId]['url'] = $url_apm;
+                    $method_name = $this->getAPMName($methodId);
+                    $method_img = str_replace(" ", "", Tools::strtolower($method_name));
+                    $url_paytpv[$methodId]['method_name'] = $method_name;
+                    $url_paytpv[$methodId]['img_name'] = $method_img;
+                    $url_paytpv[$methodId]['templateVars'] = $this->getAPMTemplateVars(
+                        $methodId,
+                        $cart->getOrderTotal(true, Cart::BOTH)
+                    );
 
-                        $url_paytpv[$methodId]['url'] = $url_apm;
-                        $method_name = $this->getAPMName($methodId);
-                        $method_img = str_replace(" ", "", Tools::strtolower($method_name));
-                        $url_paytpv[$methodId]['method_name'] = $method_name;
-                        $url_paytpv[$methodId]['img_name'] = $method_img;
-                        $url_paytpv[$methodId]['templateVars'] = $this->getAPMTemplateVars(
-                            $methodId,
-                            $cart->getOrderTotal(true, Cart::BOTH)
-                        );
-                    }
                 } catch (exception $e) {
                     $url_paytpv = $e->getCode();
                 }
@@ -2534,6 +2508,33 @@ class Paytpv extends PaymentModule
 
     public function hookDisplayOrderConfirmation($params)
     {
+    }
+
+    public function hookDisplayOrderDetail($params)
+    {
+        if (!$this->active) {
+            return;
+        }
+        $this->context->smarty->assign(array(
+            'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name .
+            '/'
+        ));
+
+        $id_order = Order::getOrderByCartId((int) $params["order"]->id_cart);
+        $order = new Order($id_order);
+
+        if (strstr(Tools::strtolower($order->payment), "multibanco")) {
+            // Multibanco
+            $result_txt = "";
+        } else {
+            $result_txt = "";
+
+        }
+
+        $this->context->smarty->assign('result_txt', $result_txt);
+        $this->context->smarty->assign('base_dir', __PS_BASE_URI__);
+
+        return $this->display(__FILE__, 'order_detail.tpl');
     }
 
 
