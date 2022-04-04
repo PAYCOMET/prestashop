@@ -60,6 +60,10 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.14: 
+
+- Mejoras de código
+
 > 7.7.13: 
 
 - Se añade email al concepto de las operaciones
