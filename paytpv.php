@@ -2530,19 +2530,28 @@ class Paytpv extends PaymentModule
 
         $id_order = Order::getOrderByCartId((int) $params["order"]->id_cart);
         $order = new Order($id_order);
-        $message = Message::getMessagesByOrderId($order->id, true)[0]["message"];
-        $methodData = json_decode(explode('|', $message, 2)[0]);
 
-        if (strstr(Tools::strtolower($order->payment), "multibanco")) {
-            // Multibanco
-            $mbentity = $methodData->entityNumber; // Entidad
-            $mbreference = $methodData->referenceNumber; // Referencia
-            $this->context->smarty->assign('mbentity', $mbentity);
-            $this->context->smarty->assign('mbreference', $mbreference);
-        } else {
-            $this->context->smarty->assign('display', "none");
+        $result_txt = "";
+        $mbentity = ""; // Entidad
+        $mbreference = ""; // Referencia
+        $display = "";
+
+        if (isset(Message::getMessagesByOrderId($order->id, true)[0]["message"])) {
+            $message = Message::getMessagesByOrderId($order->id, true)[0]["message"];
+            $methodData = json_decode(explode('|', $message, 2)[0]);
         }
 
+        if (strstr(Tools::strtolower($order->payment), "multibanco") && isset($methodData->entityNumber) && isset($methodData->referenceNumber)) {
+            // Multibanco
+            $mbentity = $methodData->entityNumber;
+            $mbreference = $methodData->referenceNumber;
+        } else {
+            $display = "none";
+        }
+
+        $this->context->smarty->assign('display', $display);
+        $this->context->smarty->assign('mbentity', $mbentity);
+        $this->context->smarty->assign('mbreference', $mbreference);
         $this->context->smarty->assign('result_txt', $result_txt);
         $this->context->smarty->assign('base_dir', __PS_BASE_URI__);
 
@@ -2563,23 +2572,32 @@ class Paytpv extends PaymentModule
 
         $id_order = Order::getOrderByCartId((int) $params["order"]->id_cart);
         $order = new Order($id_order);
-        $message = Message::getMessagesByOrderId($order->id, true)[0]["message"];
-        $methodData = json_decode(explode('|', $message, 2)[0]);
 
-        if (strstr(Tools::strtolower($order->payment), "multibanco")) {
+        $result_txt = "";
+        $mbentity = ""; // Entidad
+        $mbreference = ""; // Referencia
+        $display = "";
+
+        if (isset(Message::getMessagesByOrderId($order->id, true)[0]["message"])) {
+            $message = Message::getMessagesByOrderId($order->id, true)[0]["message"];
+            $methodData = json_decode(explode('|', $message, 2)[0]);
+        }
+
+        if (strstr(Tools::strtolower($order->payment), "multibanco")  && isset($methodData->entityNumber) && isset($methodData->referenceNumber)) {
             $result_txt = $this->l('Your order will be sent as soon as we receive your payment.');
-            $mbentity = $methodData->entityNumber; // Entidad
-            $mbreference = $methodData->referenceNumber; // Referencia
-            $this->context->smarty->assign('mbentity', $mbentity);
-            $this->context->smarty->assign('mbreference', $mbreference);
+            $mbentity = $methodData->entityNumber;
+            $mbreference = $methodData->referenceNumber;
         } else {
             $result_txt = $this->l(
                 'Thank you for trusting us.
                  Your purchase has been formalized correctly and we will process your order soon.'
             );
-            $this->context->smarty->assign('display', "none");
+            $display = "none";
         }
 
+        $this->context->smarty->assign('display', $display);
+        $this->context->smarty->assign('mbentity', $mbentity);
+        $this->context->smarty->assign('mbreference', $mbreference);
         $this->context->smarty->assign('shop_name', $this->context->shop->name);
         $this->context->smarty->assign('reference', $order->reference);
         $this->context->smarty->assign('result_txt', $result_txt);
