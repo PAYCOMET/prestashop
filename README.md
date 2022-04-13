@@ -60,6 +60,12 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.15: 
+
+- Se añade paypal
+- Se añade información de pago de multibanco
+- Mejoras de código
+
 > 7.7.14: 
 
 - Mejoras de código
