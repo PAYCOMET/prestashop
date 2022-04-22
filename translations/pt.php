@@ -101,3 +101,6 @@ $_MODULE['<{paytpv}prestashop>order_suscription_info_ec53a8c4f07baed5d8825072c89
 $_MODULE['<{paytpv}prestashop>payment_bsiframe_99938b17c91170dfb0c2f3f8bc9f2a85'] = 'Pagar';
 $_MODULE['<{paytpv}prestashop>payment_bsiframe_0df6dc54d8913c70ff40a8ffcce9c5f6'] = 'Carregando o formulário de pagamento...';
 $_MODULE['<{paytpv}prestashop>payment_newpage_b933f6b9b13a6706766fb18b75af4f45'] = 'Pagar com Cartão';
+$_MODULE['<{paytpv}prestashop>payment_return_3cb701aea20df40357ca7d755af1cfb3'] = 'Informação de pagamento de';
+$_MODULE['<{paytpv}prestashop>payment_return_1a434befae3f49ae09347ded52032f6f'] = 'Entidade';
+$_MODULE['<{paytpv}prestashop>payment_return_63d5049791d9d79d86e9a108b0a999ca'] = 'Referência';

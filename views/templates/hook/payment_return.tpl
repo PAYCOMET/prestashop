@@ -28,9 +28,11 @@
 <p>
 	{$result_txt}
 </p>
-<div style="display: {$display}">
-	{l s='Payment information of' mod='paytpv'}
-	<img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/apms/multibanco.svg" width="100">
-	<p>{l s='Entity' mod='paytpv'}: {$mbentity}</p>
-	<p>{l s='Reference' mod='paytpv'}: {$mbreference}</p>
-</div>
+<section id="order-paycomet" class="box" style="display: {$display}">
+{l s='Payment information of' mod='paytpv'}
+<img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/apms/multibanco.svg" width="100">
+<ul>
+<li><strong>{l s='Entity' mod='paytpv'}:</strong> {$mbentity}</li>
+<li><strong>{l s='Reference' mod='paytpv'}:</strong> {$mbreference}</li>
+</ul>
+</section>
