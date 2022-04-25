@@ -22,12 +22,12 @@
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *}
 
-<section id="order-paycomet" class="box" style="display: {$display}">
-{$result_txt}
+<section id="order-paycomet" class="box" style="display: {$display|escape:'htmlall':'UTF-8':FALSE}">
+{$result_txt|escape:'htmlall':'UTF-8':FALSE}
 {l s='Payment information of' mod='paytpv'}
 <img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/apms/multibanco.svg" width="100">
 <ul>
-<li><strong>{l s='Entity' mod='paytpv'}:</strong> {$mbentity}</li>
-<li><strong>{l s='Reference' mod='paytpv'}:</strong> {$mbreference}</li>
+<li><strong>{l s='Entity' mod='paytpv'}:</strong> {$mbentity|escape:'htmlall':'UTF-8':FALSE}</li>
+<li><strong>{l s='Reference' mod='paytpv'}:</strong> {$mbreference|escape:'htmlall':'UTF-8':FALSE}</li>
 </ul>
 </section>
