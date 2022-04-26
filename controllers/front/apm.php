@@ -46,20 +46,82 @@ class PaytpvApmModuleFrontController extends ModuleFrontController
         $methodId = (string) Tools::getValue('methodId');
         $paytpv = $this->module;
 
-        // Generar Pedido en los metodos Asincronos
-        if ($paytpv->APMAsynchronous($methodId)) {
-            if (Configuration::get("PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT") == '') {
-                $this->createSatusWaitingLocalPayment();
+        $cart = new Cart($id_cart);
+        $datos_pedido = $paytpv->terminalCurrency($cart);
+        $importe = $datos_pedido["importe"];
+        $currency_iso_code = $datos_pedido["currency_iso_code"];
+        $idterminal = $datos_pedido["idterminal"];
+        $paytpv_order_ref = str_pad($cart->id, 8, "0", STR_PAD_LEFT);
+        $merchantData = $paytpv->getMerchantData($cart);
+        $ssl = Configuration::get('PS_SSL_ENABLED');
+        $values = array(
+            'id_cart' => $cart->id,
+            'key' => Context::getContext()->customer->secure_key
+        );
+        $URLOK = Context::getContext()->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
+        $URLKO = Context::getContext()->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
+
+        $apiRest = new PaycometApiRest($paytpv->apikey);
+
+        $ssl = Configuration::get('PS_SSL_ENABLED');
+
+        $userInteraction = 1;
+        $secure_pay = 1;
+        $productDescription = '';
+
+        if (isset(Context::getContext()->customer->email)) $productDescription = Context::getContext()->customer->email;
+
+        $score = $paytpv->transactionScore($cart);
+        $scoring = $score["score"];
+
+        $executePurchaseResponse = $apiRest->executePurchase(
+            $idterminal,
+            $paytpv_order_ref,
+            $importe,
+            $currency_iso_code,
+            $methodId,
+            Tools::getRemoteAddr(),
+            $secure_pay,
+            '',
+            '',
+            $URLOK,
+            $URLKO,
+            $scoring,
+            $productDescription,
+            '',
+            $userInteraction,
+            [],
+            '',
+            '',
+            $merchantData,
+            1
+        );
+
+        // Hay challenge
+        if (isset($executePurchaseResponse->challengeUrl) &&
+            $executePurchaseResponse->challengeUrl != ""
+        ) {
+            $url = $executePurchaseResponse->challengeUrl;
+            // Generar Pedido en los metodos Asincronos
+            if ($paytpv->APMAsynchronous($methodId)) {
+                if (Configuration::get("PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT") == '') {
+                    $this->createSatusWaitingLocalPayment();
+                }
+                $displayName = $paytpv->displayName . " [" . $paytpv->getAPMName($methodId) . "]";
+                $message = json_encode($executePurchaseResponse->methodData) . '|';
+
+                $paytpv->validateOrder(
+                    $id_cart,
+                    Configuration::get("PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT"),
+                    0,
+                    $displayName,
+                    $message
+                );
             }
-            $displayName = $paytpv->displayName . " [" . $paytpv->getAPMName($methodId) . "]";
-            $paytpv->validateOrder(
-                $id_cart,
-                Configuration::get("PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT"),
-                0,
-                $displayName,
-                ''
-            );
+        } else {
+            $url = $URLKO;
         }
+
         Tools::redirect($url);
         exit;
     }

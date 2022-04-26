@@ -26,5 +26,13 @@
 	{l s='Your order on %s is complete.' sprintf=[$shop_name] mod='paytpv'}
 </p>
 <p>
-	{$result_txt}
+	{$result_txt|escape:'htmlall':'UTF-8':FALSE}
 </p>
+<section id="order-paycomet" class="box" style="display: {$display|escape:'htmlall':'UTF-8':FALSE}">
+{l s='Payment information of' mod='paytpv'}
+<img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/apms/multibanco.svg" width="100">
+<ul>
+<li><strong>{l s='Entity' mod='paytpv'}:</strong> {$mbentity|escape:'htmlall':'UTF-8':FALSE}</li>
+<li><strong>{l s='Reference' mod='paytpv'}:</strong> {$mbreference|escape:'htmlall':'UTF-8':FALSE}</li>
+</ul>
+</section>
