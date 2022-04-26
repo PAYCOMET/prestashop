@@ -1899,10 +1899,14 @@ class Paytpv extends PaymentModule
         $language = $this->getPaycometLang($this->context->language->language_code);
 
         $paytpv_error = 0;
-        $iframeURL = $this->paytpvIframeURL();
-        if (filter_var($iframeURL, FILTER_VALIDATE_URL) === false) {
-            $paytpv_error = $iframeURL;
-            $iframeURL = "";
+        $iframeURL = "";
+
+        if ($paytpv_integration != 1) {
+            $iframeURL = $this->paytpvIframeURL();
+            if (filter_var($iframeURL, FILTER_VALIDATE_URL) === false) {
+                $paytpv_error = $iframeURL;
+                $iframeURL = "";
+            }
         }
 
         return array(
@@ -2153,41 +2157,14 @@ class Paytpv extends PaymentModule
             if (Configuration::get('PAYTPV_APM_paypal') != null) {
                 array_push($apms, Configuration::get('PAYTPV_APM_paypal'));
             }
-            
+
             if (empty($apms)) {
                 return $apms;
             }
 
             $cart = Context::getContext()->cart;
-            $datos_pedido = $this->terminalCurrency($cart);
-            $importe = $datos_pedido["importe"];
-            $currency_iso_code = $datos_pedido["currency_iso_code"];
-            $idterminal = $datos_pedido["idterminal"];
-            $paytpv_order_ref = str_pad($cart->id, 8, "0", STR_PAD_LEFT);
-            $merchantData = $this->getMerchantData($cart);
-            $ssl = Configuration::get('PS_SSL_ENABLED');
-            $values = array(
-                'id_cart' => $cart->id,
-                'key' => Context::getContext()->customer->secure_key
-            );
-            $URLOK = Context::getContext()->link->getModuleLink($this->name, 'urlok', $values, $ssl);
-            $URLKO = Context::getContext()->link->getModuleLink($this->name, 'urlko', $values, $ssl);
-
-            $apiRest = new PaycometApiRest($this->apikey);
             $url_paytpv = array();
-
             $ssl = Configuration::get('PS_SSL_ENABLED');
-
-            $OPERATION = 1;
-            $userInteraction = 1;
-            $secure_pay = 1;
-            $language = $this->getPaycometLang($this->context->language->language_code);
-            $productDescription = '';
-        
-            if (isset($this->context->customer->email)) $productDescription = $this->context->customer->email;
-
-            $score = $this->transactionScore($cart);
-            $scoring = $score["score"];
 
             foreach ($apms as $methodId) {
                 try {

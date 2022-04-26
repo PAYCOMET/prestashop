@@ -69,7 +69,7 @@ class PaytpvApmModuleFrontController extends ModuleFrontController
         $secure_pay = 1;
         $productDescription = '';
 
-        if (isset($paytpv->context->customer->email)) $productDescription = $paytpv->context->customer->email;
+        if (isset(Context::getContext()->customer->email)) $productDescription = Context::getContext()->customer->email;
 
         $score = $paytpv->transactionScore($cart);
         $scoring = $score["score"];
