@@ -60,6 +60,10 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.16:
+
+- Mejoras de codigo. Llamada al formulario de pago
+
 > 7.7.15: 
 
 - Se añade paypal
