@@ -84,7 +84,7 @@
 
         <div class="payment_module paytpv_iframe" id="nueva_tarjeta" style="display:none">
             {if ($paytpv_integration==0)}
-                <iframe src="{$url_paytpv|escape:'htmlall':'UTF-8':FALSE}" id="paytpv_iframe" name="paytpv" style="min-width: 360px; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-style: initial; border-color: initial; border-image: initial; height: 360px; " marginheight="0" marginwidth="0" scrolling="no" sandbox="allow-top-navigation"></iframe>
+                <iframe src="{$url_paytpv|escape:'htmlall':'UTF-8':FALSE}" id="paytpv_iframe" name="paytpv" style="min-width: 360px; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-style: initial; border-color: initial; border-image: initial; height: 360px; " marginheight="0" marginwidth="0" scrolling="no" sandbox="allow-top-navigation allow-scripts allow-same-origin allow-forms"></iframe>
             {else}
                 <form action="{$paytpv_jetid_url|escape:'htmlall':'UTF-8'}" method="POST" class="paytpv_jet" id="paycometPaymentForm">
                     {include file='modules/paytpv/views/templates/hook/inc_payment_jetIframe.tpl'}
