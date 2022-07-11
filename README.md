@@ -60,6 +60,10 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.17:
+
+- Mejoras de código.
+
 > 7.7.16:
 
 - Mejoras de codigo. Llamada al formulario de pago

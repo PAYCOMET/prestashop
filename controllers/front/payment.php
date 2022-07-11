@@ -160,7 +160,7 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
         $this->context->controller->registerJavascript('paytpv-js', 'modules/paytpv/views/js/paytpv.js');
 
         $this->context->smarty->assign('total_amount', $importe_tienda);
-        
+
         $this->context->smarty->assign('currency_symbol', $currency->sign);
 
         $this->context->smarty->assign('disableoffersavecard', $disableoffersavecard);
@@ -172,6 +172,12 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
             $this->context->smarty->assign('paytpv_error', $paytpv_error);
             $this->setTemplate('module:paytpv/views/templates/hook/payment_error.tpl');
         } else {
+
+            // Si el pago es en PAYCOMET redireccionamos directamente
+            if ($newpage_payment == 2) {
+                header("Location: " . $iframeURL);
+            }
+
             $this->context->smarty->assign('paytpv_iframe', $iframeURL);
             $this->setTemplate('module:paytpv/views/templates/hook/payment_bsiframe_newpage.tpl');
         }

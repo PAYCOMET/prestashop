@@ -51,7 +51,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.16';
+        $this->version = '7.7.17';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -1875,6 +1875,13 @@ class Paytpv extends PaymentModule
         );
 
         $active_suscriptions = (int) Configuration::get('PAYTPV_SUSCRIPTIONS');
+        $paytpv_integration = (int) Configuration::get('PAYTPV_INTEGRATION');
+        $newpage_payment = (int) Configuration::get('PAYTPV_NEWPAGEPAYMENT');
+        $iframe_height = (int)$this->iframe_height;
+
+        $disableoffersavecard = Configuration::get('PAYTPV_DISABLEOFFERSAVECARD');
+
+        $language = $this->getPaycometLang($this->context->language->language_code);
 
         $saved_card = PaytpvCustomer::getCardsCustomer((int) $this->context->customer->id);
         $index = 0;
@@ -1890,19 +1897,14 @@ class Paytpv extends PaymentModule
         }
         $saved_card[$index]['url'] = 0;
 
-        $paytpv_integration = (int) Configuration::get('PAYTPV_INTEGRATION');
-        $newpage_payment = (int) Configuration::get('PAYTPV_NEWPAGEPAYMENT');
-        $iframe_height = (int)$this->iframe_height;
-
-        $disableoffersavecard = Configuration::get('PAYTPV_DISABLEOFFERSAVECARD');
-
-        $language = $this->getPaycometLang($this->context->language->language_code);
-
         $paytpv_error = 0;
         $iframeURL = "";
-
         if ($paytpv_integration != 1) {
-            $iframeURL = $this->paytpvIframeURL();
+            if ($newpage_payment == 2) {
+                $iframeURL = Context::getContext()->link->getModuleLink($this->name, 'payment');
+            } else {
+                $iframeURL = $this->paytpvIframeURL();
+            }
             if (filter_var($iframeURL, FILTER_VALIDATE_URL) === false) {
                 $paytpv_error = $iframeURL;
                 $iframeURL = "";
