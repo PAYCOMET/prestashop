@@ -51,7 +51,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.17';
+        $this->version = '7.7.18';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -281,7 +281,8 @@ class Paytpv extends PaymentModule
             !$this->registerHook('actionFrontControllerSetMedia') ||
             !$this->registerHook('header') || 
             !$this->registerHook('displayOrderConfirmation') || 
-            !$this->registerHook('displayOrderDetail')
+            !$this->registerHook('displayOrderDetail') ||
+            !$this->registerHook('actionEmailAddAfterContent')
         ) {
             return false;
         }
@@ -2495,6 +2496,52 @@ class Paytpv extends PaymentModule
 
     public function hookDisplayOrderConfirmation($params)
     {
+    }
+
+    public function hookActionEmailAddAfterContent($params) {
+
+        if (!$this->active) {
+            return;
+        }
+
+        if ($params['template'] !== 'order_conf') {
+            return;
+        }
+
+        $this->context->smarty->assign(array(
+            'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name .
+            '/'
+        ));
+
+        $id_order = Order::getOrderByCartId((int) $params["cookie"]->id_cart);
+        $order = new Order($id_order);
+
+        $result_txt = "";
+        $mbentity = ""; // Entidad
+        $mbreference = ""; // Referencia
+        $display = "inline";
+
+        if (isset(Message::getMessagesByOrderId($order->id, true)[0]["message"])) {
+            $message = Message::getMessagesByOrderId($order->id, true)[0]["message"];
+            $methodData = json_decode(explode('|', $message, 2)[0]);
+        }
+
+        if (strstr(Tools::strtolower($order->payment), "multibanco") && isset($methodData->entityNumber) && isset($methodData->referenceNumber)) {
+            // Multibanco
+            $mbentity = $methodData->entityNumber;
+            $mbreference = $methodData->referenceNumber;
+        } else {
+            $display = "none";
+        }
+
+        $this->context->smarty->assign('display', $display);
+        $this->context->smarty->assign('mbentity', $mbentity);
+        $this->context->smarty->assign('mbreference', $mbreference);
+        $this->context->smarty->assign('result_txt', $result_txt);
+        $this->context->smarty->assign('base_dir', __PS_BASE_URI__);
+    
+        $params['template_html'] .= $this->display(__FILE__, 'order_detail.tpl');
+        $params['template_html'] = str_replace("{multibanco_data}", $this->display(__FILE__, 'order_detail.tpl'), $params['template_html']);   
     }
 
     public function hookDisplayOrderDetail($params)
