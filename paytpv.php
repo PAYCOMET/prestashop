@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 2007-2019 PrestaShop
  *
@@ -78,7 +79,7 @@ class Paytpv extends PaymentModule
         if (isset($config['PAYTPV_NEWPAGEPAYMENT'])) {
             $this->newpage_payment = $config['PAYTPV_NEWPAGEPAYMENT'];
         }
-        if (array_key_exists('PAYTPV_IFRAME_HEIGHT', $config) && $config['PAYTPV_IFRAME_HEIGHT']>=440) {
+        if (array_key_exists('PAYTPV_IFRAME_HEIGHT', $config) && $config['PAYTPV_IFRAME_HEIGHT'] >= 440) {
             $this->iframe_height = $config['PAYTPV_IFRAME_HEIGHT'];
         } else {
             $this->iframe_height = "440"; // Valor por defecto
@@ -268,7 +269,8 @@ class Paytpv extends PaymentModule
         $paytpv_install->updateConfiguration();
 
         // Valores por defecto al instalar el módulo
-        if (!parent::install() ||
+        if (
+            !parent::install() ||
             !$this->registerHook('displayPayment') ||
             !$this->registerHook('displayPaymentTop') ||
             !$this->registerHook('displayPaymentReturn') ||
@@ -279,8 +281,8 @@ class Paytpv extends PaymentModule
             !$this->registerHook('displayShoppingCart') ||
             !$this->registerHook('paymentOptions') ||
             !$this->registerHook('actionFrontControllerSetMedia') ||
-            !$this->registerHook('header') || 
-            !$this->registerHook('displayOrderConfirmation') || 
+            !$this->registerHook('header') ||
+            !$this->registerHook('displayOrderConfirmation') ||
             !$this->registerHook('displayOrderDetail') ||
             !$this->registerHook('actionEmailAddAfterContent')
         ) {
@@ -320,9 +322,10 @@ class Paytpv extends PaymentModule
                 $this->postErrors[] = $this->l('User Password required');
             }
 
-            if (Tools::getValue('newpage_payment') != 2
+            if (
+                Tools::getValue('newpage_payment') != 2
                 && (!filter_var(Tools::getValue('iframe_height'), FILTER_VALIDATE_INT) ||
-                Tools::getValue('iframe_height') < 440)
+                    Tools::getValue('iframe_height') < 440)
             ) {
                 $this->postErrors[] = $this->l('The height of the iframe must be at least 440');
             }
@@ -331,15 +334,15 @@ class Paytpv extends PaymentModule
             foreach (Tools::getValue('term') as $key => $term) {
                 if ($term == "" || !is_numeric($term)) {
                     $this->postErrors[] = $this->l('Terminal') . " " . ($key + 1) . "º " .
-                                        $this->l('Terminal number invalid');
+                        $this->l('Terminal number invalid');
                 }
                 if (Tools::getValue('pass')[$key] == "") {
                     $this->postErrors[] = $this->l('Terminal') . " " . ($key + 1) . "º " .
-                                        $this->l('Password invalid');
+                        $this->l('Password invalid');
                 }
                 if (Tools::getValue('jetid')[$key] == "" && Tools::getValue('integration') == 1) {
                     $this->postErrors[] = $this->l('Terminal') . " " . ($key + 1) . "º " .
-                                            $this->l('JET ID number invalid');
+                        $this->l('JET ID number invalid');
                 }
             }
 
@@ -407,7 +410,7 @@ class Paytpv extends PaymentModule
                         $ssl = Configuration::get('PS_SSL_ENABLED');
                         $arrDatos["error_txt"] = $this->l('The notification URL defined in the product configuration
                          of your PAYCOMET account does not respond correctly. Verify that it has been defined as: ')
-                        . Context::getContext()->link->getModuleLink($this->name, 'url', array(), $ssl);
+                            . Context::getContext()->link->getModuleLink($this->name, 'url', array(), $ssl);
                         break;
                     case 1339:  // Configuración de terminales incorrecta
                         $arrDatos["error_txt"] = $this->l(
@@ -438,9 +441,9 @@ class Paytpv extends PaymentModule
             PaytpvTerminal::removeTerminals();
 
             foreach (array_keys(Tools::getValue("term")) as $key) {
-                $aux_term = (Tools::getValue('term')[$key]=='')?"":Tools::getValue('term')[$key];
+                $aux_term = (Tools::getValue('term')[$key] == '') ? "" : Tools::getValue('term')[$key];
                 PaytpvTerminal::addTerminal(
-                    $key+1,
+                    $key + 1,
                     trim($aux_term),
                     trim(Tools::getValue("pass")[$key]),
                     trim(Tools::getValue("jetid")[$key]),
@@ -499,7 +502,7 @@ class Paytpv extends PaymentModule
                 'PAYTPV_APM_instant_credit_maxFin',
                 Tools::getValue('apms_instant_credit_maxFin')
             );
-            
+
 
             // Datos Scoring
 
@@ -772,10 +775,10 @@ class Paytpv extends PaymentModule
             if (is_int($product["quantity"])) {
                 $shoppingCartData[$key + $i]["sku"] = "1";
                 $shoppingCartData[$key + $i]["quantity"] = (int) $product["quantity"];
-                $shoppingCartData[$key + $i]["unitPrice"] = number_format($product["price_without_reduction_without_tax"] * 100, 0, '.', ''); 
+                $shoppingCartData[$key + $i]["unitPrice"] = number_format($product["price_without_reduction_without_tax"] * 100, 0, '.', '');
                 $shoppingCartData[$key + $i]["name"] = $product["name"];
                 $shoppingCartData[$key + $i]["category"] = $product["category"];
-                $shoppingCartData[$key + $i]["articleType"] = ($product["is_virtual"] == 1)?8 : 5;
+                $shoppingCartData[$key + $i]["articleType"] = ($product["is_virtual"] == 1) ? 8 : 5;
                 $amount += $shoppingCartData[$key + $i]["unitPrice"] * $product["quantity"];
             } else {
                 $shoppingCartData[$key + $i]["sku"] = "1";
@@ -783,7 +786,7 @@ class Paytpv extends PaymentModule
                 $shoppingCartData[$key + $i]["unitPrice"] = number_format(($product["price_without_reduction_without_tax"] * $product["quantity"]) * 100, 0, '.', '');
                 $shoppingCartData[$key + $i]["name"] = $product["name"];
                 $shoppingCartData[$key + $i]["category"] = $product["category"];
-                $shoppingCartData[$key + $i]["articleType"] = ($product["is_virtual"] == 1)?8 : 5;
+                $shoppingCartData[$key + $i]["articleType"] = ($product["is_virtual"] == 1) ? 8 : 5;
                 $amount += $shoppingCartData[$key + $i]["unitPrice"] * $product["quantity"];
             }
 
@@ -1069,7 +1072,7 @@ class Paytpv extends PaymentModule
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'submitPaytpvpaymentsModule';
         $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
-        . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
+            . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
 
         $helper->tpl_vars = array(
@@ -1091,7 +1094,7 @@ class Paytpv extends PaymentModule
         $arrValues["apikey"] = trim($config["PAYTPV_APIKEY"]);
         $arrValues["integration"] = $config["PAYTPV_INTEGRATION"];
         $arrValues["newpage_payment"] = $config["PAYTPV_NEWPAGEPAYMENT"];
-        $arrValues["iframe_height"] = ($config["PAYTPV_IFRAME_HEIGHT"]!="")?$config["PAYTPV_IFRAME_HEIGHT"] : 440;
+        $arrValues["iframe_height"] = ($config["PAYTPV_IFRAME_HEIGHT"] != "") ? $config["PAYTPV_IFRAME_HEIGHT"] : 440;
         $arrValues["suscriptions"] = $config["PAYTPV_SUSCRIPTIONS"];
 
         $arrValues["firstpurchase_scoring"] = $config["PAYTPV_FIRSTPURCHASE_SCORING"];
@@ -1106,7 +1109,7 @@ class Paytpv extends PaymentModule
 
         //APMs
         // Tarjeta activa siempre que no la haya deshabilitado el cliente
-        $arrValues["apms_tarjeta"] = ((string)$config["PAYTPV_APM_tarjeta"] == "0")?0:1;
+        $arrValues["apms_tarjeta"] = ((string)$config["PAYTPV_APM_tarjeta"] == "0") ? 0 : 1;
         $arrValues["apms_bizum"] = $config["PAYTPV_APM_bizum"];
         $arrValues["apms_klarna_paynow"] = $config["PAYTPV_APM_klarna_paynow"];
         $arrValues["apms_ideal"] = $config["PAYTPV_APM_ideal"];
@@ -1148,11 +1151,11 @@ class Paytpv extends PaymentModule
 
 
         foreach ($this->terminales_paytpv as $key => $term) {
-            $arrValues["term[".$key."]"] = trim($term["idterminal"]);
-            $arrValues["pass[".$key."]"] = trim($term["password"]);
-            $arrValues["jetid[".$key."]"] = trim($term["jetid"]);
-            $arrValues["moneda[".$key."]"] = $term["currency_iso_code"];
-            $arrValues["dcc[".$key."]"] = $term["dcc"];
+            $arrValues["term[" . $key . "]"] = trim($term["idterminal"]);
+            $arrValues["pass[" . $key . "]"] = trim($term["password"]);
+            $arrValues["jetid[" . $key . "]"] = trim($term["jetid"]);
+            $arrValues["moneda[" . $key . "]"] = $term["currency_iso_code"];
+            $arrValues["dcc[" . $key . "]"] = $term["dcc"];
         }
         return $arrValues;
     }
@@ -1221,9 +1224,9 @@ class Paytpv extends PaymentModule
                     'col' => 1,
                     'type' => 'text',
                     'label' => $this->l('Terminal Number'),
-                    'name' => 'term['.$key.']',
+                    'name' => 'term[' . $key . ']',
                     'id' => 'term_' . $key,
-                    'class' => 'term term_s_container_'.$key,
+                    'class' => 'term term_s_container_' . $key,
                     'hint' => $this->l(
                         'Terminal Number. Available in the PAYCOMET product configuration'
                     ),
@@ -1233,9 +1236,9 @@ class Paytpv extends PaymentModule
                     'col' => 2,
                     'type' => 'text',
                     'label' => $this->l('Password'),
-                    'name' => 'pass['.$key.']',
+                    'name' => 'pass[' . $key . ']',
                     'id' => 'pass_' . $key,
-                    'class' => 'term_s_container_'.$key,
+                    'class' => 'term_s_container_' . $key,
                     'hint' => $this->l(
                         'Password. Available in the PAYCOMET product configuration'
                     ),
@@ -1245,9 +1248,9 @@ class Paytpv extends PaymentModule
                     'col' => 2,
                     'type' => 'text',
                     'label' => $this->l('JET ID'),
-                    'name' => 'jetid['.$key.']',
+                    'name' => 'jetid[' . $key . ']',
                     'id' => 'jetid_' . $key,
-                    'class' => 'class_jetid term_s_container_'.$key,
+                    'class' => 'class_jetid term_s_container_' . $key,
                     'hint' => $this->l(
                         'JET ID. Available in the PAYCOMET product configuration'
                     ),
@@ -1256,7 +1259,7 @@ class Paytpv extends PaymentModule
                 array(
                     'type' => 'select',
                     'label' => $this->l('Currency'),
-                    'name' => 'moneda['.$key.']',
+                    'name' => 'moneda[' . $key . ']',
                     'id' => 'moneda_' . $key,
                     'desc' => '',
                     'options' => array(
@@ -1269,7 +1272,7 @@ class Paytpv extends PaymentModule
                 array(
                     'type' => 'switch',
                     'label' => $this->l('DCC'),
-                    'name' => 'dcc['.$key.']',
+                    'name' => 'dcc[' . $key . ']',
                     'id' => 'dcc_' . $key,
                     'values' => array(
                         array(
@@ -1296,7 +1299,7 @@ class Paytpv extends PaymentModule
                 )
             );
 
-            if ($key==0) {
+            if ($key == 0) {
                 $terminal_form['form']['buttons'] = array(
                     array(
                         'title' => $this->l('Add Terminal'),
@@ -1511,23 +1514,23 @@ class Paytpv extends PaymentModule
         // Array Score
 
         $arrScore = array();
-        for ($i=0; $i <= 100; $i++) {
+        for ($i = 0; $i <= 100; $i++) {
             $arrScore[$i]["id"] = $i;
             $arrScore[$i]["name"] = $i;
         }
 
         $arrSessionTime = array(
-            array("id"=>0,"name"=>'00:00'),
-            array("id"=>15,"name"=>'00:15'),
-            array("id"=>30,"name"=>'00:30'),
-            array("id"=>45,"name"=>'00:45'),
-            array("id"=>60,"name"=>'01:00'),
-            array("id"=>90,"name"=>'01:30'),
-            array("id"=>120,"name"=>'02:00'),
-            array("id"=>180,"name"=>'03:00'),
-            array("id"=>240,"name"=>'04:00'),
-            array("id"=>300,"name"=>'05:00'),
-            array("id"=>360,"name"=>'06:00')
+            array("id" => 0, "name" => '00:00'),
+            array("id" => 15, "name" => '00:15'),
+            array("id" => 30, "name" => '00:30'),
+            array("id" => 45, "name" => '00:45'),
+            array("id" => 60, "name" => '01:00'),
+            array("id" => 90, "name" => '01:30'),
+            array("id" => 120, "name" => '02:00'),
+            array("id" => 180, "name" => '03:00'),
+            array("id" => 240, "name" => '04:00'),
+            array("id" => 300, "name" => '05:00'),
+            array("id" => 360, "name" => '06:00')
         );
 
 
@@ -1768,9 +1771,9 @@ class Paytpv extends PaymentModule
             }
         } else {
             $apms[] = [
-                "id"=>"tarjeta",
+                "id" => "tarjeta",
                 "name" => "Tarjeta",
-                "val"=> 1
+                "val" => 1
             ];
         }
 
@@ -1887,15 +1890,49 @@ class Paytpv extends PaymentModule
         $saved_card = PaytpvCustomer::getCardsCustomer((int) $this->context->customer->id);
         $index = 0;
         foreach ($saved_card as $key => $val) {
-            $values_aux = array_merge($values, array("TOKEN_USER" => $val["TOKEN_USER"]));
-            $saved_card[$key]['url'] = Context::getContext()->link->getModuleLink(
-                $this->name,
-                'capture',
-                $values_aux,
-                $ssl
-            );
-            $index++;
+
+            if ($saved_card[$key]['EXPIRY_DATE'] == NULL) {
+                if ($this->apikey != '') {
+                    try {
+                        $apiRest = new PaycometApiRest($this->apikey);
+
+                        $infoUserResponse = $apiRest->infoUser(
+                            $saved_card[$key]["IDUSER"],
+                            $saved_card[$key]["TOKEN_USER"],
+                            $datos_pedido["idterminal"]
+                        );
+
+                        if ($infoUserResponse->errorCode == 0) {
+                            $result['DS_MERCHANT_PAN'] = $infoUserResponse->pan;
+                            $result['DS_CARD_BRAND'] = $infoUserResponse->cardBrand;
+                            $result['DS_MERCHANT_EXPIRYDATE'] = $infoUserResponse->expiryDate;
+
+                            // eliminar tarjeta
+                            PaytpvCustomer::removeCustomerIduser((int) $this->context->customer->id, $saved_card[$key]["IDUSER"]);
+
+                            // se añade la tarjeta con la fecha
+                            PaytpvCustomer::addCustomer($saved_card[$key]["IDUSER"], $saved_card[$key]["TOKEN_USER"], $saved_card[$key]["CC"], $saved_card[$key]["BRAND"], $result['DS_MERCHANT_EXPIRYDATE'], $this->context->customer->id);
+
+                            $saved_card[$key] = PaytpvCustomer::getCardsCustomer((int) $this->context->customer->id)[$key];
+                        }
+                    } catch (exception $e) {
+                    }
+                }
+            }
+            if (date("Ym") < str_replace("/", "", $saved_card[$key]['EXPIRY_DATE'])) {
+                $values_aux = array_merge($values, array("TOKEN_USER" => $val["TOKEN_USER"]));
+                $saved_card[$key]['url'] = Context::getContext()->link->getModuleLink(
+                    $this->name,
+                    'capture',
+                    $values_aux,
+                    $ssl
+                );
+                $active_cards[] = $saved_card[$key];
+                $index++;
+            }
         }
+
+        $saved_card = $active_cards;
         $saved_card[$index]['url'] = 0;
 
         $paytpv_error = 0;
@@ -1969,15 +2006,15 @@ class Paytpv extends PaymentModule
 
             $newOption = new PaymentOption();
             $newOption->setCallToActionText($this->trans($this->l('Pay with card'), array(), 'Modules.Paytpv.Shop'))
-            ->setLogo(_MODULE_DIR_ . 'paytpv/views/img/paycomet.svg')
-            ->setForm($form_paytpv);
-        // Pago en página de PAYCOMET
+                ->setLogo(_MODULE_DIR_ . 'paytpv/views/img/paycomet.svg')
+                ->setForm($form_paytpv);
+            // Pago en página de PAYCOMET
         } elseif ($newpage_payment == 2) {
             $arrTemplateVarInfos = $this->getTemplateVarInfos();
             $this->context->smarty->assign(
                 $arrTemplateVarInfos
             );
-            if ($arrTemplateVarInfos['paytpv_error']!=0) {
+            if ($arrTemplateVarInfos['paytpv_error'] != 0) {
                 $newOption = new PaymentOption();
                 $newOption->setCallToActionText(
                     $this->trans($this->l('Pay with card'), array(), 'Modules.Paytpv.Shop')
@@ -1989,17 +2026,17 @@ class Paytpv extends PaymentModule
             } else {
                 $newOption = new PaymentOption();
                 $newOption->setCallToActionText($this->trans($this->l('Pay with card'), array(), 'Modules.Paytpv.Shop'))
-                            ->setForm($this->paycometPageForm());
+                    ->setForm($this->paycometPageForm());
                 $newOption->setLogo(_MODULE_DIR_ . 'paytpv/views/img/paycomet.svg');
             }
-        // Pago integrado
+            // Pago integrado
         } else {
             $arrTemplateVarInfos = $this->getTemplateVarInfos();
             $this->context->smarty->assign(
                 $arrTemplateVarInfos
             );
 
-            if ($arrTemplateVarInfos['paytpv_error']!=0) {
+            if ($arrTemplateVarInfos['paytpv_error'] != 0) {
                 $newOption = new PaymentOption();
                 $newOption->setCallToActionText(
                     $this->trans($this->l('Pay with card'), array(), 'Modules.Paytpv.Shop')
@@ -2009,7 +2046,7 @@ class Paytpv extends PaymentModule
                 );
             } else {
                 switch ($this->integration) {
-                    // Iframe
+                        // Iframe
                     case 0:
                         $newOption = new PaymentOption();
                         $newOption->setBinary(true);
@@ -2022,7 +2059,7 @@ class Paytpv extends PaymentModule
                         $newOption->setLogo(_MODULE_DIR_ . 'paytpv/views/img/paycomet.svg');
                         break;
 
-                    // JetIframe
+                        // JetIframe
                     case 1:
                         $newOption = new PaymentOption();
                         $newOption->setCallToActionText(
@@ -2049,8 +2086,8 @@ class Paytpv extends PaymentModule
                     'Modules.MyModule.Shop'
                 )
             )
-            ->setLogo(_MODULE_DIR_ . 'paytpv/views/img/apms/' . $apm['img_name'] . '.svg')
-            ->setAction($apm['url']);
+                ->setLogo(_MODULE_DIR_ . 'paytpv/views/img/apms/' . $apm['img_name'] . '.svg')
+                ->setAction($apm['url']);
 
             // PESRONALIZACIONES APMS
             switch ($methodId) {
@@ -2193,7 +2230,6 @@ class Paytpv extends PaymentModule
                         $methodId,
                         $cart->getOrderTotal(true, Cart::BOTH)
                     );
-
                 } catch (exception $e) {
                     $url_paytpv = $e->getCode();
                 }
@@ -2208,9 +2244,10 @@ class Paytpv extends PaymentModule
         switch ($methodId) {
             case 33: // Instant Credit
                 if (($this->paytpv_apm_instant_credit_minFin == 0 ||
-                    $cart->getOrderTotal(true, Cart::BOTH) >= $this->paytpv_apm_instant_credit_minFin ) &&
+                        $cart->getOrderTotal(true, Cart::BOTH) >= $this->paytpv_apm_instant_credit_minFin) &&
                     ($this->paytpv_apm_instant_credit_maxFin == 0 ||
-                    $cart->getOrderTotal(true, Cart::BOTH) <= $this->paytpv_apm_instant_credit_maxFin )) {
+                        $cart->getOrderTotal(true, Cart::BOTH) <= $this->paytpv_apm_instant_credit_maxFin)
+                ) {
                     $valid = true;
                 } else {
                     $valid = false;
@@ -2354,13 +2391,13 @@ class Paytpv extends PaymentModule
 
         $language = $this->getPaycometLang($this->context->language->language_code);
         $productDescription = '';
-        
+
         if (isset($this->context->customer->email)) $productDescription = $this->context->customer->email;
 
         $score = $this->transactionScore($cart);
         $scoring = $score["score"];
 
-        $OPERATION = ($dcc == 1)?116 : 1;
+        $OPERATION = ($dcc == 1) ? 116 : 1;
         if ($this->apikey != '') {
             $userInteraction = 1;
             $merchantData = $this->getMerchantData($cart);
@@ -2469,12 +2506,13 @@ class Paytpv extends PaymentModule
         }
 
         // Si esta definido como que la primera compra es Segura y es la primera compra aunque este tokenizada
-        if ($terminales == 2 &&
+        if (
+            $terminales == 2 &&
             $tdfirst &&
             $card > 0 &&
             PaytpvOrder::isFirstPurchaseToken($this->context->customer->id, $card)
         ) {
-                return true;
+            return true;
         }
 
         return false;
@@ -2498,7 +2536,8 @@ class Paytpv extends PaymentModule
     {
     }
 
-    public function hookActionEmailAddAfterContent($params) {
+    public function hookActionEmailAddAfterContent($params)
+    {
 
         if (!$this->active) {
             return;
@@ -2510,7 +2549,7 @@ class Paytpv extends PaymentModule
 
         $this->context->smarty->assign(array(
             'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name .
-            '/'
+                '/'
         ));
 
         $id_order = Order::getOrderByCartId((int) $params["cookie"]->id_cart);
@@ -2539,9 +2578,9 @@ class Paytpv extends PaymentModule
         $this->context->smarty->assign('mbreference', $mbreference);
         $this->context->smarty->assign('result_txt', $result_txt);
         $this->context->smarty->assign('base_dir', __PS_BASE_URI__);
-    
+
         $params['template_html'] .= $this->display(__FILE__, 'order_detail.tpl');
-        $params['template_html'] = str_replace("{multibanco_data}", $this->display(__FILE__, 'order_detail.tpl'), $params['template_html']);   
+        $params['template_html'] = str_replace("{multibanco_data}", $this->display(__FILE__, 'order_detail.tpl'), $params['template_html']);
     }
 
     public function hookDisplayOrderDetail($params)
@@ -2551,7 +2590,7 @@ class Paytpv extends PaymentModule
         }
         $this->context->smarty->assign(array(
             'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name .
-            '/'
+                '/'
         ));
 
         $id_order = Order::getOrderByCartId((int) $params["order"]->id_cart);
@@ -2593,7 +2632,7 @@ class Paytpv extends PaymentModule
         }
         $this->context->smarty->assign(array(
             'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name .
-            '/'
+                '/'
         ));
 
         $id_order = Order::getOrderByCartId((int) $params["order"]->id_cart);
@@ -2658,7 +2697,7 @@ class Paytpv extends PaymentModule
 
 
             $date_YYYYMMDD = ($language == "es") ?
-                        date("d-m-Y", strtotime($result['date'])) : date("Y-m-d", strtotime($result['date']));
+                date("d-m-Y", strtotime($result['date'])) : date("Y-m-d", strtotime($result['date']));
 
 
             $this->context->smarty->assign('suscription_type', $suscription_type);
@@ -2677,24 +2716,30 @@ class Paytpv extends PaymentModule
 
     private function getConfigValues()
     {
-        $arrPaycomet = array('PAYTPV_CLIENTCODE', 'PAYTPV_INTEGRATION', 'PAYTPV_APIKEY', 'PAYTPV_NEWPAGEPAYMENT',
-        'PAYTPV_IFRAME_HEIGHT', 'PAYTPV_SUSCRIPTIONS', 'PAYTPV_FIRSTPURCHASE_SCORING',
-        'PAYTPV_FIRSTPURCHASE_SCORING_SCO', 'PAYTPV_SESSIONTIME_SCORING', 'PAYTPV_SESSIONTIME_SCORING_VAL',
-        'PAYTPV_SESSIONTIME_SCORING_SCORE', 'PAYTPV_DCOUNTRY_SCORING', 'PAYTPV_DCOUNTRY_SCORING_VAL',
-        'PAYTPV_DCOUNTRY_SCORING_SCORE', 'PAYTPV_IPCHANGE_SCORING', 'PAYTPV_IPCHANGE_SCORING_SCORE',
-        'PAYTPV_BROWSER_SCORING', 'PAYTPV_BROWSER_SCORING_SCORE', 'PAYTPV_SO_SCORING',
-        'PAYTPV_SO_SCORING_SCORE', 'PAYTPV_DISABLEOFFERSAVECARD');
+        $arrPaycomet = array(
+            'PAYTPV_CLIENTCODE', 'PAYTPV_INTEGRATION', 'PAYTPV_APIKEY', 'PAYTPV_NEWPAGEPAYMENT',
+            'PAYTPV_IFRAME_HEIGHT', 'PAYTPV_SUSCRIPTIONS', 'PAYTPV_FIRSTPURCHASE_SCORING',
+            'PAYTPV_FIRSTPURCHASE_SCORING_SCO', 'PAYTPV_SESSIONTIME_SCORING', 'PAYTPV_SESSIONTIME_SCORING_VAL',
+            'PAYTPV_SESSIONTIME_SCORING_SCORE', 'PAYTPV_DCOUNTRY_SCORING', 'PAYTPV_DCOUNTRY_SCORING_VAL',
+            'PAYTPV_DCOUNTRY_SCORING_SCORE', 'PAYTPV_IPCHANGE_SCORING', 'PAYTPV_IPCHANGE_SCORING_SCORE',
+            'PAYTPV_BROWSER_SCORING', 'PAYTPV_BROWSER_SCORING_SCORE', 'PAYTPV_SO_SCORING',
+            'PAYTPV_SO_SCORING_SCORE', 'PAYTPV_DISABLEOFFERSAVECARD'
+        );
 
-        $arrApms = array('PAYTPV_APM_tarjeta', 'PAYTPV_APM_bizum', 'PAYTPV_APM_ideal', 'PAYTPV_APM_klarna_paynow',
-        'PAYTPV_APM_giropay', 'PAYTPV_APM_mybank', 'PAYTPV_APM_multibanco_sibs', 'PAYTPV_APM_trustly',
-        'PAYTPV_APM_przelewy24', 'PAYTPV_APM_bancontact', 'PAYTPV_APM_eps', 'PAYTPV_APM_tele2',
-        'PAYTPV_APM_paysera', 'PAYTPV_APM_postfinance', 'PAYTPV_APM_qiwi_wallet', 'PAYTPV_APM_yandex_money',
-        'PAYTPV_APM_mts', 'PAYTPV_APM_beeline', 'PAYTPV_APM_paysafecard', 'PAYTPV_APM_skrill',
-        'PAYTPV_APM_webmoney', 'PAYTPV_APM_instant_credit', 'PAYTPV_APM_klarna_payments', 'PAYTPV_APM_paypal');
+        $arrApms = array(
+            'PAYTPV_APM_tarjeta', 'PAYTPV_APM_bizum', 'PAYTPV_APM_ideal', 'PAYTPV_APM_klarna_paynow',
+            'PAYTPV_APM_giropay', 'PAYTPV_APM_mybank', 'PAYTPV_APM_multibanco_sibs', 'PAYTPV_APM_trustly',
+            'PAYTPV_APM_przelewy24', 'PAYTPV_APM_bancontact', 'PAYTPV_APM_eps', 'PAYTPV_APM_tele2',
+            'PAYTPV_APM_paysera', 'PAYTPV_APM_postfinance', 'PAYTPV_APM_qiwi_wallet', 'PAYTPV_APM_yandex_money',
+            'PAYTPV_APM_mts', 'PAYTPV_APM_beeline', 'PAYTPV_APM_paysafecard', 'PAYTPV_APM_skrill',
+            'PAYTPV_APM_webmoney', 'PAYTPV_APM_instant_credit', 'PAYTPV_APM_klarna_payments', 'PAYTPV_APM_paypal'
+        );
 
-        $arrInstantCredit = array('PAYTPV_APM_instant_credit_simuladorCoutas','PAYTPV_APM_instant_credit_environment',
-        'PAYTPV_APM_instant_credit_hashToken', 'PAYTPV_APM_instant_credit_minFin',
-        'PAYTPV_APM_instant_credit_maxFin');
+        $arrInstantCredit = array(
+            'PAYTPV_APM_instant_credit_simuladorCoutas', 'PAYTPV_APM_instant_credit_environment',
+            'PAYTPV_APM_instant_credit_hashToken', 'PAYTPV_APM_instant_credit_minFin',
+            'PAYTPV_APM_instant_credit_maxFin'
+        );
 
         $arrConfig = array_merge($arrPaycomet, $arrApms, $arrInstantCredit);
 
@@ -2706,12 +2751,13 @@ class Paytpv extends PaymentModule
         $paytpv_iduser,
         $paytpv_tokenuser,
         $paytpv_cc,
-        $paytpv_brand
+        $paytpv_brand,
+        $paytpv_expirydate
     ) {
 
         $paytpv_cc = '************' . Tools::substr($paytpv_cc, -4);
 
-        PaytpvCustomer::addCustomer($paytpv_iduser, $paytpv_tokenuser, $paytpv_cc, $paytpv_brand, $id_customer);
+        PaytpvCustomer::addCustomer($paytpv_iduser, $paytpv_tokenuser, $paytpv_cc, $paytpv_brand, $paytpv_expirydate, $id_customer);
 
         $result = array();
         $result["paytpv_iduser"] = $paytpv_iduser;
@@ -2784,7 +2830,7 @@ class Paytpv extends PaymentModule
                     $paytpv_iduser,
                     $paytpv_tokenuser
                 );
-                $result["DS_RESPONSE"] = ($removeSubscriptionResponse->errorCode > 0)? 0 : 1;
+                $result["DS_RESPONSE"] = ($removeSubscriptionResponse->errorCode > 0) ? 0 : 1;
             } else {
                 $result["DS_RESPONSE"] = 0; // Error
             }
@@ -2853,7 +2899,7 @@ class Paytpv extends PaymentModule
     public function validPassword($id_customer, $passwd)
     {
         $sql = 'select * from ' . _DB_PREFIX_ . 'customer where id_customer = ' . pSQL($id_customer) .
-                ' and passwd="' . md5(pSQL(_COOKIE_KEY_ . $passwd)) . '"';
+            ' and passwd="' . md5(pSQL(_COOKIE_KEY_ . $passwd)) . '"';
         $result = Db::getInstance()->getRow($sql);
         return (empty($result) === true) ? false : true;
     }
@@ -2867,9 +2913,11 @@ class Paytpv extends PaymentModule
 
         if (Tools::isSubmit('generateDiscount')) {
             return false;
-        } elseif ($params['order']->module != $this->name ||
-                !($order = $params['order']) ||
-                !Validate::isLoadedObject($order)) {
+        } elseif (
+            $params['order']->module != $this->name ||
+            !($order = $params['order']) ||
+            !Validate::isLoadedObject($order)
+        ) {
             return false;
         } elseif (!$order->hasBeenPaid()) {
             return false;
@@ -2898,7 +2946,7 @@ class Paytpv extends PaymentModule
         $cancel_quantity = Tools::getValue('cancelQuantity');
 
         $amt = (float) ($products[(int) $order_detail->id]['product_price_wt'] *
-                        (int) $cancel_quantity[(int) $order_detail->id]);
+            (int) $cancel_quantity[(int) $order_detail->id]);
         $amount = number_format($amt * 100, 0, '.', '');
 
         $paytpv_order_ref = str_pad((int) $order->id_cart, 8, "0", STR_PAD_LEFT);
@@ -2918,7 +2966,7 @@ class Paytpv extends PaymentModule
         $refund_txt = $response["txt"];
 
         $message = $this->l('PAYCOMET Refund ') .  ", " . $amt . " " . $currency->sign . " [" . $refund_txt . "]" .
-        '<br>';
+            '<br>';
 
         $this->addNewPrivateMessage((int) $order->id, $message);
     }
@@ -2960,7 +3008,7 @@ class Paytpv extends PaymentModule
 
             $result = array();
 
-            $result["DS_RESPONSE"] = ($executeRefundReponse->errorCode > 0)? 0 : 1;
+            $result["DS_RESPONSE"] = ($executeRefundReponse->errorCode > 0) ? 0 : 1;
             $result['DS_ERROR_ID'] = $executeRefundReponse->errorCode;
 
             if ($executeRefundReponse->errorCode == 0) {
@@ -2995,7 +3043,7 @@ class Paytpv extends PaymentModule
                     $notifyDirectPayment
                 );
 
-                $result["DS_RESPONSE"] = ($executeRefundReponse->errorCode > 0)? 0 : 1;
+                $result["DS_RESPONSE"] = ($executeRefundReponse->errorCode > 0) ? 0 : 1;
                 $result['DS_ERROR_ID'] = $executeRefundReponse->errorCode;
                 if ($executeRefundReponse->errorCode == 0) {
                     $result['DS_MERCHANT_AUTHCODE'] = $executeRefundReponse->authCode;
@@ -3101,7 +3149,7 @@ class Paytpv extends PaymentModule
             }
 
             $date_YYYYMMDD = ($this->context->language->iso_code == "es") ?
-                            date("d-m-Y", strtotime($result['date'])) : date("Y-m-d", strtotime($result['date']));
+                date("d-m-Y", strtotime($result['date'])) : date("Y-m-d", strtotime($result['date']));
 
 
             $this->context->smarty->assign('suscription_type', $suscription_type);
@@ -3137,8 +3185,10 @@ class Paytpv extends PaymentModule
                     $amt_refund = number_format($amt_refund, 2, '.', '');
                 }
 
-                if (Tools::getValue('paytpPartialRefundAmount') &&
-                    ($amt_refund > $total_pending || $amt_refund == "" || !is_numeric($amt_refund))) {
+                if (
+                    Tools::getValue('paytpPartialRefundAmount') &&
+                    ($amt_refund > $total_pending || $amt_refund == "" || !is_numeric($amt_refund))
+                ) {
                     $error_msg = Tools::displayError(
                         $this->l('The partial amount should be less than the outstanding amount')
                     );
@@ -3241,7 +3291,7 @@ class Paytpv extends PaymentModule
             );
             $refund_txt = $response["txt"];
             $message = $this->l('PAYCOMET Refund ') .  ", " . $amt . " " . $currency->sign .
-                        " [" . $refund_txt . "]" .  '<br>';
+                " [" . $refund_txt . "]" .  '<br>';
 
             $this->addNewPrivateMessage((int) $id_order, $message);
 
@@ -3303,7 +3353,7 @@ class Paytpv extends PaymentModule
         );
         $refund_txt = $response["txt"];
         $message = $this->l('PAYCOMET Total Refund ') .  ", " . $total_pending . " " . $currency->sign .
-                             " [" . $refund_txt . "]" .  '<br>';
+            " [" . $refund_txt . "]" .  '<br>';
 
         if ($response['error'] == 0) {
             if (!PaytpvOrder::setOrderRefunded($id_order)) {
@@ -3347,7 +3397,7 @@ class Paytpv extends PaymentModule
     /* Compruebas si un pedido ya ha sido pagado en la hora anterior*/
     public function isPaymentProcesed($authCode)
     {
-         $sql = 'SELECT COUNT(*) as np  FROM `' . _DB_PREFIX_ . 'order_payment`
+        $sql = 'SELECT COUNT(*) as np  FROM `' . _DB_PREFIX_ . 'order_payment`
             WHERE transaction_id = ' . $authCode . ' and date_add > DATE_ADD(SYSDATE(),INTERVAL - 1 hour)';
         $n = Db::getInstance()->getValue($sql);
         return ($n > 0);

@@ -109,13 +109,15 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                         if ($infoUserResponse->errorCode == 0) {
                             $result['DS_MERCHANT_PAN'] = $infoUserResponse->pan;
                             $result['DS_CARD_BRAND'] = $infoUserResponse->cardBrand;
+                            $result['DS_MERCHANT_EXPIRYDATE'] = $infoUserResponse->expiryDate;
 
                             $paytpv->saveCard(
                                 (int)$this->context->customer->id,
                                 $idUser,
                                 $tokenUser,
                                 $result['DS_MERCHANT_PAN'],
-                                $result['DS_CARD_BRAND']
+                                $result['DS_CARD_BRAND'],
+                                $result['DS_MERCHANT_EXPIRYDATE']
                             );
                         }
                     }
@@ -168,8 +170,47 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
             $this->context->controller->addCSS($paytpv_path . 'views/css/fullscreen.css', 'all');
             $this->context->controller->addJS($paytpv_path . 'views/js/paytpv_account.js');
 
+            foreach ($saved_card as $key => $val) {
+                if ($saved_card[$key]['EXPIRY_DATE'] == '') {
+                    if ($paytpv->apikey != '') {
+                        try {
+                            $apiRest = new PaycometApiRest($paytpv->apikey);
+    
+                            $infoUserResponse = $apiRest->infoUser(
+                                $saved_card[$key]["IDUSER"],
+                                $saved_card[$key]["TOKEN_USER"],
+                                $idterminal
+                            );
+                            if ($infoUserResponse->errorCode == 0) {
+                                $result['DS_MERCHANT_PAN'] = $infoUserResponse->pan;
+                                $result['DS_CARD_BRAND'] = $infoUserResponse->cardBrand;
+                                $result['DS_MERCHANT_EXPIRYDATE'] = $infoUserResponse->expiryDate;
+    
+                                // eliminar tarjeta
+                                PaytpvCustomer::removeCustomerIduser(Context::getContext()->customer->id, $saved_card[$key]["IDUSER"]);
+    
+                                // se añade la tarjeta con la fecha
+                                PaytpvCustomer::addCustomer($saved_card[$key]["IDUSER"], $saved_card[$key]["TOKEN_USER"], $saved_card[$key]["CC"], $saved_card[$key]["BRAND"], $result['DS_MERCHANT_EXPIRYDATE'], Context::getContext()->customer->id);
+    
+                                $saved_card[$key] = PaytpvCustomer::getCardsCustomer(Context::getContext()->customer->id)[$key];
+                            }
+                        } catch (exception $e) {
+                        }
+                    }
+                }
+                if (date("Ym") < str_replace("/", "", $saved_card[$key]['EXPIRY_DATE'])) {
+                    $active_cards[] = $saved_card[$key];
+                } else {
+                    $caducadas[] = $saved_card[$key];
+                }
+                $index++;
+            }
+
+            $saved_card = $active_cards;
+            
             $this->context->smarty->assign('url_paytpv', $url_paytpv);
             $this->context->smarty->assign('saved_card', $saved_card);
+            $this->context->smarty->assign('caducadas', $caducadas);
             $this->context->smarty->assign('suscriptions', $suscriptions);
             $this->context->smarty->assign('base_dir', __PS_BASE_URI__);
 

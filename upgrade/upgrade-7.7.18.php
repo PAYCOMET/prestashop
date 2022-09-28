@@ -12,5 +12,11 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_7_7_18($object)
 {
+    try {
+        Db::getInstance()->execute('ALTER TABLE `'._DB_PREFIX_.'paytpv_customer` 
+        ADD COLUMN IF NOT EXISTS `paytpv_expirydate` VARCHAR(7)
+        ');
+    } catch (exception $e) {
+    }
     return ($object->registerHook('actionEmailAddAfterContent'));
 }

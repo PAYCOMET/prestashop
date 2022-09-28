@@ -71,6 +71,22 @@
     {else}
         <p class="warning">{l s='You still have no card associated.' mod='paytpv'}</p>
     {/if}
+    {if isset($caducadas[0])}
+        <div class="span6" id="div_tarjetas">
+            {l s='Tarjetas inactivas' mod='paytpv'}:
+            {section name=card loop=$caducadas}
+                <div class="bankstoreCard" id="card_{$caducadas[card].IDUSER|escape:'htmlall':'UTF-8':FALSE}">
+                    {$caducadas[card].CC|escape:'htmlall':'UTF-8':FALSE} ({$caducadas[card].BRAND|escape:'htmlall':'UTF-8':FALSE})
+                    <label class="button_del">
+                        <a href="#" id="{$caducadas[card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" class="remove_card">
+                         {l s='Remove Card' mod='paytpv'}
+                        </a>
+                        <input type="hidden" name="cc_{$caducadas[card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" id="cc_{$saved_card[card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" value="{$saved_card[card].CC|escape:'htmlall':'UTF-8'}">
+                    </label>
+                </div>
+            {/section}
+        </div>
+    {/if}
     <div id="storingStep_account" class="box">
         <p>
             <button href="javascript:void(0);" onclick="vincularTarjeta();" title="{l s='Link card' mod='paytpv'}" class="btn btn-primary">
