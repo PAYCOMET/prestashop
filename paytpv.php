@@ -795,7 +795,7 @@ class Paytpv extends PaymentModule
                 $i++;
                 $shoppingCartData[$key + $i]["sku"] = "1";
                 $shoppingCartData[$key + $i]["quantity"] = 1;
-                $shoppingCartData[$key + $i]["unitPrice"] = '-' . number_format($product["reduction"] * 100, 0, '.', '') * $product["quantity"];
+                $shoppingCartData[$key + $i]["unitPrice"] = number_format($product["reduction"] * 100, 0, '.', '') * $product["quantity"];
                 $shoppingCartData[$key + $i]["name"] = $product["name"];
                 $shoppingCartData[$key + $i]["category"] = $product["category"];
                 $shoppingCartData[$key + $i]["articleType"] = "4";
@@ -1755,6 +1755,7 @@ class Paytpv extends PaymentModule
                 $terminalId = PaytpvTerminal::getTerminals()[0]['idterminal'];
             }
             $paymentMethods = $apiRest->getUserPaymentMethods($terminalId);
+
             $apms = [];
 
             // Si no hay error en la consulta a los metodos
@@ -1888,10 +1889,11 @@ class Paytpv extends PaymentModule
         $language = $this->getPaycometLang($this->context->language->language_code);
 
         $saved_card = PaytpvCustomer::getCardsCustomer((int) $this->context->customer->id);
+        $active_cards = [];
         $index = 0;
         foreach ($saved_card as $key => $val) {
 
-            if ($saved_card[$key]['EXPIRY_DATE'] == NULL) {
+            if ($saved_card[$key]['EXPIRY_DATE'] == '') {
                 if ($this->apikey != '') {
                     try {
                         $apiRest = new PaycometApiRest($this->apikey);
@@ -1907,13 +1909,11 @@ class Paytpv extends PaymentModule
                             $result['DS_CARD_BRAND'] = $infoUserResponse->cardBrand;
                             $result['DS_MERCHANT_EXPIRYDATE'] = $infoUserResponse->expiryDate;
 
-                            // eliminar tarjeta
-                            PaytpvCustomer::removeCustomerIduser((int) $this->context->customer->id, $saved_card[$key]["IDUSER"]);
-
-                            // se añade la tarjeta con la fecha
-                            PaytpvCustomer::addCustomer($saved_card[$key]["IDUSER"], $saved_card[$key]["TOKEN_USER"], $saved_card[$key]["CC"], $saved_card[$key]["BRAND"], $result['DS_MERCHANT_EXPIRYDATE'], $this->context->customer->id);
+                            PaytpvCustomer::UpdateCustomerExpiryDate((int) $this->context->customer->id, $saved_card[$key]["IDUSER"], $result['DS_MERCHANT_EXPIRYDATE']);
 
                             $saved_card[$key] = PaytpvCustomer::getCardsCustomer((int) $this->context->customer->id)[$key];
+                        } else if ($infoUserResponse->errorCode == 1001) {
+                            PaytpvCustomer::UpdateCustomerExpiryDate((int) $this->context->customer->id, $saved_card[$key]["IDUSER"], '1900/01');
                         }
                     } catch (exception $e) {
                     }

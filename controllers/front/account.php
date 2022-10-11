@@ -170,6 +170,9 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
             $this->context->controller->addCSS($paytpv_path . 'views/css/fullscreen.css', 'all');
             $this->context->controller->addJS($paytpv_path . 'views/js/paytpv_account.js');
 
+            $active_cards = [];
+            $caducadas = [];
+
             foreach ($saved_card as $key => $val) {
                 if ($saved_card[$key]['EXPIRY_DATE'] == '') {
                     if ($paytpv->apikey != '') {
@@ -186,13 +189,12 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                                 $result['DS_CARD_BRAND'] = $infoUserResponse->cardBrand;
                                 $result['DS_MERCHANT_EXPIRYDATE'] = $infoUserResponse->expiryDate;
     
-                                // eliminar tarjeta
-                                PaytpvCustomer::removeCustomerIduser(Context::getContext()->customer->id, $saved_card[$key]["IDUSER"]);
-    
-                                // se añade la tarjeta con la fecha
-                                PaytpvCustomer::addCustomer($saved_card[$key]["IDUSER"], $saved_card[$key]["TOKEN_USER"], $saved_card[$key]["CC"], $saved_card[$key]["BRAND"], $result['DS_MERCHANT_EXPIRYDATE'], Context::getContext()->customer->id);
-    
+                                PaytpvCustomer::UpdateCustomerExpiryDate(Context::getContext()->customer->id, $saved_card[$key]["IDUSER"], $result['DS_MERCHANT_EXPIRYDATE']);
+
                                 $saved_card[$key] = PaytpvCustomer::getCardsCustomer(Context::getContext()->customer->id)[$key];
+                            } else if($infoUserResponse->errorCode == 1001) {
+                
+                                PaytpvCustomer::UpdateCustomerExpiryDate(Context::getContext()->customer->id, $saved_card[$key]["IDUSER"], '1900/01');
                             }
                         } catch (exception $e) {
                         }
@@ -203,11 +205,10 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                 } else {
                     $caducadas[] = $saved_card[$key];
                 }
-                $index++;
             }
 
             $saved_card = $active_cards;
-            
+
             $this->context->smarty->assign('url_paytpv', $url_paytpv);
             $this->context->smarty->assign('saved_card', $saved_card);
             $this->context->smarty->assign('caducadas', $caducadas);

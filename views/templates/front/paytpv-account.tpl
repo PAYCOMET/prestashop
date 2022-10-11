@@ -73,7 +73,7 @@
     {/if}
     {if isset($caducadas[0])}
         <div class="span6" id="div_tarjetas">
-            {l s='Tarjetas inactivas' mod='paytpv'}:
+            {l s='Inactive Cards' mod='paytpv'}:
             {section name=card loop=$caducadas}
                 <div class="bankstoreCard" id="card_{$caducadas[card].IDUSER|escape:'htmlall':'UTF-8':FALSE}">
                     {$caducadas[card].CC|escape:'htmlall':'UTF-8':FALSE} ({$caducadas[card].BRAND|escape:'htmlall':'UTF-8':FALSE})

@@ -145,4 +145,12 @@ class PaytpvCustomer extends ObjectModel
         Db::getInstance()->Execute($sql);
         return true;
     }
+
+    public static function updateCustomerExpiryDate($customer_id, $paytpv_iduser, $paytpv_expirydate)
+    {
+        $sql = 'UPDATE '. _DB_PREFIX_ .'paytpv_customer set paytpv_expirydate = "' .pSQL($paytpv_expirydate) .'" where id_customer = '
+        .(int)$customer_id . ' and `paytpv_iduser`="'.(int)$paytpv_iduser.'"';
+        Db::getInstance()->Execute($sql);
+        return true;
+    }
 }
