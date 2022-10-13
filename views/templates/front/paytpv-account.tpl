@@ -48,22 +48,22 @@
 
 <section>
 <div id="paytpv_block_account" style="">
-    {if isset($saved_card[0])}
+    {if isset($saved_card['valid'][0])}
         <div class="span6" id="div_tarjetas">
             {l s='Available Cards' mod='paytpv'}:
-            {section name=card loop=$saved_card}
-                <div class="bankstoreCard" id="card_{$saved_card[card].IDUSER|escape:'htmlall':'UTF-8':FALSE}">
-                    {$saved_card[card].CC|escape:'htmlall':'UTF-8':FALSE} ({$saved_card[card].BRAND|escape:'htmlall':'UTF-8':FALSE})
-                    <input type="text" maxlength="32" style="width:300px" id="card_desc_{$saved_card[card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" name="card_desc_{$saved_card[card].IDUSER|escape:'htmlall':'UTF-8'}" value="{$saved_card[card].CARD_DESC|escape:'htmlall':'UTF-8'}" placeholder="{l s='Add a description' mod='paytpv'}">
+            {section name=card loop=$saved_card['valid']}
+                <div class="bankstoreCard" id="card_{$saved_card['valid'][card].IDUSER|escape:'htmlall':'UTF-8':FALSE}">
+                    {$saved_card['valid'][card].CC|escape:'htmlall':'UTF-8':FALSE} ({$saved_card['valid'][card].BRAND|escape:'htmlall':'UTF-8':FALSE})
+                    <input type="text" maxlength="32" style="width:300px" id="card_desc_{$saved_card['valid'][card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" name="card_desc_{$saved_card['valid'][card].IDUSER|escape:'htmlall':'UTF-8'}" value="{$saved_card['valid'][card].CARD_DESC|escape:'htmlall':'UTF-8'}" placeholder="{l s='Add a description' mod='paytpv'}">
                     <label class="button_del">
-                        <a href="#" id="{$saved_card[card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" class="save_desc">
+                        <a href="#" id="{$saved_card['valid'][card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" class="save_desc">
                          {l s='Save description' mod='paytpv'}
                         </a>
                          | 
-                        <a href="#" id="{$saved_card[card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" class="remove_card">
+                        <a href="#" id="{$saved_card['valid'][card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" class="remove_card">
                          {l s='Remove Card' mod='paytpv'}
                         </a>
-                        <input type="hidden" name="cc_{$saved_card[card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" id="cc_{$saved_card[card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" value="{$saved_card[card].CC|escape:'htmlall':'UTF-8'}">
+                        <input type="hidden" name="cc_{$saved_card['valid'][card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" id="cc_{$saved_card['valid'][card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" value="{$saved_card['valid'][card].CC|escape:'htmlall':'UTF-8'}">
                     </label>
                 </div>
             {/section}
@@ -71,17 +71,17 @@
     {else}
         <p class="warning">{l s='You still have no card associated.' mod='paytpv'}</p>
     {/if}
-    {if isset($caducadas[0])}
+    {if isset($saved_card['invalid'][0])}
         <div class="span6" id="div_tarjetas">
             {l s='Inactive Cards' mod='paytpv'}:
-            {section name=card loop=$caducadas}
-                <div class="bankstoreCard" id="card_{$caducadas[card].IDUSER|escape:'htmlall':'UTF-8':FALSE}">
-                    {$caducadas[card].CC|escape:'htmlall':'UTF-8':FALSE} ({$caducadas[card].BRAND|escape:'htmlall':'UTF-8':FALSE})
+            {section name=card loop=$saved_card['invalid']}
+                <div class="bankstoreCard" id="card_{$saved_card['invalid'][card].IDUSER|escape:'htmlall':'UTF-8':FALSE}">
+                    {$saved_card['invalid'][card].CC|escape:'htmlall':'UTF-8':FALSE} ({$saved_card['invalid'][card].BRAND|escape:'htmlall':'UTF-8':FALSE})
                     <label class="button_del">
-                        <a href="#" id="{$caducadas[card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" class="remove_card">
+                        <a href="#" id="{$saved_card['invalid'][card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" class="remove_card">
                          {l s='Remove Card' mod='paytpv'}
                         </a>
-                        <input type="hidden" name="cc_{$caducadas[card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" id="cc_{$saved_card[card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" value="{$saved_card[card].CC|escape:'htmlall':'UTF-8'}">
+                        <input type="hidden" name="cc_{$saved_card['invalid'][card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" id="cc_{$saved_card['invalid'][card].IDUSER|escape:'htmlall':'UTF-8':FALSE}" value="{$saved_card['invalid'][card].CC|escape:'htmlall':'UTF-8'}">
                     </label>
                 </div>
             {/section}

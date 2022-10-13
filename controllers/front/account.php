@@ -170,9 +170,9 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
             $this->context->controller->addCSS($paytpv_path . 'views/css/fullscreen.css', 'all');
             $this->context->controller->addJS($paytpv_path . 'views/js/paytpv_account.js');
 
-            $active_cards = [];
-            $caducadas = [];
-
+            $saved_cards['valid'] = [];
+            $saved_cards['invalid'] = [];
+            
             foreach ($saved_card as $key => $val) {
                 if ($saved_card[$key]['EXPIRY_DATE'] == '') {
                     if ($paytpv->apikey != '') {
@@ -201,17 +201,15 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                     }
                 }
                 if (date("Ym") < str_replace("/", "", $saved_card[$key]['EXPIRY_DATE'])) {
-                    $active_cards[] = $saved_card[$key];
+                    $saved_cards['valid'][] = $saved_card[$key];
                 } else {
-                    $caducadas[] = $saved_card[$key];
+                    $saved_cards['invalid'][] = $saved_card[$key];
                 }
             }
 
-            $saved_card = $active_cards;
-
             $this->context->smarty->assign('url_paytpv', $url_paytpv);
-            $this->context->smarty->assign('saved_card', $saved_card);
-            $this->context->smarty->assign('caducadas', $caducadas);
+            $this->context->smarty->assign('saved_card', $saved_cards);
+
             $this->context->smarty->assign('suscriptions', $suscriptions);
             $this->context->smarty->assign('base_dir', __PS_BASE_URI__);
 
