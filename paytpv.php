@@ -2579,8 +2579,8 @@ class Paytpv extends PaymentModule
         $this->context->smarty->assign('result_txt', $result_txt);
         $this->context->smarty->assign('base_dir', __PS_BASE_URI__);
 
-        $params['template_html'] .= $this->display(__FILE__, 'order_detail.tpl');
-        $params['template_html'] = str_replace("{multibanco_data}", $this->display(__FILE__, 'order_detail.tpl'), $params['template_html']);
+        //$params['template_html'] .= $this->display(__FILE__, 'order_detail.tpl');
+        $params['template_html'] = str_replace("{multibanco}", $this->display(__FILE__, 'order_detail.tpl'), $params['template_html']);
     }
 
     public function hookDisplayOrderDetail($params)
