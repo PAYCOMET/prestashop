@@ -64,6 +64,7 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
         $active_suscriptions = (int) Configuration::get('PAYTPV_SUSCRIPTIONS');
 
         $saved_card = PaytpvCustomer::getCardsCustomer($this->context->customer->id);
+
         $index = 0;
         foreach ($saved_card as $key => $val) {
             $values_aux = array_merge(

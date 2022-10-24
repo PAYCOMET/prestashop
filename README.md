@@ -60,6 +60,11 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.18:
+
+- Se permite añadir los datos de multibanco en el email de confirmación
+- Se eliminan los tokens caducados
+
 > 7.7.17:
 
 - Mejoras de código.

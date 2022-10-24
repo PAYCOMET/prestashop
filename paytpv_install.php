@@ -59,6 +59,7 @@ class PayTpvInstall
                 `id_customer` int(10) unsigned NOT NULL,
                 `date` DATETIME NOT NULL,
                 `card_desc` VARCHAR(32) NULL DEFAULT NULL,
+                `paytpv_expirydate` VARCHAR(7) DEFAULT NULL,
                 PRIMARY KEY (`paytpv_iduser`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8')) {
             return false;
