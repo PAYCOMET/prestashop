@@ -52,7 +52,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.18';
+        $this->version = '7.7.19';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -478,7 +478,7 @@ class Paytpv extends PaymentModule
             Configuration::updateValue('PAYTPV_APM_skrill', Tools::getValue('apms_skrill'));
             Configuration::updateValue('PAYTPV_APM_webmoney', Tools::getValue('apms_webmoney'));
             Configuration::updateValue('PAYTPV_APM_instant_credit', Tools::getValue('apms_instant_credit'));
-            Configuration::updateValue('PAYTPV_APM_klarna_payments', Tools::getValue('apms_klarna_payments'));
+            Configuration::updateValue('PAYTPV_APM_klarna_payments', Tools::getValue('apms_klarna_payments_(pay_later_y_slice_it)'));
             Configuration::updateValue('PAYTPV_APM_paypal', Tools::getValue('apms_paypal'));
 
             // Instan Credit
@@ -767,7 +767,6 @@ class Paytpv extends PaymentModule
 
         $shoppingCartData = array();
 
-
         $i = 0;
         $amount = 0;
         foreach ($cart->getProducts() as $key => $product) {
@@ -779,7 +778,14 @@ class Paytpv extends PaymentModule
                 $shoppingCartData[$key + $i]["name"] = $product["name"];
                 $shoppingCartData[$key + $i]["category"] = $product["category"];
                 $shoppingCartData[$key + $i]["articleType"] = ($product["is_virtual"] == 1) ? 8 : 5;
-                $amount += $shoppingCartData[$key + $i]["unitPrice"] * $product["quantity"];
+
+                if($product["reduction_type"] == "amount") {
+                    $shoppingCartData[$key + $i]["discountValue"] = number_format(($product["reduction"]) * 100, 0, '.', '');
+                } else if($product["reduction_type"] == "percentage") {
+                    $shoppingCartData[$key + $i]["discount"] = number_format(($product["specific_prices"]["reduction"]) * 10000, 0, '.', '');
+                }
+                
+                $amount += $shoppingCartData[$key + $i]["unitPrice"] - number_format(($product["reduction"]) * 100, 0, '.', '') * $product["quantity"];
             } else {
                 $shoppingCartData[$key + $i]["sku"] = "1";
                 $shoppingCartData[$key + $i]["quantity"] = 1;
@@ -787,19 +793,14 @@ class Paytpv extends PaymentModule
                 $shoppingCartData[$key + $i]["name"] = $product["name"];
                 $shoppingCartData[$key + $i]["category"] = $product["category"];
                 $shoppingCartData[$key + $i]["articleType"] = ($product["is_virtual"] == 1) ? 8 : 5;
-                $amount += $shoppingCartData[$key + $i]["unitPrice"] * $product["quantity"];
-            }
 
-            // Se añade el descuento
-            if ($product["reduction"] > 0) {
-                $i++;
-                $shoppingCartData[$key + $i]["sku"] = "1";
-                $shoppingCartData[$key + $i]["quantity"] = 1;
-                $shoppingCartData[$key + $i]["unitPrice"] = number_format($product["reduction"] * 100, 0, '.', '') * $product["quantity"];
-                $shoppingCartData[$key + $i]["name"] = $product["name"];
-                $shoppingCartData[$key + $i]["category"] = $product["category"];
-                $shoppingCartData[$key + $i]["articleType"] = "4";
-                $amount += $shoppingCartData[$key + $i]["unitPrice"];
+                if($product["reduction_type"] == "amount") {
+                    $shoppingCartData[$key + $i]["discountValue"] = number_format(($product["reduction"]) * 100, 0, '.', '');
+                } else if($product["reduction_type"] == "percentage") {
+                    $shoppingCartData[$key + $i]["discount"] = number_format(($product["specific_prices"]["reduction"]) * 10000, 0, '.', '');
+                }
+                
+                $amount += $shoppingCartData[$key + $i]["unitPrice"] - number_format(($product["reduction"]) * 100, 0, '.', '') * $product["quantity"];
             }
         }
         // Se calculan gastos de envio
@@ -1131,7 +1132,7 @@ class Paytpv extends PaymentModule
         $arrValues["apms_skrill"] = $config["PAYTPV_APM_skrill"];
         $arrValues["apms_webmoney"] = $config["PAYTPV_APM_webmoney"];
         $arrValues["apms_instant_credit"] = $config["PAYTPV_APM_instant_credit"];
-        $arrValues["apms_klarna_payments"] = $config["PAYTPV_APM_klarna_payments"];
+        $arrValues["apms_klarna_payments_(pay_later_y_slice_it)"] = $config["PAYTPV_APM_klarna_payments"];
         $arrValues["apms_paypal"] = $config["PAYTPV_APM_paypal"];
 
         // Instant Credit
@@ -2325,7 +2326,7 @@ class Paytpv extends PaymentModule
             29 => "Skrill",
             30 => "WebMoney",
             33 => "Instant Credit",
-            34 => "Klarna Payments"
+            34 => "Klarna Payments (Pay Later y Slice It)"
         ][$methodId];
     }
 
