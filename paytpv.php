@@ -928,7 +928,7 @@ class Paytpv extends PaymentModule
                 $arrDatosHomePhone["cc"] =
                     Tools::substr(preg_replace('/[^0-9]/', '', $billing_address_country->call_prefix), 0, 3);
                 $arrDatosHomePhone["subscriber"] =
-                    Tools::substr(preg_replace('/[^0-9]/', '', $billing->phone), 0, 15);
+                    Tools::substr(preg_replace('/[^0-9]/', '', str_replace("+" . $billing_address_country->call_prefix, "", $billing->phone)), 0, 15);
 
                 $Merchant_EMV3DS["customer"]["homePhone"] = $arrDatosHomePhone;
                 $Merchant_EMV3DS["customer"]["mobilePhone"] = $arrDatosHomePhone;
@@ -940,7 +940,7 @@ class Paytpv extends PaymentModule
                 $arrDatosMobilePhone["cc"] =
                     Tools::substr(preg_replace('/[^0-9]/', '', $billing_address_country->call_prefix), 0, 3);
                 $arrDatosMobilePhone["subscriber"] =
-                    Tools::substr(preg_replace('/[^0-9]/', '', $billing->phone_mobile), 0, 15);
+                    Tools::substr(preg_replace('/[^0-9]/', '', str_replace("+" . $billing_address_country->call_prefix, "", $billing->phone_mobile)), 0, 15);
 
                 $Merchant_EMV3DS["customer"]["mobilePhone"] = $arrDatosMobilePhone;
             }
@@ -977,7 +977,7 @@ class Paytpv extends PaymentModule
                 $arrDatosWorkPhone["cc"] =
                     Tools::substr(preg_replace('/[^0-9]/', '', $shipping_address_country->call_prefix), 0, 3);
                 $arrDatosWorkPhone["subscriber"] =
-                    Tools::substr(preg_replace('/[^0-9]/', '', $shipping->phone), 0, 15);
+                    Tools::substr(preg_replace('/[^0-9]/', '', str_replace("+" . $billing_address_country->call_prefix, "", $shipping->phone)), 0, 15);
 
                 $Merchant_EMV3DS["customer"]["workPhone"] = $arrDatosWorkPhone;
             }
