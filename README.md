@@ -60,6 +60,11 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.19:
+
+- Cambio envío información de descuento
+- Mejoras de código
+
 > 7.7.18:
 
 - Se permite añadir los datos de multibanco en el email de confirmación
