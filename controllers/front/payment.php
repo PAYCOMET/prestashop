@@ -176,7 +176,8 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
 
             // Si el pago es en PAYCOMET redireccionamos directamente
             if ($newpage_payment == 2) {
-                header("Location: " . $iframeURL);
+                //header("Location: " . $iframeURL);
+                Tools::redirect($iframeURL);
             }
 
             $this->context->smarty->assign('paytpv_iframe', $iframeURL);
