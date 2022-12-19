@@ -60,6 +60,10 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.20:
+
+- Corrección uso funciones php8
+
 > 7.7.19:
 
 - Cambio envío información de descuento
