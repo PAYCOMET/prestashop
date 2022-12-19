@@ -628,7 +628,6 @@ class Paytpv extends PaymentModule
 
         // CALC ORDER SCORE
         if (isset($arrScore["scoreCalc"]) && sizeof($arrScore["scoreCalc"]) > 0) {
-            //$score = floor(array_sum($arrScore["scoreCalc"]) / sizeof($arrScore["scoreCalc"]));   // Media
             $score = floor(array_sum($arrScore["scoreCalc"])); // Suma de valores. Si es superior a 100 asignamos 100
             if ($score > 100) {
                 $score = 100;
@@ -644,7 +643,6 @@ class Paytpv extends PaymentModule
 
         $customerStats = $this->context->customer->getStats();
 
-        //$threeDSReqAuthTimestamp = strftime('%Y%m%d%H%M', strtotime($customerStats['last_visit']));
         $threeDSReqAuthTimestamp = date('YmdHi', strtotime($customerStats['last_visit']));
 
         $threeDSRequestorAuthenticationInfo = array();
@@ -667,7 +665,6 @@ class Paytpv extends PaymentModule
         if ($isGuest) {
             $acctInfoData["chAccAgeInd"] = "01";
         } else {
-            //$date_customer = new DateTime(strftime('%Y%m%d', strtotime($this->context->customer->date_add)));
             $date_customer = new DateTime(date('Ymd', strtotime($this->context->customer->date_add)));
 
             $diff = $date_now->diff($date_customer);
@@ -683,10 +680,8 @@ class Paytpv extends PaymentModule
                 $acctInfoData["chAccAgeInd"] = "05";
             }
         }
-        //$acctInfoData["chAccChange"] = strftime('%Y%m%d', strtotime($this->context->customer->date_upd));
         $acctInfoData["chAccChange"] = date('Ymd',  strtotime($this->context->customer->date_upd));
 
-        //$date_customer_upd = new DateTime(strftime('%Y%m%d', strtotime($this->context->customer->date_upd)));
         $date_customer_upd = new DateTime(date('Ymd', strtotime($this->context->customer->date_upd)));
 
         $diff = $date_now->diff($date_customer_upd);
@@ -702,7 +697,6 @@ class Paytpv extends PaymentModule
             $acctInfoData["chAccChangeInd"] = "04";
         }
 
-        //$acctInfoData["chAccDate"] = strftime('%Y%m%d', strtotime($this->context->customer->date_upd));
         $acctInfoData["chAccDate"] = date('Ymd', strtotime($this->context->customer->date_upd));
 
         //$acctInfoData["chAccPwChange"] = "";
@@ -737,7 +731,6 @@ class Paytpv extends PaymentModule
         if ($firstAddressDelivery != "") {
             $acctInfoData["shipAddressUsage"] = date("Ymd", strtotime($firstAddressDelivery));
 
-            //$date_firstAddressDelivery = new DateTime(strftime('%Y%m%d', strtotime($firstAddressDelivery)));
             $date_firstAddressDelivery = new DateTime(date('Ymd', strtotime($firstAddressDelivery)));
 
             $diff = $date_now->diff($date_firstAddressDelivery);
@@ -824,12 +817,14 @@ class Paytpv extends PaymentModule
 
         // Se calculan los impuestos
         $tax = number_format($cart->getOrderTotal(true, Cart::BOTH) * 100, 0, '.', '') - $amount;
-        $i++;
-        $shoppingCartData[$key + $i]["sku"] = "1";
-        $shoppingCartData[$key + $i]["quantity"] = 1;
-        $shoppingCartData[$key + $i]["unitPrice"] = $tax;
-        $shoppingCartData[$key + $i]["name"] = "Tax";
-        $shoppingCartData[$key + $i]["articleType"] = "11";
+        if ((int)$tax!=0) {
+            $i++;
+            $shoppingCartData[$key + $i]["sku"] = "1";
+            $shoppingCartData[$key + $i]["quantity"] = 1;
+            $shoppingCartData[$key + $i]["unitPrice"] = $tax;
+            $shoppingCartData[$key + $i]["name"] = "Tax";
+            $shoppingCartData[$key + $i]["articleType"] = "11";
+        }
 
         return array("shoppingCart" => array_values($shoppingCartData));
     }
@@ -886,7 +881,22 @@ class Paytpv extends PaymentModule
 
     public function getPhonePrefix($phone)
     {
-        $prefix_array = ['44', '213', '376', '244', '1264', '1268', '54', '374', '297', '61', '43', '994', '1242', '973', '880', '1246', '375', '32', '501', '229', '1441', '975', '591', '387', '267', '55', '673', '359', '226', '257', '855', '237', '1', '238', '1345', '236', '56', '86', '57', '269', '242', '682', '506', '385', '53', '90392', '357', '42', '45', '253', '1809', '1809', '593', '20', '503', '240', '291', '372', '251', '500', '298', '679', '358', '33', '594', '689', '241', '220', '7880', '49', '233', '350', '30', '299', '1473', '590', '671', '502', '224', '245', '592', '509', '504', '852', '36', '354', '91', '62', '98', '964', '353', '972', '39', '1876', '81', '962', '7', '254', '686', '850', '82', '965', '996', '856', '371', '961', '266', '231', '218', '417', '370', '352', '853', '389', '261', '265', '60', '960', '223', '356', '692', '596', '222', '269', '52', '691', '373', '377', '976', '1664', '212', '258', '95', '264', '674', '977', '31', '687', '64', '505', '227', '234', '683', '672', '670', '47', '968', '680', '507', '675', '595', '51', '63', '48', '351', '1787', '974', '262', '40', '7', '250', '378', '239', '966', '221', '381', '248', '232', '65', '421', '386', '677', '252', '27', '34', '94', '290', '1869', '1758', '249', '597', '268', '46', '41', '963', '886', '7', '66', '228', '676', '1868', '216', '90', '7', '993', '1649', '688', '256', '380', '971', '598', '7', '678', '379', '58', '84', '84', '84', '681', '969', '967', '260', '1', '263'];
+        $prefix_array = [
+            '44', '213', '376', '244', '1264', '1268', '54', '374', '297', '61', '43', '994', '1242', '973', '880',
+            '1246', '375', '32', '501', '229', '1441', '975', '591', '387', '267', '55', '673', '359', '226', '257',
+            '855', '237', '1', '238', '1345', '236', '56', '86', '57', '269', '242', '682', '506', '385', '53', '90392',
+            '357', '42', '45', '253', '1809', '1809', '593', '20', '503', '240', '291', '372', '251', '500', '298',
+            '679', '358', '33', '594', '689', '241', '220', '7880', '49', '233', '350', '30', '299', '1473', '590',
+            '671', '502', '224', '245', '592', '509', '504', '852', '36', '354', '91', '62', '98', '964', '353', '972',
+            '39', '1876', '81', '962', '7', '254', '686', '850', '82', '965', '996', '856', '371', '961', '266', '231',
+            '218', '417', '370', '352', '853', '389', '261', '265', '60', '960', '223', '356', '692', '596', '222',
+            '52', '691', '373', '377', '976', '1664', '212', '258', '95', '264', '674', '977', '31', '687', '64', '505',
+             '227', '234', '683', '672', '670', '47', '968', '680', '507', '675', '595', '51', '63', '48', '351',
+             '1787', '974', '262', '40', '250', '378', '239', '966', '221', '381', '248', '232', '65', '421', '386',
+            '677', '252', '27', '34', '94', '290', '1869', '1758', '249', '597', '268', '46', '41', '963', '886', '66',
+            '228', '676', '1868', '216', '90', '993', '1649', '688', '256', '380', '971', '598', '678', '379', '58',
+            '84', '84', '84', '681', '969', '967', '260', '263'
+        ];
         foreach ($prefix_array as $key => $prefix) {
             if (str_starts_with($phone, '+' . $prefix))
                 return $prefix;
@@ -942,10 +952,10 @@ class Paytpv extends PaymentModule
             if ($billing->phone) {
                 $arrDatosHomePhone = array();
 
-                $phone_prefix = str_starts_with($billing->phone, '+') ? $this->getPhonePrefix($billing->phone) : $billing_address_country->call_prefix;
+                $phone_prefix = str_starts_with(trim($billing->phone), '+') ? $this->getPhonePrefix(trim($billing->phone)) : $billing_address_country->call_prefix;
 
                 $arrDatosHomePhone["cc"] =
-                    Tools::substr(preg_replace('/[^0-9]/', '', $phone_prefix), 0, 3);
+                    Tools::substr(preg_replace('/[^0-9]/', '', $phone_prefix), 0, 5);
                 $arrDatosHomePhone["subscriber"] =
                     Tools::substr(preg_replace('/[^0-9]/', '', str_replace("+" . $phone_prefix, "", $billing->phone)), 0, 15);
 
@@ -956,10 +966,10 @@ class Paytpv extends PaymentModule
             if ($billing->phone_mobile) {
                 $arrDatosMobilePhone = array();
 
-                $phone_prefix = str_starts_with($billing->phone_mobile, '+') ? $this->getPhonePrefix($billing->phone_mobile) : $billing_address_country->call_prefix;
+                $phone_prefix = str_starts_with(trim($billing->phone_mobile), '+') ? $this->getPhonePrefix(trim($billing->phone_mobile)) : $billing_address_country->call_prefix;
 
                 $arrDatosMobilePhone["cc"] =
-                    Tools::substr(preg_replace('/[^0-9]/', '', $phone_prefix), 0, 3);
+                    Tools::substr(preg_replace('/[^0-9]/', '', $phone_prefix), 0, 5);
                 $arrDatosMobilePhone["subscriber"] =
                     Tools::substr(preg_replace('/[^0-9]/', '', str_replace("+" . $phone_prefix, "", $billing->phone_mobile)), 0, 15);
 
@@ -995,10 +1005,10 @@ class Paytpv extends PaymentModule
             if ($shipping->phone) {
                 $arrDatosWorkPhone = array();
 
-                $phone_prefix = str_starts_with($shipping->phone, '+') ? $this->getPhonePrefix($shipping->phone) : $shipping_address_country->call_prefix;
+                $phone_prefix = str_starts_with(trim($shipping->phone), '+') ? $this->getPhonePrefix(trim($shipping->phone)) : $shipping_address_country->call_prefix;
 
                 $arrDatosWorkPhone["cc"] =
-                    Tools::substr(preg_replace('/[^0-9]/', '', $phone_prefix), 0, 3);
+                    Tools::substr(preg_replace('/[^0-9]/', '', $phone_prefix), 0, 5);
                 $arrDatosWorkPhone["subscriber"] =
                     Tools::substr(preg_replace('/[^0-9]/', '', str_replace("+" . $phone_prefix, "", $shipping->phone)), 0, 15);
 
