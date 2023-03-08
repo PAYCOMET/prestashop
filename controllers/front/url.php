@@ -557,9 +557,13 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
                 // Token Payment or APM
                 } else {
+                    $paytpv_iduser = 0;
+                    $paytpv_tokenuser = 0;
                     $result = PaytpvCustomer::getCustomerIduser($datos_order["paytpv_iduser"]);
-                    $paytpv_iduser = $result["paytpv_iduser"];
-                    $paytpv_tokenuser = $result["paytpv_tokenuser"];
+                    if ($result) {
+                        $paytpv_iduser = $result["paytpv_iduser"];
+                        $paytpv_tokenuser = $result["paytpv_tokenuser"];
+                    }
                 }
                 // Save paytpv order
                 PaytpvOrder::addOrder(
