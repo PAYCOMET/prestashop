@@ -51,7 +51,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.20';
+        $this->version = '7.7.21';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -200,6 +200,9 @@ class Paytpv extends PaymentModule
         }
         if (array_key_exists('PAYTPV_APM_paypal', $config)) {
             $this->paytpv_apm_paypal = $config['PAYTPV_APM_paypal'];
+        }
+        if (array_key_exists('PAYTPV_APM_waylet', $config)) {
+            $this->paytpv_apm_waylet = $config['PAYTPV_APM_waylet'];
         }
 
         // Instant Credit ---------------------------------------------
@@ -479,6 +482,7 @@ class Paytpv extends PaymentModule
             Configuration::updateValue('PAYTPV_APM_instant_credit', Tools::getValue('apms_instant_credit'));
             Configuration::updateValue('PAYTPV_APM_klarna_payments', Tools::getValue('apms_klarna_payments_(pay_later_y_slice_it)'));
             Configuration::updateValue('PAYTPV_APM_paypal', Tools::getValue('apms_paypal'));
+            Configuration::updateValue('PAYTPV_APM_waylet', Tools::getValue('apms_waylet'));
 
             // Instan Credit
             Configuration::updateValue(
@@ -1164,6 +1168,7 @@ class Paytpv extends PaymentModule
         $arrValues["apms_instant_credit"] = $config["PAYTPV_APM_instant_credit"];
         $arrValues["apms_klarna_payments_(pay_later_y_slice_it)"] = $config["PAYTPV_APM_klarna_payments"];
         $arrValues["apms_paypal"] = $config["PAYTPV_APM_paypal"];
+        $arrValues["apms_waylet"] = $config["PAYTPV_APM_waylet"];
 
         // Instant Credit
         $arrValues["apms_instant_credit_simuladorCoutas"] = $config["PAYTPV_APM_instant_credit_simuladorCoutas"];
@@ -2228,6 +2233,9 @@ class Paytpv extends PaymentModule
             if (Configuration::get('PAYTPV_APM_paypal') != null) {
                 array_push($apms, Configuration::get('PAYTPV_APM_paypal'));
             }
+            if (Configuration::get('PAYTPV_APM_waylet') != null) {
+                array_push($apms, Configuration::get('PAYTPV_APM_waylet'));
+            }
 
             if (empty($apms)) {
                 return $apms;
@@ -2356,7 +2364,8 @@ class Paytpv extends PaymentModule
             29 => "Skrill",
             30 => "WebMoney",
             33 => "Instant Credit",
-            34 => "Klarna Payments (Pay Later y Slice It)"
+            34 => "Klarna Payments (Pay Later y Slice It)",
+            41 => "Waylet"
         ][$methodId];
     }
 
@@ -2763,7 +2772,8 @@ class Paytpv extends PaymentModule
             'PAYTPV_APM_przelewy24', 'PAYTPV_APM_bancontact', 'PAYTPV_APM_eps', 'PAYTPV_APM_tele2',
             'PAYTPV_APM_paysera', 'PAYTPV_APM_postfinance', 'PAYTPV_APM_qiwi_wallet', 'PAYTPV_APM_yandex_money',
             'PAYTPV_APM_mts', 'PAYTPV_APM_beeline', 'PAYTPV_APM_paysafecard', 'PAYTPV_APM_skrill',
-            'PAYTPV_APM_webmoney', 'PAYTPV_APM_instant_credit', 'PAYTPV_APM_klarna_payments', 'PAYTPV_APM_paypal'
+            'PAYTPV_APM_webmoney', 'PAYTPV_APM_instant_credit', 'PAYTPV_APM_klarna_payments', 'PAYTPV_APM_paypal',
+            'PAYTPV_APM_waylet'
         );
 
         $arrInstantCredit = array(
