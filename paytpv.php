@@ -51,7 +51,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.21';
+        $this->version = '7.7.22';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -776,36 +776,36 @@ class Paytpv extends PaymentModule
         $amount = 0;
         foreach ($cart->getProducts() as $key => $product) {
 
-            if (is_int($product["quantity"])) {
+            if (is_int(isset($product["quantity"]) ? $product["quantity"] : 1)) {
                 $shoppingCartData[$key + $i]["sku"] = "1";
-                $shoppingCartData[$key + $i]["quantity"] = (int) $product["quantity"];
-                $shoppingCartData[$key + $i]["unitPrice"] = number_format($product["price_without_reduction_without_tax"] * 100, 0, '.', '');
-                $shoppingCartData[$key + $i]["name"] = $product["name"];
-                $shoppingCartData[$key + $i]["category"] = $product["category"];
-                $shoppingCartData[$key + $i]["articleType"] = ($product["is_virtual"] == 1) ? 8 : 5;
+                $shoppingCartData[$key + $i]["quantity"] = (int) isset($product["quantity"]) ? $product["quantity"] : 1;
+                $shoppingCartData[$key + $i]["unitPrice"] = number_format((isset($product["price_without_reduction_without_tax"]) ? $product["price_without_reduction_without_tax"] : 0) * 100, 0, '.', '');
+                $shoppingCartData[$key + $i]["name"] = isset($product["name"]) ? $product["name"] : "";
+                $shoppingCartData[$key + $i]["category"] = isset($product["category"]) ? $product["category"] : "";
+                $shoppingCartData[$key + $i]["articleType"] = (isset($product["is_virtual"]) ? $product["is_virtual"] : 0 == 1) ? 8 : 5;
 
-                if ($product["reduction_type"] == "amount") {
-                    $shoppingCartData[$key + $i]["discountValue"] = number_format(($product["reduction_without_tax"]) * 100, 0, '.', '');
-                } else if ($product["reduction_type"] == "percentage") {
-                    $shoppingCartData[$key + $i]["discount"] = number_format(($product["specific_prices"]["reduction"]) * 10000, 0, '.', '');
+                if ((isset($product["reduction_type"]) ? $product["reduction_type"] : "") == "amount") {
+                    $shoppingCartData[$key + $i]["discountValue"] = number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '');
+                } else if ((isset($product["reduction_type"]) ? $product["reduction_type"] : "") == "percentage") {
+                    $shoppingCartData[$key + $i]["discount"] = number_format((isset($product["specific_prices"]["reduction"]) ? $product["specific_prices"]["reduction"] : 0) * 10000, 0, '.', '');
                 }
                 
-                $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format(($product["reduction_without_tax"]) * 100, 0, '.', '')) * $product["quantity"];
+                $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '')) * isset($product["quantity"]) ? $product["quantity"] : 1;
             } else {
                 $shoppingCartData[$key + $i]["sku"] = "1";
                 $shoppingCartData[$key + $i]["quantity"] = 1;
-                $shoppingCartData[$key + $i]["unitPrice"] = number_format(($product["price_without_reduction_without_tax"] * $product["quantity"]) * 100, 0, '.', '');
-                $shoppingCartData[$key + $i]["name"] = $product["name"];
-                $shoppingCartData[$key + $i]["category"] = $product["category"];
-                $shoppingCartData[$key + $i]["articleType"] = ($product["is_virtual"] == 1) ? 8 : 5;
+                $shoppingCartData[$key + $i]["unitPrice"] = number_format((isset($product["price_without_reduction_without_tax"]) ? $product["price_without_reduction_without_tax"] : 0) * 100, 0, '.', '');
+                $shoppingCartData[$key + $i]["name"] = isset($product["name"]) ? $product["name"] : "";
+                $shoppingCartData[$key + $i]["category"] = isset($product["category"]) ? $product["category"] : "";
+                $shoppingCartData[$key + $i]["articleType"] = (isset($product["is_virtual"]) ? $product["is_virtual"] : 0 == 1) ? 8 : 5;
 
-                if ($product["reduction_type"] == "amount") {
-                    $shoppingCartData[$key + $i]["discountValue"] = number_format(($product["reduction"]) * 100, 0, '.', '');
+                if ((isset($product["reduction_type"]) ? $product["reduction_type"] : "") == "amount") {
+                    $shoppingCartData[$key + $i]["discountValue"] = number_format((isset($product["reduction"]) ? $product["reduction"] : 0) * 100, 0, '.', '');
                 } else if ($product["reduction_type"] == "percentage") {
-                    $shoppingCartData[$key + $i]["discount"] = number_format(($product["specific_prices"]["reduction"]) * 10000, 0, '.', '');
+                    $shoppingCartData[$key + $i]["discount"] = number_format((isset($product["specific_prices"]["reduction"]) ? $product["specific_prices"]["reduction"] : 0) * 10000, 0, '.', '');
                 }
 
-                $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format(($product["reduction"]) * 100, 0, '.', '')) * $product["quantity"];
+                $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format((isset($product["reduction"]) ? $product["reduction"] : 0) * 100, 0, '.', '')) * isset($product["quantity"]) ? $product["quantity"] : 1;
             }
         }
         // Se calculan gastos de envio
