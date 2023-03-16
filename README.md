@@ -60,6 +60,10 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.22: 
+
+- Mejoras de código
+
 > 7.7.21: 
 
 - Se añade Waylet
