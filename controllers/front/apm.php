@@ -108,7 +108,11 @@ class PaytpvApmModuleFrontController extends ModuleFrontController
                     $this->createSatusWaitingLocalPayment();
                 }
                 $displayName = $paytpv->displayName . " [" . $paytpv->getAPMName($methodId) . "]";
-                $message = json_encode($executePurchaseResponse->methodData) . '|';
+                $message = '';
+
+                if($methodId == 16) {
+                    $message = json_encode($executePurchaseResponse->methodData) . '|';
+                }
 
                 $paytpv->validateOrder(
                     $id_cart,
