@@ -769,7 +769,6 @@ class Paytpv extends PaymentModule
 
     public function getShoppingCart($cart)
     {
-
         $shoppingCartData = array();
 
         $i = 0;
@@ -790,7 +789,8 @@ class Paytpv extends PaymentModule
                     $shoppingCartData[$key + $i]["discount"] = number_format((isset($product["specific_prices"]["reduction"]) ? $product["specific_prices"]["reduction"] : 0) * 10000, 0, '.', '');
                 }
                 
-                $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '')) * isset($product["quantity"]) ? $product["quantity"] : 1;
+                $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '')) * (isset($product["quantity"]) ? $product["quantity"] : 1);
+
             } else {
                 $shoppingCartData[$key + $i]["sku"] = "1";
                 $shoppingCartData[$key + $i]["quantity"] = 1;
@@ -805,7 +805,7 @@ class Paytpv extends PaymentModule
                     $shoppingCartData[$key + $i]["discount"] = number_format((isset($product["specific_prices"]["reduction"]) ? $product["specific_prices"]["reduction"] : 0) * 10000, 0, '.', '');
                 }
 
-                $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format((isset($product["reduction"]) ? $product["reduction"] : 0) * 100, 0, '.', '')) * isset($product["quantity"]) ? $product["quantity"] : 1;
+                $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format((isset($product["reduction"]) ? $product["reduction"] : 0) * 100, 0, '.', '')) * (isset($product["quantity"]) ? $product["quantity"] : 1);
             }
         }
         // Se calculan gastos de envio
@@ -821,13 +821,15 @@ class Paytpv extends PaymentModule
 
         // Se calculan los impuestos
         $tax = number_format($cart->getOrderTotal(true, Cart::BOTH) * 100, 0, '.', '') - $amount;
+       
         if ((int)$tax!=0) {
             $i++;
             $shoppingCartData[$key + $i]["sku"] = "1";
             $shoppingCartData[$key + $i]["quantity"] = 1;
-            $shoppingCartData[$key + $i]["unitPrice"] = $tax;
+            $shoppingCartData[$key + $i]["unitPrice"] = ($tax < 0) ? 100 : $tax;
             $shoppingCartData[$key + $i]["name"] = "Tax";
             $shoppingCartData[$key + $i]["articleType"] = "11";
+            $shoppingCartData[$key + $i]["discountValue"] = ($tax < 0) ? abs($tax) + 100 : 0;
         }
 
         return array("shoppingCart" => array_values($shoppingCartData));
