@@ -26,5 +26,6 @@
 	{l s='Your order on %s is complete.' sprintf=[$shop_name] mod='paytpv'}
 </p>
 <p>
-	{$result_txt|escape:'htmlall':'UTF-8':FALSE}
+	<img src="{$this_path|escape:'htmlall':'UTF-8':FALSE}views/img/apms/mbway.svg" width="100"> {$result_txt|escape:'htmlall':'UTF-8':FALSE}
 </p>
+

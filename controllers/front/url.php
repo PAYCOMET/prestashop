@@ -37,7 +37,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
         $this->context->smarty->assign(array(
             'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name .
-            '/'
+                '/'
         ));
 
         $esURLOK = false;
@@ -58,10 +58,12 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             $idterminal = $arrTerminal["idterminal"];
             $pass = $arrTerminal["password"];
 
-            $apiKey = ($paytpv->apikey != '')?1:0;
+            $apiKey = ($paytpv->apikey != '') ? 1 : 0;
 
-            if (Tools::getValue('clientcode') && Tools::getValue('clientcode') == $paytpv->clientcode &&
-            Tools::getValue('terminal') && Tools::getValue('terminal')==$idterminal) {
+            if (
+                Tools::getValue('clientcode') && Tools::getValue('clientcode') == $paytpv->clientcode &&
+                Tools::getValue('terminal') && Tools::getValue('terminal') == $idterminal
+            ) {
                 $arrDatos = array(
                     "module_v" => $paytpv->version,
                     "ps_v" => _PS_VERSION_,
@@ -73,7 +75,8 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
         // Notify response
         // (execute_purchase)
-        if (Tools::getValue('TransactionType') === "1"
+        if (
+            Tools::getValue('TransactionType') === "1"
             and Tools::getValue('Order')
             and Tools::getValue('Response')
             and Tools::getValue('NotificationHash')
@@ -98,8 +101,8 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             $pass = $arrTerminal["password"];
 
             $local_sign = hash('sha512', $paytpv->clientcode . $idterminal . Tools::getValue('TransactionType') .
-                                $ref . Tools::getValue('Amount') . Tools::getValue('Currency') . md5($pass) .
-                                Tools::getValue('BankDateTime') . Tools::getValue('Response'));
+                $ref . Tools::getValue('Amount') . Tools::getValue('Currency') . md5($pass) .
+                Tools::getValue('BankDateTime') . Tools::getValue('Response'));
 
             // Check Signature
             if ($sign != $local_sign) {
@@ -126,7 +129,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             $pass = $arrTerminal["password"];
 
             $local_sign = hash('sha512', $paytpv->clientcode . $idterminal . Tools::getValue('TransactionType') .
-                                 $ref . Tools::getValue('DateTime') . md5($pass));
+                $ref . Tools::getValue('DateTime') . md5($pass));
 
             // Check Signature
             if ($sign != $local_sign) {
@@ -258,7 +261,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                             include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaytpvApi.php');
 
                             $ip = Tools::getRemoteAddr();
-                            if ($ip=="::1" || $ip=="") {
+                            if ($ip == "::1" || $ip == "") {
                                 $ip = "127.0.0.1";
                             }
 
@@ -280,7 +283,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                         } else {
                             $result = array();
                             $result['DS_RESPONSE'] = 1004;
-                            $result['DS_MERCHANT_AUTHCODE'] ="";
+                            $result['DS_MERCHANT_AUTHCODE'] = "";
                         }
 
                         $refund = 1;
@@ -555,7 +558,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                         // ********************************************************************************************
                     }
 
-                // Token Payment or APM
+                    // Token Payment or APM
                 } else {
                     $paytpv_iduser = 0;
                     $paytpv_tokenuser = 0;
@@ -594,6 +597,19 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                 return;
             } elseif ($pagoRegistrado) {
                 die('Pago registrado');
+            }
+        } else {
+            $ref = Tools::getValue('Order');
+            $id_cart = (int) $ref;
+            $id_order = Order::getOrderByCartId((int) $id_cart);
+            $order = new Order($id_order);
+            // Para APMs. Si el estado esta en "Pendient de pago" lo pasamos a Pago Aceptado
+            if ($order->getCurrentState() == Configuration::get("PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT")) {
+                $order->addOrderPayment($importe, null, Tools::getValue('AuthCode'));
+                $history = new OrderHistory();
+                $history->id_order = (int)$order->id;
+                $history->changeIdOrderState(8, (int)($order->id), true);
+                die('Pago fallido');
             }
         }
         die('Error');
