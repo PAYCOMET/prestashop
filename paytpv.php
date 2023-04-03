@@ -51,7 +51,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.21';
+        $this->version = '7.7.22';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -203,6 +203,9 @@ class Paytpv extends PaymentModule
         }
         if (array_key_exists('PAYTPV_APM_waylet', $config)) {
             $this->paytpv_apm_waylet = $config['PAYTPV_APM_waylet'];
+        }
+        if (array_key_exists('PAYTPV_APM_mb_way', $config)) {
+            $this->paytpv_apm_mb_way = $config['PAYTPV_APM_mb_way'];
         }
 
         // Instant Credit ---------------------------------------------
@@ -483,6 +486,7 @@ class Paytpv extends PaymentModule
             Configuration::updateValue('PAYTPV_APM_klarna_payments', Tools::getValue('apms_klarna_payments_(pay_later_y_slice_it)'));
             Configuration::updateValue('PAYTPV_APM_paypal', Tools::getValue('apms_paypal'));
             Configuration::updateValue('PAYTPV_APM_waylet', Tools::getValue('apms_waylet'));
+            Configuration::updateValue('PAYTPV_APM_mb_way', Tools::getValue('apms_mb_way'));
 
             // Instan Credit
             Configuration::updateValue(
@@ -769,43 +773,43 @@ class Paytpv extends PaymentModule
 
     public function getShoppingCart($cart)
     {
-
         $shoppingCartData = array();
 
         $i = 0;
         $amount = 0;
         foreach ($cart->getProducts() as $key => $product) {
 
-            if (is_int($product["quantity"])) {
+            if (is_int(isset($product["quantity"]) ? $product["quantity"] : 1)) {
                 $shoppingCartData[$key + $i]["sku"] = "1";
-                $shoppingCartData[$key + $i]["quantity"] = (int) $product["quantity"];
-                $shoppingCartData[$key + $i]["unitPrice"] = number_format($product["price_without_reduction_without_tax"] * 100, 0, '.', '');
-                $shoppingCartData[$key + $i]["name"] = $product["name"];
-                $shoppingCartData[$key + $i]["category"] = $product["category"];
-                $shoppingCartData[$key + $i]["articleType"] = ($product["is_virtual"] == 1) ? 8 : 5;
+                $shoppingCartData[$key + $i]["quantity"] = (int) isset($product["quantity"]) ? $product["quantity"] : 1;
+                $shoppingCartData[$key + $i]["unitPrice"] = number_format((isset($product["price_without_reduction_without_tax"]) ? $product["price_without_reduction_without_tax"] : 0) * 100, 0, '.', '');
+                $shoppingCartData[$key + $i]["name"] = isset($product["name"]) ? $product["name"] : "";
+                $shoppingCartData[$key + $i]["category"] = isset($product["category"]) ? $product["category"] : "";
+                $shoppingCartData[$key + $i]["articleType"] = (isset($product["is_virtual"]) ? $product["is_virtual"] : 0 == 1) ? 8 : 5;
 
-                if ($product["reduction_type"] == "amount") {
-                    $shoppingCartData[$key + $i]["discountValue"] = number_format(($product["reduction_without_tax"]) * 100, 0, '.', '');
-                } else if ($product["reduction_type"] == "percentage") {
-                    $shoppingCartData[$key + $i]["discount"] = number_format(($product["specific_prices"]["reduction"]) * 10000, 0, '.', '');
+                if ((isset($product["reduction_type"]) ? $product["reduction_type"] : "") == "amount") {
+                    $shoppingCartData[$key + $i]["discountValue"] = number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '');
+                } else if ((isset($product["reduction_type"]) ? $product["reduction_type"] : "") == "percentage") {
+                    $shoppingCartData[$key + $i]["discount"] = number_format((isset($product["specific_prices"]["reduction"]) ? $product["specific_prices"]["reduction"] : 0) * 10000, 0, '.', '');
                 }
                 
-                $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format(($product["reduction_without_tax"]) * 100, 0, '.', '')) * $product["quantity"];
+                $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '')) * (isset($product["quantity"]) ? $product["quantity"] : 1);
+
             } else {
                 $shoppingCartData[$key + $i]["sku"] = "1";
                 $shoppingCartData[$key + $i]["quantity"] = 1;
-                $shoppingCartData[$key + $i]["unitPrice"] = number_format(($product["price_without_reduction_without_tax"] * $product["quantity"]) * 100, 0, '.', '');
-                $shoppingCartData[$key + $i]["name"] = $product["name"];
-                $shoppingCartData[$key + $i]["category"] = $product["category"];
-                $shoppingCartData[$key + $i]["articleType"] = ($product["is_virtual"] == 1) ? 8 : 5;
+                $shoppingCartData[$key + $i]["unitPrice"] = number_format((isset($product["price_without_reduction_without_tax"]) ? $product["price_without_reduction_without_tax"] : 0) * 100, 0, '.', '');
+                $shoppingCartData[$key + $i]["name"] = isset($product["name"]) ? $product["name"] : "";
+                $shoppingCartData[$key + $i]["category"] = isset($product["category"]) ? $product["category"] : "";
+                $shoppingCartData[$key + $i]["articleType"] = (isset($product["is_virtual"]) ? $product["is_virtual"] : 0 == 1) ? 8 : 5;
 
-                if ($product["reduction_type"] == "amount") {
-                    $shoppingCartData[$key + $i]["discountValue"] = number_format(($product["reduction"]) * 100, 0, '.', '');
+                if ((isset($product["reduction_type"]) ? $product["reduction_type"] : "") == "amount") {
+                    $shoppingCartData[$key + $i]["discountValue"] = number_format((isset($product["reduction"]) ? $product["reduction"] : 0) * 100, 0, '.', '');
                 } else if ($product["reduction_type"] == "percentage") {
-                    $shoppingCartData[$key + $i]["discount"] = number_format(($product["specific_prices"]["reduction"]) * 10000, 0, '.', '');
+                    $shoppingCartData[$key + $i]["discount"] = number_format((isset($product["specific_prices"]["reduction"]) ? $product["specific_prices"]["reduction"] : 0) * 10000, 0, '.', '');
                 }
 
-                $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format(($product["reduction"]) * 100, 0, '.', '')) * $product["quantity"];
+                $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format((isset($product["reduction"]) ? $product["reduction"] : 0) * 100, 0, '.', '')) * (isset($product["quantity"]) ? $product["quantity"] : 1);
             }
         }
         // Se calculan gastos de envio
@@ -821,13 +825,15 @@ class Paytpv extends PaymentModule
 
         // Se calculan los impuestos
         $tax = number_format($cart->getOrderTotal(true, Cart::BOTH) * 100, 0, '.', '') - $amount;
+       
         if ((int)$tax!=0) {
             $i++;
             $shoppingCartData[$key + $i]["sku"] = "1";
             $shoppingCartData[$key + $i]["quantity"] = 1;
-            $shoppingCartData[$key + $i]["unitPrice"] = $tax;
+            $shoppingCartData[$key + $i]["unitPrice"] = ($tax < 0) ? 100 : $tax;
             $shoppingCartData[$key + $i]["name"] = "Tax";
             $shoppingCartData[$key + $i]["articleType"] = "11";
+            $shoppingCartData[$key + $i]["discountValue"] = ($tax < 0) ? abs($tax) + 100 : 0;
         }
 
         return array("shoppingCart" => array_values($shoppingCartData));
@@ -1169,6 +1175,7 @@ class Paytpv extends PaymentModule
         $arrValues["apms_klarna_payments_(pay_later_y_slice_it)"] = $config["PAYTPV_APM_klarna_payments"];
         $arrValues["apms_paypal"] = $config["PAYTPV_APM_paypal"];
         $arrValues["apms_waylet"] = $config["PAYTPV_APM_waylet"];
+        $arrValues["apms_mb_way"] = $config["PAYTPV_APM_mb_way"];
 
         // Instant Credit
         $arrValues["apms_instant_credit_simuladorCoutas"] = $config["PAYTPV_APM_instant_credit_simuladorCoutas"];
@@ -2236,6 +2243,9 @@ class Paytpv extends PaymentModule
             if (Configuration::get('PAYTPV_APM_waylet') != null) {
                 array_push($apms, Configuration::get('PAYTPV_APM_waylet'));
             }
+            if (Configuration::get('PAYTPV_APM_mb_way') != null) {
+                array_push($apms, Configuration::get('PAYTPV_APM_mb_way'));
+            }
 
             if (empty($apms)) {
                 return $apms;
@@ -2365,6 +2375,7 @@ class Paytpv extends PaymentModule
             30 => "WebMoney",
             33 => "Instant Credit",
             34 => "Klarna Payments (Pay Later y Slice It)",
+            38 => "MB WAY",
             41 => "Waylet"
         ][$methodId];
     }
@@ -2372,7 +2383,8 @@ class Paytpv extends PaymentModule
     public function APMAsynchronous($methodId)
     {
         $arr = [
-            16 // Multibanco
+            16, // Multibanco
+            38 // MB WAY
         ];
         return (in_array($methodId, $arr));
     }
@@ -2678,10 +2690,10 @@ class Paytpv extends PaymentModule
         $id_order = Order::getOrderByCartId((int) $params["order"]->id_cart);
         $order = new Order($id_order);
 
+        $template = 'payment_return.tpl';
         $result_txt = "";
-        $mbentity = ""; // Entidad
-        $mbreference = ""; // Referencia
         $display = "";
+        $mbway = "";
 
         if (isset(Message::getMessagesByOrderId($order->id, true)[0]["message"])) {
             $message = Message::getMessagesByOrderId($order->id, true)[0]["message"];
@@ -2690,26 +2702,28 @@ class Paytpv extends PaymentModule
 
         if (strstr(Tools::strtolower($order->payment), "multibanco")  && isset($methodData->entityNumber) && isset($methodData->referenceNumber)) {
             $result_txt = $this->l('Your order will be sent as soon as we receive your payment.');
-            $mbentity = $methodData->entityNumber;
-            $mbreference = $methodData->referenceNumber;
+            $this->context->smarty->assign('mbentity', $methodData->entityNumber);
+            $this->context->smarty->assign('mbreference', $methodData->referenceNumber);
+            $template = 'payment_return_multibanco.tpl';
+        } else if (strstr(Tools::strtolower($order->payment), "mb way")) {
+            $result_txt = $this->l('You must confirm the purchase on MB WAY, through the notice or in the activity area');
+            $template = 'payment_return_mbway.tpl';
         } else {
+
             $result_txt = $this->l(
                 'Thank you for trusting us.
                  Your purchase has been formalized correctly and we will process your order soon.'
             );
-            $display = "none";
         }
 
+        $this->context->smarty->assign('mbway', $mbway);
         $this->context->smarty->assign('display', $display);
-        $this->context->smarty->assign('mbentity', $mbentity);
-        $this->context->smarty->assign('mbreference', $mbreference);
         $this->context->smarty->assign('shop_name', $this->context->shop->name);
         $this->context->smarty->assign('reference', $order->reference);
         $this->context->smarty->assign('result_txt', $result_txt);
         $this->context->smarty->assign('base_dir', __PS_BASE_URI__);
 
-
-        $this->html .= $this->display(__FILE__, 'payment_return.tpl');
+        $this->html .= $this->display(__FILE__, $template);
 
         $result = PaytpvSuscription::getSuscriptionOrderPayments($id_order);
         if ($order->module == $this->name && !empty($result)) {
@@ -2773,7 +2787,7 @@ class Paytpv extends PaymentModule
             'PAYTPV_APM_paysera', 'PAYTPV_APM_postfinance', 'PAYTPV_APM_qiwi_wallet', 'PAYTPV_APM_yandex_money',
             'PAYTPV_APM_mts', 'PAYTPV_APM_beeline', 'PAYTPV_APM_paysafecard', 'PAYTPV_APM_skrill',
             'PAYTPV_APM_webmoney', 'PAYTPV_APM_instant_credit', 'PAYTPV_APM_klarna_payments', 'PAYTPV_APM_paypal',
-            'PAYTPV_APM_waylet'
+            'PAYTPV_APM_waylet', 'PAYTPV_APM_mb_way'
         );
 
         $arrInstantCredit = array(

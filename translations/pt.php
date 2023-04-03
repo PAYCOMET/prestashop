@@ -11,6 +11,7 @@ $_MODULE['<{paytpv}prestashop>paytpv_2cc93fbfb804f22a74c96238ad0cdf86'] = 'Termi
 $_MODULE['<{paytpv}prestashop>paytpv_ada904b28b70b6a8b7d32f259599650c'] = 'Moeda duplicada. Indique uma moeda diferente para cada terminal';
 $_MODULE['<{paytpv}prestashop>paytpv_20015706a8cbd457cbb6ea3e7d5dc9b3'] = 'Configuração atualizada';
 $_MODULE['<{paytpv}prestashop>paytpv_902b0d55fddef6f8d651fe1035b7d4bd'] = 'Erro';
+$_MODULE['<{paytpv}prestashop>paytpv_79db19215007c9f9aa709bece2af3b39'] = 'Deve confirmar a compra no MB WAY, através do aviso ou na área de atividade';
 $_MODULE['<{paytpv}prestashop>paytpv_1d036a5610c1bb53870b58e5dc1d4560'] = 'Este pedido é uma Subscrição';
 $_MODULE['<{paytpv}prestashop>paytpv_8d9c307cb7f3c4a32822a51922d1ceaa'] = 'N';
 $_MODULE['<{paytpv}prestashop>paytpv_18ff74f43da410c5529f7d6fca84f115'] = 'ATIVA';
@@ -101,6 +102,6 @@ $_MODULE['<{paytpv}prestashop>order_suscription_info_ec53a8c4f07baed5d8825072c89
 $_MODULE['<{paytpv}prestashop>payment_bsiframe_99938b17c91170dfb0c2f3f8bc9f2a85'] = 'Pagar';
 $_MODULE['<{paytpv}prestashop>payment_bsiframe_0df6dc54d8913c70ff40a8ffcce9c5f6'] = 'Carregando o formulário de pagamento...';
 $_MODULE['<{paytpv}prestashop>payment_newpage_b933f6b9b13a6706766fb18b75af4f45'] = 'Pagar com Cartão';
-$_MODULE['<{paytpv}prestashop>payment_return_3cb701aea20df40357ca7d755af1cfb3'] = 'Informação de pagamento de';
-$_MODULE['<{paytpv}prestashop>payment_return_1a434befae3f49ae09347ded52032f6f'] = 'Entidade';
-$_MODULE['<{paytpv}prestashop>payment_return_63d5049791d9d79d86e9a108b0a999ca'] = 'Referência';
+$_MODULE['<{paytpv}prestashop>payment_return_multibanco_3cb701aea20df40357ca7d755af1cfb3'] = 'Informação de pagamento de';
+$_MODULE['<{paytpv}prestashop>payment_return_multibanco_1a434befae3f49ae09347ded52032f6f'] = 'Entidade';
+$_MODULE['<{paytpv}prestashop>payment_return_multibanco_63d5049791d9d79d86e9a108b0a999ca'] = 'Referência';
