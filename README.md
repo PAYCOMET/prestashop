@@ -1,4 +1,4 @@
-# Módulo de pago de PAYCOMET para Prestashop 1.7+
+# Módulo de pago de PAYCOMET para Prestashop 1.7+ y Prestashop 8.0+
 
 
 Ofrece la posibilidad de cobrar a tus clientes con tarjeta en tiendas Prestashop 1.7+.
