@@ -64,7 +64,7 @@
         height: {if $simuladorCuotas == 1}auto  {else} 150px{/if}">
 
         <div id="encabezado" class="payment-option-content">
-            <img src="{$logo|escape:'html':'UTF-8'}" alt="{l s='Instant installment payment' mod='paytpv'}">
+            <img src="{$logo|escape:'html':'UTF-8'}" alt="{l s='Buy now and pay later' mod='paytpv'}">
             <div>{l s='Quick and paperless process with the confidence of Banco Sabadell. Have your ID at hand to process the financing.' mod='paytpv'}</div>
         </div>
         {if $simuladorCuotas == 1}
