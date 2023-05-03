@@ -2138,7 +2138,7 @@ class Paytpv extends PaymentModule
                 case 33: // Instant Credti
                     $apmOption->setCallToActionText(
                         $this->trans(
-                            $this->l('Instant installment payment'),
+                            $this->l('Buy now and pay later'),
                             array(),
                             'Modules.MyModule.Shop'
                         )
