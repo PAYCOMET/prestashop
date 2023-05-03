@@ -72,7 +72,7 @@ $_MODULE['<{paytpv}prestashop>paytpv_6b38032e497abe6814bf8095745394eb'] = 'Naveg
 $_MODULE['<{paytpv}prestashop>paytpv_5e64e5973f0eb58814fefbf192cdce73'] = 'Sistema Operativo No identificado';
 $_MODULE['<{paytpv}prestashop>paytpv_6a408e5941b4ed7630edd7c211aed267'] = 'Pagar con tarjeta';
 $_MODULE['<{paytpv}prestashop>paytpv_1691bd9101cc8895aa1aaa7e6833ea91'] = 'Pagar con ';
-$_MODULE['<{paytpv}prestashop>paytpv_a9bda823978eec00057d6f1fc36419dd'] = 'Pago a plazos instantáneo';
+$_MODULE['<{paytpv}prestashop>paytpv_d8ce19c9d478d37cac656199193e2b5a'] = 'Compra ahora y paga después';
 $_MODULE['<{paytpv}prestashop>paytpv_ffd2478830ca2f519f7fe7ee259d4b96'] = 'Le enviaremos su pedido en cuanto recibamos el pago.';
 $_MODULE['<{paytpv}prestashop>paytpv_79db19215007c9f9aa709bece2af3b39'] = 'Debes confirmar la compra en MB WAY, a través del aviso o en el área de actividad';
 $_MODULE['<{paytpv}prestashop>paytpv_3e62032c02e5bed1d467686dce7532b7'] = 'Gracias por confiar en nosotros. Su compra se ha formalizado correctamente y en breve procesaremos su pedido.';
@@ -216,5 +216,5 @@ $_MODULE['<{paytpv}prestashop>payment_return_multibanco_88526efe38fd18179a127024
 $_MODULE['<{paytpv}prestashop>payment_return_multibanco_3cb701aea20df40357ca7d755af1cfb3'] = 'Información de pago de';
 $_MODULE['<{paytpv}prestashop>payment_return_multibanco_1a434befae3f49ae09347ded52032f6f'] = 'Entidad';
 $_MODULE['<{paytpv}prestashop>payment_return_multibanco_63d5049791d9d79d86e9a108b0a999ca'] = 'Referencia';
-$_MODULE['<{paytpv}prestashop>payment_instantcredit_a9bda823978eec00057d6f1fc36419dd'] = 'Pago a plazos instantáneo';
+$_MODULE['<{paytpv}prestashop>payment_instantcredit_d8ce19c9d478d37cac656199193e2b5a'] = 'Compra ahora y paga después';
 $_MODULE['<{paytpv}prestashop>payment_instantcredit_3bf360883416f60cc8da623e9b2f8e55'] = 'Proceso rápido y sin papeles con la confianza de Banco Sabadell. Ten a mano tu DNI para tramitar la financiación.';

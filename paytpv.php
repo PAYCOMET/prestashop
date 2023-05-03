@@ -51,7 +51,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.22';
+        $this->version = '7.7.23';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -774,7 +774,6 @@ class Paytpv extends PaymentModule
     public function getShoppingCart($cart)
     {
         $shoppingCartData = array();
-
         $i = 0;
         $amount = 0;
         foreach ($cart->getProducts() as $key => $product) {
@@ -790,7 +789,8 @@ class Paytpv extends PaymentModule
                 if ((isset($product["reduction_type"]) ? $product["reduction_type"] : "") == "amount") {
                     $shoppingCartData[$key + $i]["discountValue"] = number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '');
                 } else if ((isset($product["reduction_type"]) ? $product["reduction_type"] : "") == "percentage") {
-                    $shoppingCartData[$key + $i]["discount"] = number_format((isset($product["specific_prices"]["reduction"]) ? $product["specific_prices"]["reduction"] : 0) * 10000, 0, '.', '');
+                    //$shoppingCartData[$key + $i]["discount"] = number_format((isset($product["specific_prices"]["reduction"]) ? $product["specific_prices"]["reduction"] : 0) * 10000, 0, '.', '');
+                    $shoppingCartData[$key + $i]["discountValue"] = number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '');
                 }
                 
                 $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '')) * (isset($product["quantity"]) ? $product["quantity"] : 1);
@@ -806,7 +806,8 @@ class Paytpv extends PaymentModule
                 if ((isset($product["reduction_type"]) ? $product["reduction_type"] : "") == "amount") {
                     $shoppingCartData[$key + $i]["discountValue"] = number_format((isset($product["reduction"]) ? $product["reduction"] : 0) * 100, 0, '.', '');
                 } else if ($product["reduction_type"] == "percentage") {
-                    $shoppingCartData[$key + $i]["discount"] = number_format((isset($product["specific_prices"]["reduction"]) ? $product["specific_prices"]["reduction"] : 0) * 10000, 0, '.', '');
+                    //$shoppingCartData[$key + $i]["discount"] = number_format((isset($product["specific_prices"]["reduction"]) ? $product["specific_prices"]["reduction"] : 0) * 10000, 0, '.', '');
+                    $shoppingCartData[$key + $i]["discountValue"] = number_format((isset($product["reduction"]) ? $product["reduction"] : 0) * 100, 0, '.', '');
                 }
 
                 $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format((isset($product["reduction"]) ? $product["reduction"] : 0) * 100, 0, '.', '')) * (isset($product["quantity"]) ? $product["quantity"] : 1);
@@ -2137,7 +2138,7 @@ class Paytpv extends PaymentModule
                 case 33: // Instant Credti
                     $apmOption->setCallToActionText(
                         $this->trans(
-                            $this->l('Instant installment payment'),
+                            $this->l('Buy now and pay later'),
                             array(),
                             'Modules.MyModule.Shop'
                         )
