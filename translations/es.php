@@ -50,6 +50,7 @@ $_MODULE['<{paytpv}prestashop>paytpv_4861a50c2be35ec00992044331cb92db'] = 'Altur
 $_MODULE['<{paytpv}prestashop>paytpv_ce1e50c31b795e7ed2a023e6bb1e4d96'] = 'Altura del Iframe en pixels (Min. 440)';
 $_MODULE['<{paytpv}prestashop>paytpv_3f0a0d50746c96d6f725bee13aef7be3'] = 'Deshabilitar Almacenar Tarjetas';
 $_MODULE['<{paytpv}prestashop>paytpv_f180ebd824f30a0c68ab99169340cb99'] = 'Activar Suscripciones';
+$_MODULE['<{paytpv}prestashop>paytpv_f27a3ce7a0632d1d6d71be78c11a3a33'] = 'Activar Reembolso Parcial';
 $_MODULE['<{paytpv}prestashop>paytpv_b8d8952ddd5e6db1936bd51b88edc760'] = 'Métodos de pago';
 $_MODULE['<{paytpv}prestashop>paytpv_eaa474377afa3956f5ebb27c83703c3a'] = 'Instant Credit';
 $_MODULE['<{paytpv}prestashop>paytpv_d0384211cbe162db92d24c0d8f563e01'] = 'Simulador';
