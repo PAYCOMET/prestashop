@@ -86,6 +86,9 @@ class Paytpv extends PaymentModule
         if (isset($config['PAYTPV_SUSCRIPTIONS'])) {
             $this->suscriptions = $config['PAYTPV_SUSCRIPTIONS'];
         }
+        if (isset($config['PAYTPV_PARTIAL_REFUNDS'])) {
+            $this->partial_refunds = $config['PAYTPV_PARTIAL_REFUNDS'];
+        }
         if (isset($config['PAYTPV_FIRSTPURCHASE_SCORING'])) {
             $this->firstpurchase_scoring = $config['PAYTPV_FIRSTPURCHASE_SCORING'];
         }
@@ -441,6 +444,7 @@ class Paytpv extends PaymentModule
             Configuration::updateValue('PAYTPV_NEWPAGEPAYMENT', Tools::getValue('newpage_payment'));
             Configuration::updateValue('PAYTPV_IFRAME_HEIGHT', Tools::getValue('iframe_height'));
             Configuration::updateValue('PAYTPV_SUSCRIPTIONS', Tools::getValue('suscriptions'));
+            Configuration::updateValue('PAYTPV_PARTIAL_REFUNDS', Tools::getValue('partial_refunds'));
             Configuration::updateValue('PAYTPV_INTEGRATION', Tools::getValue('integration'));
             // Save Paytpv Terminals
             PaytpvTerminal::removeTerminals();
@@ -1138,6 +1142,7 @@ class Paytpv extends PaymentModule
         $arrValues["newpage_payment"] = $config["PAYTPV_NEWPAGEPAYMENT"];
         $arrValues["iframe_height"] = ($config["PAYTPV_IFRAME_HEIGHT"] != "") ? $config["PAYTPV_IFRAME_HEIGHT"] : 440;
         $arrValues["suscriptions"] = $config["PAYTPV_SUSCRIPTIONS"];
+        $arrValues["partial_refunds"] = $config["PAYTPV_PARTIAL_REFUNDS"];
 
         $arrValues["firstpurchase_scoring"] = $config["PAYTPV_FIRSTPURCHASE_SCORING"];
         $arrValues["firstpurchase_scoring_score"] = $config["PAYTPV_FIRSTPURCHASE_SCORING_SCO"];
@@ -1446,6 +1451,23 @@ class Paytpv extends PaymentModule
                             )
                         ),
                     ),
+                    array(
+                        'type' => 'switch',
+                        'label' => $this->l('Activate Partial Refunds'),
+                        'name' => 'partial_refunds',
+                        'values' => array(
+                            array(
+                                'id' => 'partial_refunds_active_on',
+                                'value' => false,
+                                'label' => $this->l('No')
+                            ),
+                            array(
+                                'id' => 'partial_refunds_active_off',
+                                'value' => true,
+                                'label' => $this->l('Yes')
+                            )
+                        )
+                    )
                 )
             ),
         );
@@ -1923,6 +1945,7 @@ class Paytpv extends PaymentModule
             'key' => Context::getContext()->customer->secure_key
         );
 
+        $partial_refunds = (int) Configuration::get('PAYTPV_PARTIAL_REFUNDS');
         $active_suscriptions = (int) Configuration::get('PAYTPV_SUSCRIPTIONS');
         $paytpv_integration = (int) Configuration::get('PAYTPV_INTEGRATION');
         $newpage_payment = (int) Configuration::get('PAYTPV_NEWPAGEPAYMENT');
@@ -1996,6 +2019,7 @@ class Paytpv extends PaymentModule
         return array(
             'msg_paytpv' => '',
             'active_suscriptions' => $active_suscriptions,
+            'partial_refunds' => $partial_refunds,
             'saved_card' => $saved_card,
             'id_cart' => $cart->id,
             'paytpv_iframe' => $iframeURL,
@@ -2773,7 +2797,7 @@ class Paytpv extends PaymentModule
     {
         $arrPaycomet = array(
             'PAYTPV_CLIENTCODE', 'PAYTPV_INTEGRATION', 'PAYTPV_APIKEY', 'PAYTPV_NEWPAGEPAYMENT',
-            'PAYTPV_IFRAME_HEIGHT', 'PAYTPV_SUSCRIPTIONS', 'PAYTPV_FIRSTPURCHASE_SCORING',
+            'PAYTPV_IFRAME_HEIGHT', 'PAYTPV_SUSCRIPTIONS', 'PAYTPV_PARTIAL_REFUNDS', 'PAYTPV_FIRSTPURCHASE_SCORING',
             'PAYTPV_FIRSTPURCHASE_SCORING_SCO', 'PAYTPV_SESSIONTIME_SCORING', 'PAYTPV_SESSIONTIME_SCORING_VAL',
             'PAYTPV_SESSIONTIME_SCORING_SCORE', 'PAYTPV_DCOUNTRY_SCORING', 'PAYTPV_DCOUNTRY_SCORING_VAL',
             'PAYTPV_DCOUNTRY_SCORING_SCORE', 'PAYTPV_IPCHANGE_SCORING', 'PAYTPV_IPCHANGE_SCORING_SCORE',
@@ -2966,6 +2990,9 @@ class Paytpv extends PaymentModule
     */
     public function hookActionProductCancel($params)
     {
+        if ($params['action'] == 2 && Configuration::get('PAYTPV_PARTIAL_REFUNDS') != 1) {
+            return false;
+        }
 
         if (Tools::isSubmit('generateDiscount')) {
             return false;
@@ -2999,32 +3026,50 @@ class Paytpv extends PaymentModule
         $authcode = $orderPayment->transaction_id;
 
         $products = $order->getProducts();
-        $cancel_quantity = Tools::getValue('cancelQuantity');
+        //$cancel_quantity = Tools::getValue('cancelQuantity');
 
-        $amt = (float) ($products[(int) $order_detail->id]['product_price_wt'] *
-            (int) $cancel_quantity[(int) $order_detail->id]);
-        $amount = number_format($amt * 100, 0, '.', '');
+        $total = Tools::getValue('cancel_product');
 
-        $paytpv_order_ref = str_pad((int) $order->id_cart, 8, "0", STR_PAD_LEFT);
+        if (max(array_keys($products)) == $params['id_order_detail']) {
+            $amt = 0;
+            foreach ($products as $key => $value) {
+                if($total['amount_'.$key] > 0) {
+                    $amt = $amt + (float) $total['amount_'.$key];
+                } else {
+                    $amt = $amt + ((float) $value['product_price_wt'] * $total['quantity_'.$key]);
+                }
+                
+            }
 
-        $response = $this->makeRefund(
-            $params['order'],
-            $paytpv_iduser,
-            $order->id,
-            $paytpv_order_ref,
-            $paytpv_date,
-            $currency->iso_code,
-            $authcode,
-            $amount,
-            1
-        );
+            if($total['shipping'] == 1) {
+                $amt = $amt + (float) $order->total_shipping;
+            } else {
+                $amt = $amt + (float) $total['shipping_amount'];
+            }
 
-        $refund_txt = $response["txt"];
+            $amount = number_format((float) $amt * 100, 0, '.', '');
 
-        $message = $this->l('PAYCOMET Refund ') .  ", " . $amt . " " . $currency->sign . " [" . $refund_txt . "]" .
-            '<br>';
+            $paytpv_order_ref = str_pad((int) $order->id_cart, 8, "0", STR_PAD_LEFT);
 
-        $this->addNewPrivateMessage((int) $order->id, $message);
+            $response = $this->makeRefund(
+                $params['order'],
+                $paytpv_iduser,
+                $order->id,
+                $paytpv_order_ref,
+                $paytpv_date,
+                $currency->iso_code,
+                $authcode,
+                $amount,
+                1
+            );
+
+            $refund_txt = $response["txt"];
+
+            $message = $this->l('PAYCOMET Refund ') .  ", " . $amt . " " . $currency->sign . " [" . $refund_txt . "]" .
+                '<br>';
+
+            $this->addNewPrivateMessage((int) $order->id, $message);
+        }
     }
 
     private function makeRefund(
