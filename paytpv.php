@@ -292,7 +292,8 @@ class Paytpv extends PaymentModule
             !$this->registerHook('header') ||
             !$this->registerHook('displayOrderConfirmation') ||
             !$this->registerHook('displayOrderDetail') ||
-            !$this->registerHook('actionEmailAddAfterContent')
+            !$this->registerHook('actionEmailAddAfterContent') ||
+            !$this->registerHook('actionOrderSlipAdd')
         ) {
             return false;
         }
@@ -796,9 +797,8 @@ class Paytpv extends PaymentModule
                     //$shoppingCartData[$key + $i]["discount"] = number_format((isset($product["specific_prices"]["reduction"]) ? $product["specific_prices"]["reduction"] : 0) * 10000, 0, '.', '');
                     $shoppingCartData[$key + $i]["discountValue"] = number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '');
                 }
-                
-                $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '')) * (isset($product["quantity"]) ? $product["quantity"] : 1);
 
+                $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '')) * (isset($product["quantity"]) ? $product["quantity"] : 1);
             } else {
                 $shoppingCartData[$key + $i]["sku"] = "1";
                 $shoppingCartData[$key + $i]["quantity"] = 1;
@@ -830,8 +830,8 @@ class Paytpv extends PaymentModule
 
         // Se calculan los impuestos
         $tax = number_format($cart->getOrderTotal(true, Cart::BOTH) * 100, 0, '.', '') - $amount;
-       
-        if ((int)$tax!=0) {
+
+        if ((int)$tax != 0) {
             $i++;
             $shoppingCartData[$key + $i]["sku"] = "1";
             $shoppingCartData[$key + $i]["quantity"] = 1;
@@ -906,14 +906,14 @@ class Paytpv extends PaymentModule
             '39', '1876', '81', '962', '254', '686', '850', '82', '965', '996', '856', '371', '961', '266', '231',
             '218', '417', '370', '352', '853', '389', '261', '265', '60', '960', '223', '356', '692', '596', '222',
             '52', '691', '373', '377', '976', '1664', '212', '258', '95', '264', '674', '977', '31', '687', '64', '505',
-             '227', '234', '683', '672', '670', '47', '968', '680', '507', '675', '595', '51', '63', '48', '351',
-             '1787', '974', '262', '40', '250', '378', '239', '966', '221', '381', '248', '232', '65', '421', '386',
+            '227', '234', '683', '672', '670', '47', '968', '680', '507', '675', '595', '51', '63', '48', '351',
+            '1787', '974', '262', '40', '250', '378', '239', '966', '221', '381', '248', '232', '65', '421', '386',
             '677', '252', '27', '94', '290', '1869', '1758', '249', '597', '268', '46', '41', '963', '886', '66',
             '228', '676', '1868', '216', '90', '993', '1649', '688', '256', '380', '971', '598', '678', '379', '58',
             '84', '681', '969', '967', '260', '263', '1', '7'
         ];
         foreach ($prefix_array as $key => $prefix) {
-            if (substr($phone, 0, strlen($prefix)+1) == '+' . $prefix)
+            if (substr($phone, 0, strlen($prefix) + 1) == '+' . $prefix)
                 return $prefix;
         }
     }
@@ -2984,13 +2984,82 @@ class Paytpv extends PaymentModule
         return (empty($result) === true) ? false : true;
     }
 
+    public function hookActionOrderSlipAdd($params)
+    {
+        if (!isset(Tools::getValue('cancel_product')['shipping']) && Configuration::get('PAYTPV_PARTIAL_REFUNDS') != 1) {
+            return false;
+        }
+        
+        if (Tools::isSubmit('generateDiscount')) {
+            return false;
+        } elseif (
+            $params['order']->module != $this->name ||
+            !($order = $params['order']) ||
+            !Validate::isLoadedObject($order)
+        ) {
+            return false;
+        } elseif (!$order->hasBeenPaid()) {
+            return false;
+        }
+        
+        $paytpv_order = PaytpvOrder::getOrder((int) $order->id);
+        if (empty($paytpv_order)) {
+            return false;
+        }
 
+        $paytpv_date = date("Ymd", strtotime($paytpv_order['date']));
+        $paytpv_iduser = $paytpv_order["paytpv_iduser"];
+
+        $id_currency = $order->id_currency;
+        $currency = new Currency((int) $id_currency);
+
+        $orderPayment = $order->getOrderPaymentCollection()->getFirst();
+        $authcode = $orderPayment->transaction_id;
+
+        $products = $order->getProducts();
+        //$cancel_quantity = Tools::getValue('cancelQuantity');
+
+        $amt = 0;
+        
+        $amt = $amt + ((float) OrderSlip::getOrdersSlip((int)$params['order']->id_customer, (int)$params['order']->id)[0]['shipping_cost_amount']);
+        
+        if(!isset(Tools::getValue('cancel_product')['shipping'])) {
+            $amt = $amt + ((float) OrderSlip::getOrdersSlip((int)$params['order']->id_customer, (int)$params['order']->id)[0]['amount']);
+        }
+
+        if($amt > 0) {
+            $amount = number_format(floor((float) $amt * 100), 0, '.', '');
+        
+
+            $paytpv_order_ref = str_pad((int) $order->id_cart, 8, "0", STR_PAD_LEFT);
+
+            $response = $this->makeRefund(
+                $params['order'],
+                $paytpv_iduser,
+                $order->id,
+                $paytpv_order_ref,
+                $paytpv_date,
+                $currency->iso_code,
+                $authcode,
+                $amount,
+                1
+            );
+
+            $refund_txt = $response["txt"];
+
+            $message = $this->l('PAYCOMET Refund ') .  ", " . $amt . " " . $currency->sign . " [" . $refund_txt . "]" .
+                '<br>';  
+
+            $this->addNewPrivateMessage((int) $order->id, $message);
+        }
+    }
+    
     /*
         Refund
     */
     public function hookActionProductCancel($params)
     {
-        if ($params['action'] == 2 && Configuration::get('PAYTPV_PARTIAL_REFUNDS') != 1) {
+        if ($params['action'] == 2) {
             return false;
         }
 
@@ -3026,28 +3095,17 @@ class Paytpv extends PaymentModule
         $authcode = $orderPayment->transaction_id;
 
         $products = $order->getProducts();
-        //$cancel_quantity = Tools::getValue('cancelQuantity');
-
-        $total = Tools::getValue('cancel_product');
-
-        if (max(array_keys($products)) == $params['id_order_detail']) {
-            $amt = 0;
+        
+        $amt = 0;
+        
+        if ($params['action'] != 2) {
             foreach ($products as $key => $value) {
-                if($total['amount_'.$key] > 0) {
-                    $amt = $amt + (float) $total['amount_'.$key];
-                } else {
-                    $amt = $amt + ((float) $value['product_price_wt'] * $total['quantity_'.$key]);
+                if($params['id_order_detail'] == $key) {
+                    $amt = $amt + ((float) $value['unit_price_tax_incl'] * $params['cancel_quantity']);
                 }
-                
             }
 
-            if($total['shipping'] == 1) {
-                $amt = $amt + (float) $order->total_shipping;
-            } else {
-                $amt = $amt + (float) $total['shipping_amount'];
-            }
-
-            $amount = number_format((float) $amt * 100, 0, '.', '');
+            $amount = number_format(floor((float) $amt * 100), 0, '.', '');
 
             $paytpv_order_ref = str_pad((int) $order->id_cart, 8, "0", STR_PAD_LEFT);
 
@@ -3210,7 +3268,6 @@ class Paytpv extends PaymentModule
 
     public function hookDisplayAdminOrder($params)
     {
-
         if (Tools::isSubmit('submitPayTpvRefund')) {
             $this->doTotalRefund($params['id_order']);
         }
