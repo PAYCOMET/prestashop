@@ -1326,16 +1326,17 @@ class Paytpv extends PaymentModule
                     'values' => array(
                         array(
                             'id' => 'active_on',
-                            'value' => 0,
-                            'label' => $this->l('No')
+                            'value' => 1,
+                            'label' => $this->l('Yes')
                         ),
                         array(
                             'id' => 'active_off',
-                            'value' => 1,
-                            'label' => $this->l('Yes')
+                            'value' => 0,
+                            'label' => $this->l('No')
                         )
-                    ),
+                    )
                 )
+
             );
 
             $terminal_form = array(
@@ -1424,15 +1425,15 @@ class Paytpv extends PaymentModule
                         'values' => array(
                             array(
                                 'id' => 'active_on',
-                                'value' => 0,
-                                'label' => $this->l('No')
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
                                 'id' => 'active_off',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
-                        ),
+                        )
                     ),
                     array(
                         'type' => 'switch',
@@ -1441,15 +1442,15 @@ class Paytpv extends PaymentModule
                         'values' => array(
                             array(
                                 'id' => 'active_on',
-                                'value' => 0,
-                                'label' => $this->l('No')
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
                                 'id' => 'active_off',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
-                        ),
+                        )
                     ),
                     array(
                         'type' => 'switch',
@@ -1457,14 +1458,14 @@ class Paytpv extends PaymentModule
                         'name' => 'partial_refunds',
                         'values' => array(
                             array(
-                                'id' => 'partial_refunds_active_on',
-                                'value' => false,
-                                'label' => $this->l('No')
+                                'id' => 'active_on',
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
-                                'id' => 'partial_refunds_active_off',
-                                'value' => true,
-                                'label' => $this->l('Yes')
+                                'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
                         )
                     )
@@ -1622,15 +1623,15 @@ class Paytpv extends PaymentModule
                         'values' => array(
                             array(
                                 'id' => 'active_on',
-                                'value' => 0,
-                                'label' => $this->l('No')
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
                                 'id' => 'active_off',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
-                        ),
+                        )
                     ),
                     array(
                         'type' => 'select',
@@ -1650,15 +1651,15 @@ class Paytpv extends PaymentModule
                         'values' => array(
                             array(
                                 'id' => 'active_on',
-                                'value' => 0,
-                                'label' => $this->l('No')
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
                                 'id' => 'active_off',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
-                        ),
+                        )
                     ),
                     array(
                         'type' => 'select',
@@ -1687,15 +1688,15 @@ class Paytpv extends PaymentModule
                         'values' => array(
                             array(
                                 'id' => 'active_on',
-                                'value' => 0,
-                                'label' => $this->l('No')
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
                                 'id' => 'active_off',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
-                        ),
+                        )
                     ),
                     array(
                         'type' => 'select',
@@ -1725,15 +1726,15 @@ class Paytpv extends PaymentModule
                         'values' => array(
                             array(
                                 'id' => 'active_on',
-                                'value' => 0,
-                                'label' => $this->l('No')
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
                                 'id' => 'active_off',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
-                        ),
+                        )
                     ),
                     array(
                         'type' => 'select',
@@ -1752,15 +1753,15 @@ class Paytpv extends PaymentModule
                         'values' => array(
                             array(
                                 'id' => 'active_on',
-                                'value' => 0,
-                                'label' => $this->l('No')
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
                                 'id' => 'active_off',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
-                        ),
+                        )
                     ),
                     array(
                         'type' => 'select',
@@ -1779,15 +1780,15 @@ class Paytpv extends PaymentModule
                         'values' => array(
                             array(
                                 'id' => 'active_on',
-                                'value' => 0,
-                                'label' => $this->l('No')
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
                                 'id' => 'active_off',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
-                        ),
+                        )
                     ),
                     array(
                         'type' => 'select',
