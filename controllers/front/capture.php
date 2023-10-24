@@ -176,6 +176,8 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
             $subscription_enddate = date('Ymd', strtotime("+" . $dias_subscription . " days"));
         }
 
+        $salida = $URLKO; // Por defecto siempre redirigir a KO
+
         if ($paytpv->apikey != '') {
             $merchantData = $paytpv->getMerchantData($this->context->cart);
             $userInteraction = '1';
@@ -223,12 +225,9 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     $createSubscriptionResponse->authCode != "") {
                     $salida = $URLOK;
                 // Error
-                } else {
-                    $salida = $URLKO;
                 }
             } elseif ($dcc == 1) {
                 $OPERATION = 116;
-                
                 try {
                     $payment =  [
                         'terminal' => (int) $idterminal,
@@ -257,16 +256,14 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                         '',
                         $payment
                     );
-
+                    
                     // Hay challenge
-                    if ($formResponse->errorCode == 0) {
+                    if (isset($formResponse->challengeUrl) &&
+                        $formResponse->challengeUrl != ""
+                    ) {
                         $salida = $formResponse->challengeUrl;
-                    // Error
-                    } else {
-                        $salida = $URLKO;
                     }
                 } catch (exception $e) {
-                    $salida = $URLKO;
                 }
             } else {
                 try {
@@ -305,15 +302,10 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                         $executePurchaseResponse->authCode != "") {
                         $salida = $URLOK;
                     // Error
-                    } else {
-                        $salida = $URLKO;
                     }
                 } catch (exception $e) {
-                    $salida = $URLKO;
                 }
             }
-        } else {
-            $salida = $URLKO;
         }
 
         Tools::redirect($salida);

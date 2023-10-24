@@ -51,7 +51,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.23';
+        $this->version = '7.7.24';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -85,6 +85,9 @@ class Paytpv extends PaymentModule
         }
         if (isset($config['PAYTPV_SUSCRIPTIONS'])) {
             $this->suscriptions = $config['PAYTPV_SUSCRIPTIONS'];
+        }
+        if (isset($config['PAYTPV_PARTIAL_REFUNDS'])) {
+            $this->partial_refunds = $config['PAYTPV_PARTIAL_REFUNDS'];
         }
         if (isset($config['PAYTPV_FIRSTPURCHASE_SCORING'])) {
             $this->firstpurchase_scoring = $config['PAYTPV_FIRSTPURCHASE_SCORING'];
@@ -289,7 +292,8 @@ class Paytpv extends PaymentModule
             !$this->registerHook('header') ||
             !$this->registerHook('displayOrderConfirmation') ||
             !$this->registerHook('displayOrderDetail') ||
-            !$this->registerHook('actionEmailAddAfterContent')
+            !$this->registerHook('actionEmailAddAfterContent') ||
+            !$this->registerHook('actionOrderSlipAdd')
         ) {
             return false;
         }
@@ -441,6 +445,7 @@ class Paytpv extends PaymentModule
             Configuration::updateValue('PAYTPV_NEWPAGEPAYMENT', Tools::getValue('newpage_payment'));
             Configuration::updateValue('PAYTPV_IFRAME_HEIGHT', Tools::getValue('iframe_height'));
             Configuration::updateValue('PAYTPV_SUSCRIPTIONS', Tools::getValue('suscriptions'));
+            Configuration::updateValue('PAYTPV_PARTIAL_REFUNDS', Tools::getValue('partial_refunds'));
             Configuration::updateValue('PAYTPV_INTEGRATION', Tools::getValue('integration'));
             // Save Paytpv Terminals
             PaytpvTerminal::removeTerminals();
@@ -792,9 +797,8 @@ class Paytpv extends PaymentModule
                     //$shoppingCartData[$key + $i]["discount"] = number_format((isset($product["specific_prices"]["reduction"]) ? $product["specific_prices"]["reduction"] : 0) * 10000, 0, '.', '');
                     $shoppingCartData[$key + $i]["discountValue"] = number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '');
                 }
-                
-                $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '')) * (isset($product["quantity"]) ? $product["quantity"] : 1);
 
+                $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '')) * (isset($product["quantity"]) ? $product["quantity"] : 1);
             } else {
                 $shoppingCartData[$key + $i]["sku"] = "1";
                 $shoppingCartData[$key + $i]["quantity"] = 1;
@@ -826,8 +830,8 @@ class Paytpv extends PaymentModule
 
         // Se calculan los impuestos
         $tax = number_format($cart->getOrderTotal(true, Cart::BOTH) * 100, 0, '.', '') - $amount;
-       
-        if ((int)$tax!=0) {
+
+        if ((int)$tax != 0) {
             $i++;
             $shoppingCartData[$key + $i]["sku"] = "1";
             $shoppingCartData[$key + $i]["quantity"] = 1;
@@ -902,14 +906,14 @@ class Paytpv extends PaymentModule
             '39', '1876', '81', '962', '254', '686', '850', '82', '965', '996', '856', '371', '961', '266', '231',
             '218', '417', '370', '352', '853', '389', '261', '265', '60', '960', '223', '356', '692', '596', '222',
             '52', '691', '373', '377', '976', '1664', '212', '258', '95', '264', '674', '977', '31', '687', '64', '505',
-             '227', '234', '683', '672', '670', '47', '968', '680', '507', '675', '595', '51', '63', '48', '351',
-             '1787', '974', '262', '40', '250', '378', '239', '966', '221', '381', '248', '232', '65', '421', '386',
+            '227', '234', '683', '672', '670', '47', '968', '680', '507', '675', '595', '51', '63', '48', '351',
+            '1787', '974', '262', '40', '250', '378', '239', '966', '221', '381', '248', '232', '65', '421', '386',
             '677', '252', '27', '94', '290', '1869', '1758', '249', '597', '268', '46', '41', '963', '886', '66',
             '228', '676', '1868', '216', '90', '993', '1649', '688', '256', '380', '971', '598', '678', '379', '58',
             '84', '681', '969', '967', '260', '263', '1', '7'
         ];
         foreach ($prefix_array as $key => $prefix) {
-            if (substr($phone, 0, strlen($prefix)+1) == '+' . $prefix)
+            if (substr($phone, 0, strlen($prefix) + 1) == '+' . $prefix)
                 return $prefix;
         }
     }
@@ -1138,6 +1142,7 @@ class Paytpv extends PaymentModule
         $arrValues["newpage_payment"] = $config["PAYTPV_NEWPAGEPAYMENT"];
         $arrValues["iframe_height"] = ($config["PAYTPV_IFRAME_HEIGHT"] != "") ? $config["PAYTPV_IFRAME_HEIGHT"] : 440;
         $arrValues["suscriptions"] = $config["PAYTPV_SUSCRIPTIONS"];
+        $arrValues["partial_refunds"] = $config["PAYTPV_PARTIAL_REFUNDS"];
 
         $arrValues["firstpurchase_scoring"] = $config["PAYTPV_FIRSTPURCHASE_SCORING"];
         $arrValues["firstpurchase_scoring_score"] = $config["PAYTPV_FIRSTPURCHASE_SCORING_SCO"];
@@ -1321,16 +1326,17 @@ class Paytpv extends PaymentModule
                     'values' => array(
                         array(
                             'id' => 'active_on',
-                            'value' => 0,
-                            'label' => $this->l('No')
+                            'value' => 1,
+                            'label' => $this->l('Yes')
                         ),
                         array(
                             'id' => 'active_off',
-                            'value' => 1,
-                            'label' => $this->l('Yes')
+                            'value' => 0,
+                            'label' => $this->l('No')
                         )
-                    ),
+                    )
                 )
+
             );
 
             $terminal_form = array(
@@ -1419,15 +1425,15 @@ class Paytpv extends PaymentModule
                         'values' => array(
                             array(
                                 'id' => 'active_on',
-                                'value' => 0,
-                                'label' => $this->l('No')
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
                                 'id' => 'active_off',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
-                        ),
+                        )
                     ),
                     array(
                         'type' => 'switch',
@@ -1436,16 +1442,33 @@ class Paytpv extends PaymentModule
                         'values' => array(
                             array(
                                 'id' => 'active_on',
-                                'value' => 0,
-                                'label' => $this->l('No')
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
                                 'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->l('No')
+                            )
+                        )
+                    ),
+                    array(
+                        'type' => 'switch',
+                        'label' => $this->l('Activate Partial Refunds'),
+                        'name' => 'partial_refunds',
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
                                 'value' => 1,
                                 'label' => $this->l('Yes')
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
-                        ),
-                    ),
+                        )
+                    )
                 )
             ),
         );
@@ -1600,15 +1623,15 @@ class Paytpv extends PaymentModule
                         'values' => array(
                             array(
                                 'id' => 'active_on',
-                                'value' => 0,
-                                'label' => $this->l('No')
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
                                 'id' => 'active_off',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
-                        ),
+                        )
                     ),
                     array(
                         'type' => 'select',
@@ -1628,15 +1651,15 @@ class Paytpv extends PaymentModule
                         'values' => array(
                             array(
                                 'id' => 'active_on',
-                                'value' => 0,
-                                'label' => $this->l('No')
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
                                 'id' => 'active_off',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
-                        ),
+                        )
                     ),
                     array(
                         'type' => 'select',
@@ -1665,15 +1688,15 @@ class Paytpv extends PaymentModule
                         'values' => array(
                             array(
                                 'id' => 'active_on',
-                                'value' => 0,
-                                'label' => $this->l('No')
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
                                 'id' => 'active_off',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
-                        ),
+                        )
                     ),
                     array(
                         'type' => 'select',
@@ -1703,15 +1726,15 @@ class Paytpv extends PaymentModule
                         'values' => array(
                             array(
                                 'id' => 'active_on',
-                                'value' => 0,
-                                'label' => $this->l('No')
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
                                 'id' => 'active_off',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
-                        ),
+                        )
                     ),
                     array(
                         'type' => 'select',
@@ -1730,15 +1753,15 @@ class Paytpv extends PaymentModule
                         'values' => array(
                             array(
                                 'id' => 'active_on',
-                                'value' => 0,
-                                'label' => $this->l('No')
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
                                 'id' => 'active_off',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
-                        ),
+                        )
                     ),
                     array(
                         'type' => 'select',
@@ -1757,15 +1780,15 @@ class Paytpv extends PaymentModule
                         'values' => array(
                             array(
                                 'id' => 'active_on',
-                                'value' => 0,
-                                'label' => $this->l('No')
+                                'value' => 1,
+                                'label' => $this->l('Yes')
                             ),
                             array(
                                 'id' => 'active_off',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
+                                'value' => 0,
+                                'label' => $this->l('No')
                             )
-                        ),
+                        )
                     ),
                     array(
                         'type' => 'select',
@@ -1923,6 +1946,7 @@ class Paytpv extends PaymentModule
             'key' => Context::getContext()->customer->secure_key
         );
 
+        $partial_refunds = (int) Configuration::get('PAYTPV_PARTIAL_REFUNDS');
         $active_suscriptions = (int) Configuration::get('PAYTPV_SUSCRIPTIONS');
         $paytpv_integration = (int) Configuration::get('PAYTPV_INTEGRATION');
         $newpage_payment = (int) Configuration::get('PAYTPV_NEWPAGEPAYMENT');
@@ -1996,6 +2020,7 @@ class Paytpv extends PaymentModule
         return array(
             'msg_paytpv' => '',
             'active_suscriptions' => $active_suscriptions,
+            'partial_refunds' => $partial_refunds,
             'saved_card' => $saved_card,
             'id_cart' => $cart->id,
             'paytpv_iframe' => $iframeURL,
@@ -2773,7 +2798,7 @@ class Paytpv extends PaymentModule
     {
         $arrPaycomet = array(
             'PAYTPV_CLIENTCODE', 'PAYTPV_INTEGRATION', 'PAYTPV_APIKEY', 'PAYTPV_NEWPAGEPAYMENT',
-            'PAYTPV_IFRAME_HEIGHT', 'PAYTPV_SUSCRIPTIONS', 'PAYTPV_FIRSTPURCHASE_SCORING',
+            'PAYTPV_IFRAME_HEIGHT', 'PAYTPV_SUSCRIPTIONS', 'PAYTPV_PARTIAL_REFUNDS', 'PAYTPV_FIRSTPURCHASE_SCORING',
             'PAYTPV_FIRSTPURCHASE_SCORING_SCO', 'PAYTPV_SESSIONTIME_SCORING', 'PAYTPV_SESSIONTIME_SCORING_VAL',
             'PAYTPV_SESSIONTIME_SCORING_SCORE', 'PAYTPV_DCOUNTRY_SCORING', 'PAYTPV_DCOUNTRY_SCORING_VAL',
             'PAYTPV_DCOUNTRY_SCORING_SCORE', 'PAYTPV_IPCHANGE_SCORING', 'PAYTPV_IPCHANGE_SCORING_SCORE',
@@ -2960,12 +2985,84 @@ class Paytpv extends PaymentModule
         return (empty($result) === true) ? false : true;
     }
 
+    public function hookActionOrderSlipAdd($params)
+    {
+        if (!isset(Tools::getValue('cancel_product')['shipping']) && Configuration::get('PAYTPV_PARTIAL_REFUNDS') != 1) {
+            return false;
+        }
+        
+        if (Tools::isSubmit('generateDiscount')) {
+            return false;
+        } elseif (
+            $params['order']->module != $this->name ||
+            !($order = $params['order']) ||
+            !Validate::isLoadedObject($order)
+        ) {
+            return false;
+        } elseif (!$order->hasBeenPaid()) {
+            return false;
+        }
+        
+        $paytpv_order = PaytpvOrder::getOrder((int) $order->id);
+        if (empty($paytpv_order)) {
+            return false;
+        }
 
+        $paytpv_date = date("Ymd", strtotime($paytpv_order['date']));
+        $paytpv_iduser = $paytpv_order["paytpv_iduser"];
+
+        $id_currency = $order->id_currency;
+        $currency = new Currency((int) $id_currency);
+
+        $orderPayment = $order->getOrderPaymentCollection()->getFirst();
+        $authcode = $orderPayment->transaction_id;
+
+        $products = $order->getProducts();
+        //$cancel_quantity = Tools::getValue('cancelQuantity');
+
+        $amt = 0;
+        
+        $amt = $amt + ((float) OrderSlip::getOrdersSlip((int)$params['order']->id_customer, (int)$params['order']->id)[0]['shipping_cost_amount']);
+        
+        if(!isset(Tools::getValue('cancel_product')['shipping'])) {
+            $amt = $amt + ((float) OrderSlip::getOrdersSlip((int)$params['order']->id_customer, (int)$params['order']->id)[0]['amount']);
+        }
+
+        if($amt > 0) {
+            $amount = number_format(floor((float) $amt * 100), 0, '.', '');
+        
+
+            $paytpv_order_ref = str_pad((int) $order->id_cart, 8, "0", STR_PAD_LEFT);
+
+            $response = $this->makeRefund(
+                $params['order'],
+                $paytpv_iduser,
+                $order->id,
+                $paytpv_order_ref,
+                $paytpv_date,
+                $currency->iso_code,
+                $authcode,
+                $amount,
+                1
+            );
+
+            $refund_txt = $response["txt"];
+
+            $message = $this->l('PAYCOMET Refund ') .  ", " . $amt . " " . $currency->sign . " [" . $refund_txt . "]" .
+                '<br>';  
+
+            $this->addNewPrivateMessage((int) $order->id, $message);
+        }
+    }
+    
     /*
         Refund
     */
     public function hookActionProductCancel($params)
     {
+        if ($params['action'] == 2) {
+            return false;
+        }
 
         if (Tools::isSubmit('generateDiscount')) {
             return false;
@@ -2999,32 +3096,39 @@ class Paytpv extends PaymentModule
         $authcode = $orderPayment->transaction_id;
 
         $products = $order->getProducts();
-        $cancel_quantity = Tools::getValue('cancelQuantity');
+        
+        $amt = 0;
+        
+        if ($params['action'] != 2) {
+            foreach ($products as $key => $value) {
+                if($params['id_order_detail'] == $key) {
+                    $amt = $amt + ((float) $value['unit_price_tax_incl'] * $params['cancel_quantity']);
+                }
+            }
 
-        $amt = (float) ($products[(int) $order_detail->id]['product_price_wt'] *
-            (int) $cancel_quantity[(int) $order_detail->id]);
-        $amount = number_format($amt * 100, 0, '.', '');
+            $amount = number_format(floor((float) $amt * 100), 0, '.', '');
 
-        $paytpv_order_ref = str_pad((int) $order->id_cart, 8, "0", STR_PAD_LEFT);
+            $paytpv_order_ref = str_pad((int) $order->id_cart, 8, "0", STR_PAD_LEFT);
 
-        $response = $this->makeRefund(
-            $params['order'],
-            $paytpv_iduser,
-            $order->id,
-            $paytpv_order_ref,
-            $paytpv_date,
-            $currency->iso_code,
-            $authcode,
-            $amount,
-            1
-        );
+            $response = $this->makeRefund(
+                $params['order'],
+                $paytpv_iduser,
+                $order->id,
+                $paytpv_order_ref,
+                $paytpv_date,
+                $currency->iso_code,
+                $authcode,
+                $amount,
+                1
+            );
 
-        $refund_txt = $response["txt"];
+            $refund_txt = $response["txt"];
 
-        $message = $this->l('PAYCOMET Refund ') .  ", " . $amt . " " . $currency->sign . " [" . $refund_txt . "]" .
-            '<br>';
+            $message = $this->l('PAYCOMET Refund ') .  ", " . $amt . " " . $currency->sign . " [" . $refund_txt . "]" .
+                '<br>';
 
-        $this->addNewPrivateMessage((int) $order->id, $message);
+            $this->addNewPrivateMessage((int) $order->id, $message);
+        }
     }
 
     private function makeRefund(
@@ -3165,7 +3269,6 @@ class Paytpv extends PaymentModule
 
     public function hookDisplayAdminOrder($params)
     {
-
         if (Tools::isSubmit('submitPayTpvRefund')) {
             $this->doTotalRefund($params['id_order']);
         }

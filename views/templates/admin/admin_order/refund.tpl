@@ -43,7 +43,7 @@
 					<p><b>{l s='Outstanding amount' mod='paytpv'}:</b> <span class="badge badge-info">{$amount|escape:'htmlall':'UTF-8':FALSE}</span></p>
 					{if $amount>0}
 						<p class="center">
-							<button type="submit" class="btn btn-default btn-primary" name="submitPayTpvRefund" onclick="if (!confirm('{l s='Are you sure?' mod='paytpv'}'))return false;">
+							<button type="submit" class="btn btn-default btn-primary" name="submitPayTpvRefund" onclick="if (!confirm('{l s='Are you sure?' mod='paytpv'}'))return false;this.classList.add('d-none');">
 								<i class="icon-undo"></i>
 								{l s='Total Refund of the Payment' mod='paytpv'}  [{$amount|escape:'htmlall':'UTF-8':FALSE}]
 							</button>
@@ -52,7 +52,7 @@
 						<p class="input-group">
 							<input type="text" class="col-sm-1 form-control" name="paytpPartialRefundAmount" size="10" value="">
 							<span class="input-group-btn">
-								<button type="submit" class="btn btn-default btn-primary ml-3" name="submitPayTpvPartialRefund" onclick="if (!confirm('{l s='Are you sure?' mod='paytpv'}'))return false;">
+								<button type="submit" class="btn btn-default btn-primary ml-3" name="submitPayTpvPartialRefund" onclick="if (!confirm('{l s='Are you sure?' mod='paytpv'}'))return false;this.classList.add('d-none');">
 									<i class="icon-undo"></i>
 									{l s='Partial Refund of the Payment' mod='paytpv'} [{l s='Máx' mod='paytpv'}.: {$amount|escape:'htmlall':'UTF-8':FALSE}]
 								</button>
@@ -97,7 +97,7 @@
 
 	{if $amount>0}
 	<p>
-		<button type="submit" class="btn btn-default" name="submitPayTpvRefund" onclick="if (!confirm('{l s='Are you sure?' mod='paytpv'}'))return false;">
+		<button type="submit" class="btn btn-default" name="submitPayTpvRefund" onclick="if (!confirm('{l s='Are you sure?' mod='paytpv'}'))return false;this.classList.add('d-none');">
 			<i class="icon-undo"></i>
 			{l s='Total Refund of the Payment' mod='paytpv'}  [{$amount|escape:'htmlall':'UTF-8':FALSE}]
 		</button>
@@ -106,7 +106,7 @@
 	<p>
 		<input type="text" class="form-control" name="paytpPartialRefundAmount" size="10" value="">
 		<span class="input-group-btn">
-			<button type="submit" class="btn btn-default" name="submitPayTpvPartialRefund" onclick="if (!confirm('{l s='Are you sure?' mod='paytpv'}'))return false;">
+			<button type="submit" class="btn btn-default" name="submitPayTpvPartialRefund" onclick="if (!confirm('{l s='Are you sure?' mod='paytpv'}'))return false;this.classList.add('d-none');">
 				<i class="icon-undo"></i>
 				{l s='Partial Refund of the Payment' mod='paytpv'} [{l s='Máx' mod='paytpv'}.: {$amount|escape:'htmlall':'UTF-8':FALSE}]
 			</button>

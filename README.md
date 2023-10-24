@@ -60,6 +60,11 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.24: 
+
+- Mejoras de código
+- Se añade la opcion de devolver mediante "Devoluciones parciales" de prestashop
+
 > 7.7.23: 
 
 - Mejoras de código
