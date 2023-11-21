@@ -51,7 +51,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.24';
+        $this->version = '7.7.25';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -279,17 +279,15 @@ class Paytpv extends PaymentModule
         // Valores por defecto al instalar el módulo
         if (
             !parent::install() ||
-            !$this->registerHook('displayPayment') ||
             !$this->registerHook('displayPaymentTop') ||
             !$this->registerHook('displayPaymentReturn') ||
-            !$this->registerHook('displayMyAccountBlock') ||
             !$this->registerHook('displayAdminOrder') ||
             !$this->registerHook('displayCustomerAccount') ||
             !$this->registerHook('actionProductCancel') ||
             !$this->registerHook('displayShoppingCart') ||
             !$this->registerHook('paymentOptions') ||
             !$this->registerHook('actionFrontControllerSetMedia') ||
-            !$this->registerHook('header') ||
+            !$this->registerHook('displayHeader') ||
             !$this->registerHook('displayOrderConfirmation') ||
             !$this->registerHook('displayOrderDetail') ||
             !$this->registerHook('actionEmailAddAfterContent') ||
@@ -1865,7 +1863,7 @@ class Paytpv extends PaymentModule
         return $terminales;
     }
 
-    public function hookHeader()
+    public function hookDisplayHeader()
     {
         // call your media file like this
         $this->context->controller->addJqueryPlugin('fancybox');
