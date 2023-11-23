@@ -138,7 +138,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
             if ($paytpv->apikey != '') {
                 include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaytpvApi.php');
-                $apiRest = new PaycometApiRest($paytpv->apikey);
+                $apiRest = new PaycometApiRest($paytpv->apikey, $paytpv->paycometHeader);
                 $infoUserResponse = $apiRest->infoUser(
                     Tools::getValue('IdUser'),
                     Tools::getValue('TokenUser'),
@@ -267,7 +267,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
                             $notifyDirectPayment = 2;
 
-                            $apiRest = new PaycometApiRest($paytpv->apikey);
+                            $apiRest = new PaycometApiRest($paytpv->apikey, $paytpv->paycometHeader);
                             $executeRefundReponse = $apiRest->executeRefund(
                                 Tools::getValue('Order'),
                                 $idterminal,
@@ -471,7 +471,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                         if ($paytpv->apikey != '') {
                             include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaytpvApi.php');
 
-                            $apiRest = new PaycometApiRest($paytpv->apikey);
+                            $apiRest = new PaycometApiRest($paytpv->apikey, $paytpv->paycometHeader);
                             $infoUserResponse = $apiRest->infoUser(
                                 $paytpv_iduser,
                                 $paytpv_tokenuser,

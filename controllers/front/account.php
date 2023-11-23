@@ -75,7 +75,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
 
                 if ($paytpv->apikey != '') {
                     $notify = 2;
-                    $apiRest = new PaycometApiRest($paytpv->apikey);
+                    $apiRest = new PaycometApiRest($paytpv->apikey, $paytpv->paycometHeader);
                     $addUserResponse = $apiRest->addUser(
                         $idterminal,
                         $token,
@@ -99,7 +99,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                 } else {
                     $result = array();
                     if ($paytpv->apikey != '') {
-                        $apiRest = new PaycometApiRest($paytpv->apikey);
+                        $apiRest = new PaycometApiRest($paytpv->apikey, $paytpv->paycometHeader);
                         $infoUserResponse = $apiRest->infoUser(
                             $idUser,
                             $tokenUser,
@@ -140,7 +140,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
 
             if ($paytpv->apikey != '') {
                 try {
-                    $apiRest = new PaycometApiRest($paytpv->apikey);
+                    $apiRest = new PaycometApiRest($paytpv->apikey, $paytpv->paycometHeader);
                     $formResponse = $apiRest->form(
                         $operation,
                         $language,
@@ -177,7 +177,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                 if ($saved_card[$key]['EXPIRY_DATE'] == '') {
                     if ($paytpv->apikey != '') {
                         try {
-                            $apiRest = new PaycometApiRest($paytpv->apikey);
+                            $apiRest = new PaycometApiRest($paytpv->apikey, $paytpv->paycometHeader);
     
                             $infoUserResponse = $apiRest->infoUser(
                                 $saved_card[$key]["IDUSER"],

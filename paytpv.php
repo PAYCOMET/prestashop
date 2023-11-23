@@ -58,6 +58,8 @@ class Paytpv extends PaymentModule
         $this->ps_versions_compliancy = array('min' => '1.7');
         $this->controllers = array('payment', 'validation');
 
+        $this->paycometHeader = $this->version . ";" . _PS_VERSION_;
+
         $this->bootstrap = true;
         // Array config:  configuration values
         $config = $this->getConfigValues();
@@ -1811,7 +1813,7 @@ class Paytpv extends PaymentModule
     {
 
         if (Configuration::get("PAYTPV_APIKEY") != "") {
-            $apiRest = new PaycometApiRest(Configuration::get("PAYTPV_APIKEY"));
+            $apiRest = new PaycometApiRest(Configuration::get("PAYTPV_APIKEY"), $this->paycometHeader);
 
             $terminalId = 0;
             if (isset(Tools::getValue("term")[0])) {
@@ -1962,7 +1964,7 @@ class Paytpv extends PaymentModule
             if ($saved_card[$key]['EXPIRY_DATE'] == '') {
                 if ($this->apikey != '') {
                     try {
-                        $apiRest = new PaycometApiRest($this->apikey);
+                        $apiRest = new PaycometApiRest($this->apikey, $this->paycometHeader);
 
                         $infoUserResponse = $apiRest->infoUser(
                             $saved_card[$key]["IDUSER"],
@@ -2479,7 +2481,7 @@ class Paytpv extends PaymentModule
             $merchantData = $this->getMerchantData($cart);
 
             try {
-                $apiRest = new PaycometApiRest($this->apikey);
+                $apiRest = new PaycometApiRest($this->apikey, $this->paycometHeader);
 
                 $payment =  [
                     'terminal' => (int) $idterminal,
@@ -2865,7 +2867,7 @@ class Paytpv extends PaymentModule
             $paytpv_tokenuser = $result["paytpv_tokenuser"];
 
             if ($this->apikey != '') {
-                $apiRest = new PaycometApiRest($this->apikey);
+                $apiRest = new PaycometApiRest($this->apikey, $this->paycometHeader);
                 $result = $apiRest->removeUser(
                     $idterminal,
                     $paytpv_iduser,
@@ -2903,7 +2905,7 @@ class Paytpv extends PaymentModule
             $paytpv_tokenuser = $result["paytpv_tokenuser"];
 
             if ($this->apikey != '') {
-                $apiRest = new PaycometApiRest($this->apikey);
+                $apiRest = new PaycometApiRest($this->apikey, $this->paycometHeader);
                 $removeSubscriptionResponse = $apiRest->removeSubscription(
                     $idterminal,
                     $paytpv_iduser,
@@ -2944,7 +2946,7 @@ class Paytpv extends PaymentModule
             $order_ref = str_pad($order->id_cart, 8, "0", STR_PAD_LEFT);
 
             if ($this->apikey != '') {
-                $apiRest = new PaycometApiRest($this->apikey);
+                $apiRest = new PaycometApiRest($this->apikey, $this->paycometHeader);
                 try {
                     $removeSubscriptionResponse = $apiRest->removeSubscription(
                         $idterminal,
@@ -3153,7 +3155,7 @@ class Paytpv extends PaymentModule
         if ($this->apikey != '') {
             $notifyDirectPayment = 2;
 
-            $apiRest = new PaycometApiRest($this->apikey);
+            $apiRest = new PaycometApiRest($this->apikey, $this->paycometHeader);
             $executeRefundReponse = $apiRest->executeRefund(
                 $paytpv_order_ref,
                 $idterminal,
@@ -3190,7 +3192,7 @@ class Paytpv extends PaymentModule
             if ($this->apikey != '') {
                 $notifyDirectPayment = 2;
 
-                $apiRest = new PaycometApiRest($this->apikey);
+                $apiRest = new PaycometApiRest($this->apikey, $this->paycometHeader);
                 $executeRefundReponse = $apiRest->executeRefund(
                     $paytpv_order_ref,
                     $idterminal,
