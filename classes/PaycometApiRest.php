@@ -26,12 +26,14 @@
 class PaycometApiRest
 {
     private $apiKey;
+    private $paycometHeader;
 
     private $endpointUrl = "https://rest.paycomet.com";
 
-    public function __construct($apiKey)
+    public function __construct($apiKey, $paycometHeader = "")
     {
         $this->apiKey = $apiKey;
+        $this->paycometHeader = $paycometHeader;
     }
 
     public function form(
@@ -339,6 +341,15 @@ class PaycometApiRest
 
         $url = $this->endpointUrl . $endpoint;
 
+        $arrHeaders = array(
+            "PAYCOMET-API-TOKEN: $this->apiKey",
+            "Content-Type: application/json"
+        );
+
+        if ($this->paycometHeader != "") {
+            $arrHeaders[] = "X-PAYCOMET-DATA: " . $this->paycometHeader;
+        }
+
         curl_setopt_array($curl, array(
                 CURLOPT_URL                 => $url,
                 CURLOPT_RETURNTRANSFER      => true,
@@ -347,10 +358,7 @@ class PaycometApiRest
                 CURLOPT_HTTP_VERSION        => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST       => "POST",
                 CURLOPT_POSTFIELDS          => $jsonParams,
-                CURLOPT_HTTPHEADER          => array(
-                    "PAYCOMET-API-TOKEN: $this->apiKey",
-                    "Content-Type: application/json"
-            ),
+                CURLOPT_HTTPHEADER          => $arrHeaders
         ));
 
         $response = curl_exec($curl);

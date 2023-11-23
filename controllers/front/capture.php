@@ -65,7 +65,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
             if ($paytpv->apikey != '') {
                 $notify = 2; // No notificar HTTP
 
-                $apiRest = new PaycometApiRest($paytpv->apikey);
+                $apiRest = new PaycometApiRest($paytpv->apikey, $paytpv->paycometHeader);
                 $addUserResponse = $apiRest->addUser(
                     $idterminal,
                     $token,
@@ -184,7 +184,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
             $methodId = '1';
             $notifyDirectPayment = 1;
 
-            $apiRest = new PaycometApiRest($paytpv->apikey);
+            $apiRest = new PaycometApiRest($paytpv->apikey, $paytpv->paycometHeader);
 
             if ($jetPayment &&
             (Tools::getIsset("paytpv_suscripcion") && Tools::getValue("paytpv_suscripcion")==1)) {
