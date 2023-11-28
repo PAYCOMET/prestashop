@@ -171,7 +171,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                 $scoring = $score["score"];
 
                 try {
-                    $apiRest = new PaycometApiRest($paytpv->apikey);
+                    $apiRest = new PaycometApiRest($paytpv->apikey, $paytpv->paycometHeader);
 
                     $payment =  [
                         'terminal' => (int) $idterminal,
@@ -332,7 +332,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                 $userInteraction = '1';
 
                 try {
-                    $apiRest = new PaycometApiRest($paytpv->apikey);
+                    $apiRest = new PaycometApiRest($paytpv->apikey, $paytpv->paycometHeader);
 
                     $payment =  [
                         'terminal' => (int) $idterminal,

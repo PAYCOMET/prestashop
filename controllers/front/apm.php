@@ -61,7 +61,7 @@ class PaytpvApmModuleFrontController extends ModuleFrontController
         $URLOK = Context::getContext()->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
         $URLKO = Context::getContext()->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
 
-        $apiRest = new PaycometApiRest($paytpv->apikey);
+        $apiRest = new PaycometApiRest($paytpv->apikey, $paytpv->paycometHeader);
 
         $ssl = Configuration::get('PS_SSL_ENABLED');
 
