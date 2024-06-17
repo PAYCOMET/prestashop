@@ -51,7 +51,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.25';
+        $this->version = '7.7.26';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -3102,7 +3102,7 @@ class Paytpv extends PaymentModule
         if ($params['action'] != 2) {
             foreach ($products as $key => $value) {
                 if($params['id_order_detail'] == $key) {
-                    $amt = $amt + ((float) $value['unit_price_tax_incl'] * $params['cancel_quantity']);
+                    $amt = $amt + round((float) $value['unit_price_tax_incl'] * $params['cancel_quantity'], 2);
                 }
             }
 
