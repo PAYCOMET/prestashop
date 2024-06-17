@@ -60,6 +60,10 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 7.7.26: 
+
+- Mejoras de código
+
 > 7.7.25: 
 
 - Mejoras de código
