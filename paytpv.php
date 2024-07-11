@@ -51,7 +51,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.26';
+        $this->version = '7.7.27';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -3099,11 +3099,23 @@ class Paytpv extends PaymentModule
         
         $amt = 0;
         
+        $round_type = Configuration::get('PS_ROUND_TYPE');
+
         if ($params['action'] != 2) {
             foreach ($products as $key => $value) {
                 if($params['id_order_detail'] == $key) {
-                    $amt = $amt + round((float) $value['unit_price_tax_incl'] * $params['cancel_quantity'], 2);
+                    if ($round_type == 1) {
+                        $amt = $amt + round((float) $value['unit_price_tax_incl'], 2) * $params['cancel_quantity'];
+                    } elseif ($round_type == 2) {
+                        $amt = $amt + round((float) $value['unit_price_tax_incl'] * $params['cancel_quantity'], 2);
+                    } elseif ($round_type == 3) {
+                        $amt = $amt + (float) $value['unit_price_tax_incl'] * $params['cancel_quantity'];
+                    }
                 }
+            }
+
+            if ($round_type == 3) {
+                $amt = round($amt, 2);
             }
 
             $amount = number_format(floor((float) $amt * 100), 0, '.', '');
