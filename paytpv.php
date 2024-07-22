@@ -51,7 +51,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.27';
+        $this->version = '7.7.28';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -776,11 +776,12 @@ class Paytpv extends PaymentModule
         return $acctInfoData;
     }
 
-    public function getShoppingCart($cart)
+    public function getShoppingCart($cart, $methodId)
     {
         $shoppingCartData = array();
         $i = 0;
         $amount = 0;
+        $discount = 0;
         foreach ($cart->getProducts() as $key => $product) {
 
             if (is_int(isset($product["quantity"]) ? $product["quantity"] : 1)) {
@@ -797,7 +798,7 @@ class Paytpv extends PaymentModule
                     //$shoppingCartData[$key + $i]["discount"] = number_format((isset($product["specific_prices"]["reduction"]) ? $product["specific_prices"]["reduction"] : 0) * 10000, 0, '.', '');
                     $shoppingCartData[$key + $i]["discountValue"] = number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '');
                 }
-
+                $discount += $shoppingCartData[$key + $i]["discountValue"] * $shoppingCartData[$key + $i]["quantity"];
                 $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format((isset($product["reduction_without_tax"]) ? $product["reduction_without_tax"] : 0) * 100, 0, '.', '')) * (isset($product["quantity"]) ? $product["quantity"] : 1);
             } else {
                 $shoppingCartData[$key + $i]["sku"] = "1";
@@ -813,7 +814,7 @@ class Paytpv extends PaymentModule
                     //$shoppingCartData[$key + $i]["discount"] = number_format((isset($product["specific_prices"]["reduction"]) ? $product["specific_prices"]["reduction"] : 0) * 10000, 0, '.', '');
                     $shoppingCartData[$key + $i]["discountValue"] = number_format((isset($product["reduction"]) ? $product["reduction"] : 0) * 100, 0, '.', '');
                 }
-
+                $discount += $shoppingCartData[$key + $i]["discountValue"];
                 $amount += ($shoppingCartData[$key + $i]["unitPrice"] - number_format((isset($product["reduction"]) ? $product["reduction"] : 0) * 100, 0, '.', '')) * (isset($product["quantity"]) ? $product["quantity"] : 1);
             }
         }
@@ -839,6 +840,16 @@ class Paytpv extends PaymentModule
             $shoppingCartData[$key + $i]["name"] = "Tax";
             $shoppingCartData[$key + $i]["articleType"] = "11";
             $shoppingCartData[$key + $i]["discountValue"] = ($tax < 0) ? abs($tax) + 100 : 0;
+        }
+
+        if ($methodId == 10 && $discount > 0) {
+            $i++;
+            $shoppingCartData[$key + $i]["sku"] = "1";
+            $shoppingCartData[$key + $i]["quantity"] = 1;
+            $shoppingCartData[$key + $i]["unitPrice"] = $discount;
+            $shoppingCartData[$key + $i]["name"] = "Discount";
+            $shoppingCartData[$key + $i]["articleType"] = "4";
+            $shoppingCartData[$key + $i]["discountValue"] = $discount;
         }
 
         return array("shoppingCart" => array_values($shoppingCartData));
@@ -2425,11 +2436,11 @@ class Paytpv extends PaymentModule
         return $this->context->smarty->fetch('module:paytpv/views/templates/hook/payment_paycomet.tpl');
     }
 
-    public function getMerchantData($cart)
+    public function getMerchantData($cart, $methodId = 1)
     {
 
         $MERCHANT_EMV3DS = $this->getEMV3DS($cart);
-        $SHOPPING_CART = $this->getShoppingCart($cart);
+        $SHOPPING_CART = $this->getShoppingCart($cart, $methodId);
 
         $datos = array_merge($MERCHANT_EMV3DS, $SHOPPING_CART);
 

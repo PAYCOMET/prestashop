@@ -52,7 +52,7 @@ class PaytpvApmModuleFrontController extends ModuleFrontController
         $currency_iso_code = $datos_pedido["currency_iso_code"];
         $idterminal = $datos_pedido["idterminal"];
         $paytpv_order_ref = str_pad($cart->id, 8, "0", STR_PAD_LEFT);
-        $merchantData = $paytpv->getMerchantData($cart);
+        $merchantData = $paytpv->getMerchantData($cart, $methodId);
         $ssl = Configuration::get('PS_SSL_ENABLED');
         $values = array(
             'id_cart' => $cart->id,
