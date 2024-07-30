@@ -51,7 +51,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.28';
+        $this->version = '7.7.29';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -840,6 +840,7 @@ class Paytpv extends PaymentModule
             $shoppingCartData[$key + $i]["name"] = "Tax";
             $shoppingCartData[$key + $i]["articleType"] = "11";
             $shoppingCartData[$key + $i]["discountValue"] = ($tax < 0) ? abs($tax) + 100 : 0;
+            $discount += ($tax < 0) ? abs($tax) + 100 : 0;
         }
 
         if ($methodId == 10 && $discount > 0) {
