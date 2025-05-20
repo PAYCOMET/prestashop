@@ -51,7 +51,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '7.7.30';
+        $this->version = '7.7.31';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -2966,7 +2966,7 @@ class Paytpv extends PaymentModule
                         $paytpv_iduser,
                         $paytpv_tokenuser
                     );
-                    if (!isset($removeSubscriptionResponse) || $removeSubscriptionResponse->errorCode > 0) {
+                    if (!isset($removeSubscriptionResponse) || ($removeSubscriptionResponse->errorCode > 0 && $removeSubscriptionResponse->errorCode != 1001)) {
                         $result["DS_RESPONSE"] = 0;
                     } else {
                         $result["DS_RESPONSE"] = 1;
