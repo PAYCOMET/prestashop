@@ -364,7 +364,6 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                     );
 
                     $url_paytpv = '';
-                    
                     if ($formResponse->errorCode == 0) {
                         $url_paytpv = $formResponse->challengeUrl;
                     }
