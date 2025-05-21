@@ -22,13 +22,14 @@
  *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
  *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaytpvActionsModuleFrontController extends ModuleFrontController
 {
-
     public function postProcess()
     {
-
         if (Tools::getValue('process') == 'removeCard') {
             $this->processRemoveCard();
         }
@@ -56,7 +57,6 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
         exit;
     }
 
-
     /**
      * Remove card
      */
@@ -65,27 +65,24 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
         $paytpv = $this->module;
 
         if ($paytpv->removeCard(Tools::getValue('paytpv_iduser'))) {
-            die('0');
+            exit('0');
         }
-        die('1');
+        exit('1');
     }
-
-
 
     /**
      * Remove card
      */
     public function saveDescriptionCard()
     {
-
         if (PaytpvCustomer::saveCustomerCarDesc(
             (int) $this->context->customer->id,
             Tools::getValue('paytpv_iduser'),
             Tools::getValue('card_desc')
         )) {
-            die('0');
+            exit('0');
         }
-        die('1');
+        exit('1');
     }
 
     /**
@@ -95,7 +92,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
     {
         $paytpv = $this->module;
         $res = $paytpv->cancelSuscription(Tools::getValue('id_suscription'));
-        print json_encode($res);
+        echo json_encode($res);
     }
 
     /**
@@ -103,7 +100,6 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
      */
     public function processAddCard()
     {
-
         $paytpv = $this->module;
 
         $id_cart = Tools::getValue('id_cart');
@@ -123,30 +119,29 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
         }
 
         $datos_pedido = $paytpv->terminalCurrency($cart);
-        $importe = $datos_pedido["importe"];
-        $dcc = $datos_pedido["dcc"];
-        $currency_iso_code = $datos_pedido["currency_iso_code"];
-        $idterminal = $datos_pedido["idterminal"];
+        $importe = $datos_pedido['importe'];
+        $dcc = $datos_pedido['dcc'];
+        $currency_iso_code = $datos_pedido['currency_iso_code'];
+        $idterminal = $datos_pedido['idterminal'];
 
-        $values = array(
+        $values = [
             'id_cart' => $cart->id,
-            'key' => Context::getContext()->customer->secure_key
-        );
-
+            'key' => Context::getContext()->customer->secure_key,
+        ];
 
         $ssl = Configuration::get('PS_SSL_ENABLED');
 
         $URLOK = Context::getContext()->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
         $URLKO = Context::getContext()->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
 
-        $paytpv_order_ref = str_pad($cart->id, 8, "0", STR_PAD_LEFT);
+        $paytpv_order_ref = str_pad($cart->id, 8, '0', STR_PAD_LEFT);
 
         $language = $paytpv->getPaycometLang($this->context->language->language_code);
 
         $secure_pay = true;
 
-        $arrReturn = array();
-        $arrReturn["error"] = 1;
+        $arrReturn = [];
+        $arrReturn['error'] = 1;
         if (PaytpvOrderInfo::saveOrderInfo(
             (int) $this->context->customer->id,
             $cart->id,
@@ -156,24 +151,26 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
             $cycles,
             0
         )) {
-            $OPERATION = ($dcc == 1)?116 : 1;
+            $OPERATION = ($dcc == 1) ? 116 : 1;
 
             if ($paytpv->apikey != '') {
-                include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php');
+                include_once _PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php';
 
                 $userInteraction = '1';
                 $merchantData = $paytpv->getMerchantData($cart);
                 $productDescription = '';
-        
-                if (isset($this->context->customer->email)) $productDescription = $this->context->customer->email;
+
+                if (isset($this->context->customer->email)) {
+                    $productDescription = $this->context->customer->email;
+                }
 
                 $score = $paytpv->transactionScore($cart);
-                $scoring = $score["score"];
+                $scoring = $score['score'];
 
                 try {
                     $apiRest = new PaycometApiRest($paytpv->apikey, $paytpv->paycometHeader);
 
-                    $payment =  [
+                    $payment = [
                         'terminal' => (int) $idterminal,
                         'order' => (string) $paytpv_order_ref,
                         'methods' => [1],
@@ -184,7 +181,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                         'merchantData' => $merchantData,
                         'productDescription' => $productDescription,
                         'urlOk' => $URLOK,
-                        'urlKo' => $URLKO
+                        'urlKo' => $URLKO,
                     ];
 
                     if ($scoring != null) {
@@ -199,21 +196,21 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                         $payment
                     );
 
-                    $url_paytpv = "";
+                    $url_paytpv = '';
                     if ($formResponse->errorCode == 0) {
                         $url_paytpv = $formResponse->challengeUrl;
                     }
-                } catch (exception $e) {
-                    $url_paytpv = "";
+                } catch (Exception $e) {
+                    $url_paytpv = '';
                 }
             } else {
-                $url_paytpv = "";
+                $url_paytpv = '';
             }
-            $arrReturn["error"] = 0;
-            $arrReturn["url"] = $url_paytpv;
+            $arrReturn['error'] = 0;
+            $arrReturn['url'] = $url_paytpv;
         }
 
-        print json_encode($arrReturn);
+        echo json_encode($arrReturn);
     }
 
     /**
@@ -230,8 +227,8 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
         $periodicity = Tools::getValue('paytpv_periodicity');
         $cycles = Tools::getValue('paytpv_cycles');
 
-        $arrReturn = array();
-        $arrReturn["error"] = 1;
+        $arrReturn = [];
+        $arrReturn['error'] = 1;
 
         if (PaytpvOrderInfo::saveOrderInfo(
             (int) $this->context->customer->id,
@@ -242,10 +239,10 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
             $cycles,
             0
         )) {
-            $arrReturn["error"] = 0;
+            $arrReturn['error'] = 0;
         }
 
-        print json_encode($arrReturn);
+        echo json_encode($arrReturn);
     }
 
     /**
@@ -272,27 +269,26 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
         }
 
         $datos_pedido = $paytpv->terminalCurrency($cart);
-        $importe = $datos_pedido["importe"];
-        $currency_iso_code = $datos_pedido["currency_iso_code"];
-        $idterminal = $datos_pedido["idterminal"];
+        $importe = $datos_pedido['importe'];
+        $currency_iso_code = $datos_pedido['currency_iso_code'];
+        $idterminal = $datos_pedido['idterminal'];
 
-        $values = array(
+        $values = [
             'id_cart' => $cart->id,
-            'key' => Context::getContext()->customer->secure_key
-        );
+            'key' => Context::getContext()->customer->secure_key,
+        ];
 
         $ssl = Configuration::get('PS_SSL_ENABLED');
 
         $URLOK = Context::getContext()->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
         $URLKO = Context::getContext()->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
 
-        $paytpv_order_ref = str_pad($cart->id, 8, "0", STR_PAD_LEFT);
-        
+        $paytpv_order_ref = str_pad($cart->id, 8, '0', STR_PAD_LEFT);
 
         $secure_pay = true;
 
-        $arrReturn = array();
-        $arrReturn["error"] = 1;
+        $arrReturn = [];
+        $arrReturn['error'] = 1;
         if (PaytpvOrderInfo::saveOrderInfo(
             (int) $this->context->customer->id,
             $cart->id,
@@ -303,38 +299,40 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
             0
         )) {
             $OPERATION = 9;
-            $subscription_startdate = date("Ymd");
+            $subscription_startdate = date('Ymd');
             $susc_periodicity = $periodicity;
             $subs_cycles = $cycles;
 
             // Si es indefinido, ponemos como fecha tope la fecha + 10 años.
             if ($subs_cycles == 0) {
-                $subscription_enddate = date("Y") + 5 . date("m") . date("d");
+                $subscription_enddate = date('Y') + 5 . date('m') . date('d');
             } else {
                 // Dias suscripcion
                 $dias_subscription = $subs_cycles * $susc_periodicity;
-                $subscription_enddate = date('Ymd', strtotime("+" . $dias_subscription . " days"));
+                $subscription_enddate = date('Ymd', strtotime('+' . $dias_subscription . ' days'));
             }
 
             $language = $paytpv->getPaycometLang($this->context->language->language_code);
 
             $score = $paytpv->transactionScore($cart);
-            $scoring = $score["score"];
+            $scoring = $score['score'];
 
             if ($paytpv->apikey != '') {
-                include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php');
+                include_once _PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php';
 
                 $merchantData = $paytpv->getMerchantData($cart);
                 $productDescription = '';
-        
-                if (isset($this->context->customer->email)) $productDescription = $this->context->customer->email;
+
+                if (isset($this->context->customer->email)) {
+                    $productDescription = $this->context->customer->email;
+                }
 
                 $userInteraction = '1';
 
                 try {
                     $apiRest = new PaycometApiRest($paytpv->apikey, $paytpv->paycometHeader);
 
-                    $payment =  [
+                    $payment = [
                         'terminal' => (int) $idterminal,
                         'order' => (string) $paytpv_order_ref,
                         'amount' => (string) $importe,
@@ -344,17 +342,17 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                         'merchantData' => $merchantData,
                         'productDescription' => $productDescription,
                         'urlOk' => $URLOK,
-                        'urlKo' => $URLKO
+                        'urlKo' => $URLKO,
                     ];
 
                     if ($scoring != null) {
                         $payment['scoring'] = (int) $scoring;
                     }
-                    $subscription =  [
+                    $subscription = [
                         'startDate' => (string) $subscription_startdate,
                         'endDate' => (string) $subscription_enddate,
-                        'periodicity' => $susc_periodicity
-                        ];
+                        'periodicity' => $susc_periodicity,
+                    ];
 
                     $formResponse = $apiRest->form(
                         $OPERATION,
@@ -365,21 +363,22 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                         $subscription
                     );
 
-                    $url_paytpv = "";
+                    $url_paytpv = '';
+                    
                     if ($formResponse->errorCode == 0) {
                         $url_paytpv = $formResponse->challengeUrl;
                     }
-                } catch (exception $e) {
-                    $url_paytpv = "";
+                } catch (Exception $e) {
+                    $url_paytpv = '';
                 }
             } else {
-                $url_paytpv = "";
+                $url_paytpv = '';
             }
 
-            $arrReturn["error"] = 0;
-            $arrReturn["url"] = $url_paytpv;
+            $arrReturn['error'] = 0;
+            $arrReturn['url'] = $url_paytpv;
         }
 
-        print json_encode($arrReturn);
+        echo json_encode($arrReturn);
     }
 }

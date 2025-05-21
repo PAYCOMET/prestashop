@@ -22,26 +22,29 @@
  *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
  *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaytpvUrlkoModuleFrontController extends ModuleFrontController
 {
     public $display_column_left = false;
 
     public $ssl = true;
+
     /**
      * @see FrontController::initContent()
      */
-
     public function initContent()
     {
         parent::initContent();
-        
-        $this->context->smarty->assign('error_msg', "");
-        $this->context->smarty->assign(array(
+
+        $this->context->smarty->assign('error_msg', '');
+        $this->context->smarty->assign([
             'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name .
-                            '/',
-            'base_dir' =>  __PS_BASE_URI__
-        ));
+                '/',
+            'base_dir' => __PS_BASE_URI__,
+        ]);
 
         $this->setTemplate('module:paytpv/views/templates/front/payment_fail.tpl');
     }

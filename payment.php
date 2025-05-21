@@ -24,14 +24,18 @@
  *  International Registered Trademark & Property of PrestaShop SA
  */
 
-/**
+/*
  * @deprecated 1.5.0 This file is deprecated, use moduleFrontController instead
  */
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /* SSL Management */
 $useSSL = true;
 
-require('../../config/config.inc.php');
+require '../../config/config.inc.php';
 Tools::displayFileAsDeprecated();
 
 // init front controller in order to use Tools::redirect

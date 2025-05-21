@@ -1,7 +1,6 @@
 <?php
-
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{paytpv}prestashop>paytpv_c5c9b750653eb8bcb8f69cf03bf9b052'] = 'www.paycomet.com';
 $_MODULE['<{paytpv}prestashop>paytpv_74c09d0e747f78bd9d74299d2e024c35'] = 'Ez a modul lehetővé teszi a bankkártya fizetést a www.paycomet.com rendszeren keresztül';
 $_MODULE['<{paytpv}prestashop>paytpv_1b576db1b05c56c03d193ac1927ff493'] = 'Hiányzó adatokat, a modul konfigurálásához PAYCOMET';
@@ -210,7 +209,7 @@ $_MODULE['<{paytpv}prestashop>payment_bsiframe_c4408d335012a56ff58937d78050efad'
 $_MODULE['<{paytpv}prestashop>payment_bsiframe_ea4788705e6873b424c65e91c2846b19'] = 'Törölni';
 $_MODULE['<{paytpv}prestashop>payment_bsiframe_96b0faaf4b5d17d162019257cb8c1df3'] = 'Könnyitse meg vásárlását a jövőben';
 $_MODULE['<{paytpv}prestashop>payment_bsiframe_63d62ec68a78766af560fde77e363262'] = 'Igen, emlitem a kártya elfogadó ';
-$_MODULE['<{paytpv}prestashop>payment_bsiframe_0df6dc54d8913c70ff40a8ffcce9c5f6'] =  'Fizetési forma Betöltése ...';
+$_MODULE['<{paytpv}prestashop>payment_bsiframe_0df6dc54d8913c70ff40a8ffcce9c5f6'] = 'Fizetési forma Betöltése ...';
 $_MODULE['<{paytpv}prestashop>payment_bsiframe_0e8201e2f7723ad82d152b8dc254b7a9'] = 'Kártya használata';
 $_MODULE['<{paytpv}prestashop>payment_bsiframe_9645c0ed4d3e15b4492e238c65145ecc'] = 'Biztonsági okokból írja be az üzlet felhasználói jelszót.';
 $_MODULE['<{paytpv}prestashop>payment_bsiframe_dc647eb65e6711e155375218212b3964'] = 'Jelszó.';
@@ -231,6 +230,6 @@ $_MODULE['<{paytpv}prestashop>payment_bsiframe_0ae902925f2cf9350aac524f5eb4cf95'
 $_MODULE['<{paytpv}prestashop>payment_bsiframe_2bf0c149d1690aa41a2179a597588b69'] = 'PAYCOMET az ellenőrzött hozzáférés ellenőrzése termelési környezetben. CPD maradni, amikor a rendszerek működnek követelményei szerint Tier III központok. Ez biztosítja, hogy a biztonság ne kerüljön veszélybe bármikor. Kifinomult riasztórendszerek, felügyelet zártláncú televízió és a biztonsági őrök a nap 24 órájában és a hét 7 napján felügyelik a létesítményben, valamint a szigorú ellenőrzés és karbantartás. Minden tranzakció, információ az ügyfél-kártyát védi, még a saját alkalmazottak is';
 $_MODULE['<{paytpv}prestashop>payment_bsiframe_e413eba49b15917b0c9dbf2620f3e66e'] = 'A katasztrófa utáni helyreállítás';
 $_MODULE['<{paytpv}prestashop>payment_bsiframe_3e5c2b7bf7e0f028cd2653b85ee2a03c'] = 'PAYCOMET ad helyet Backup rendszerben különböző országokban, hogy garantálják az optimális biztonságot és a magas rendelkezésre állású rendszerek. Ez is egy politika a kereskedelem folyamatos katasztrófa utáni helyreállítása. ';
-$_MODULE['<{paytpv}prestashop>payment_newpage_b933f6b9b13a6706766fb18b75af4f45'] =  'Fizethet bankkártyával';
+$_MODULE['<{paytpv}prestashop>payment_newpage_b933f6b9b13a6706766fb18b75af4f45'] = 'Fizethet bankkártyával';
 $_MODULE['<{paytpv}prestashop>payment_return_f088cd31be48912a0143f62d1215fb5d'] = 'Köszönjük, hogy bíztak bennünk. Rendelését sikeresen rögzítettük rendszerünkben, rendelése feldolgozás alatt van..';
 $_MODULE['<{paytpv}prestashop>payment_return_1e860e56970a81a1ba3e1fcb7fccc846'] = 'Referencia';

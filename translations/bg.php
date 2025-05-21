@@ -1,14 +1,13 @@
 <?php
-
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{paytpv}prestashop>paytpv_c5c9b750653eb8bcb8f69cf03bf9b052'] = 'www.paycomet.com';
 $_MODULE['<{paytpv}prestashop>paytpv_74c09d0e747f78bd9d74299d2e024c35'] = 'Този модул ви позволява да приемате картови плащания чрез www.paycomet.com';
 $_MODULE['<{paytpv}prestashop>paytpv_1b576db1b05c56c03d193ac1927ff493'] = 'Липсващи данни при конфигуриране на  Paytpv модул';
 $_MODULE['<{paytpv}prestashop>paytpv_622b05a0aed41e6ceed7862d98d9b8b7'] = 'Код на Клиент  задължителен';
 $_MODULE['<{paytpv}prestashop>paytpv_6e4bc0e0dd162e6892a08a18c07a4a6c'] = 'Парола задължителна';
 $_MODULE['<{paytpv}prestashop>paytpv_514d8a494f087c0d549b9536c2ef3bd9'] = 'Терминал';
-$_MODULE['<{paytpv}prestashop>paytpv_c8e4786986793dcf5ce47805d2bf2b2c'] = 'Номер на терминал невалиден' ;
+$_MODULE['<{paytpv}prestashop>paytpv_c8e4786986793dcf5ce47805d2bf2b2c'] = 'Номер на терминал невалиден';
 $_MODULE['<{paytpv}prestashop>paytpv_b551667abbf9f0f73181ee285cf0eb06'] = 'Невалидна парола';
 $_MODULE['<{paytpv}prestashop>paytpv_d68e5d0bdf8fc9019a5c90c3bd9a096e'] = 'Покупки надвишаващи използване на 3D Secure невалиден. ';
 $_MODULE['<{paytpv}prestashop>paytpv_cc8ab9cfee5863e8de890ae524a356f0'] = 'Валута задължително';
@@ -37,7 +36,7 @@ $_MODULE['<{paytpv}prestashop>refund_91b4ddaceaccbff8eacba9b9e47d4304'] = '\" Н
 $_MODULE['<{paytpv}prestashop>refund_f85095ec6c13a624140043db63d5e493'] = '\" Наложен платеж Частичен \": не се възстановява сумата в кредитната карта на клиента.';
 $_MODULE['<{paytpv}prestashop>refund_bc30768048a7bbfd2d158d722c140c6d'] = 'Общо платена';
 $_MODULE['<{paytpv}prestashop>refund_b30c7d2457671189be2399fc6ee85547'] = 'Възстановената сума';
-$_MODULE['<{paytpv}prestashop>refund_3edb29915d85a12659560e2cb2a7701e'] = 'Сума в очакване на връщане' ;
+$_MODULE['<{paytpv}prestashop>refund_3edb29915d85a12659560e2cb2a7701e'] = 'Сума в очакване на връщане';
 $_MODULE['<{paytpv}prestashop>refund_729a51874fe901b092899e9e8b31c97a'] = 'Сигурни ли сте?';
 $_MODULE['<{paytpv}prestashop>refund_3722b990fc37f95a2bc6415dd644120f'] = 'Връщане на цялото плащане';
 $_MODULE['<{paytpv}prestashop>refund_a6041386a6b143fac9729aa695cf237d'] = 'Промяна на статуса на поръчката в платена';

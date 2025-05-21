@@ -1,7 +1,6 @@
 <?php
-
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{paytpv}prestashop>paytpv_622b05a0aed41e6ceed7862d98d9b8b7'] = 'Código de Cliente obrigatório';
 $_MODULE['<{paytpv}prestashop>paytpv_6e4bc0e0dd162e6892a08a18c07a4a6c'] = 'Password obrigatória';
 $_MODULE['<{paytpv}prestashop>paytpv_514d8a494f087c0d549b9536c2ef3bd9'] = 'Terminal';

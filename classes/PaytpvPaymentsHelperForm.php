@@ -22,18 +22,21 @@
  *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
  *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaytpvPaymentsHelperForm extends HelperForm
 {
-    
     public function generatePaytpvForm(&$smarty, $fields_form)
     {
         $this->fields_form = $fields_form;
         $base_generate = $this->generate();
         $smarty->assign('form_vars', $this->tpl->getTemplateVars());
+
         return $base_generate;
     }
-    
+
     public function generate()
     {
         return parent::generate();
