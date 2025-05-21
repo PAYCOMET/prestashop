@@ -22,10 +22,12 @@
  *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
  *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaytpvSimuladorModuleFrontController extends ModuleFrontController
 {
-
     public function initContent()
     {
         $paytpv = $this->module;
@@ -38,17 +40,17 @@ class PaytpvSimuladorModuleFrontController extends ModuleFrontController
         $hashToken = Configuration::get('PAYTPV_APM_instant_credit_hashToken');
 
         if (isset($importe_financiar)) {
-            $importe_financiar = str_replace(",", ".", $importe_financiar);
-            $simulador = "<html>
+            $importe_financiar = str_replace(',', '.', $importe_financiar);
+            $simulador = '<html>
                             <body>
-                             <div class=\"ic-configuration\" style=\"display:none;\">" . $hashToken . "</div>
-                                <div class=\"ic-simulator\" amount=\"" . $importe_financiar . "\"></div>
+                             <div class="ic-configuration" style="display:none;">' . $hashToken . '</div>
+                                <div class="ic-simulator" amount="' . $importe_financiar . '"></div>
                             </body>
-                            <script src=\"" . $urlSimulatorJs . "\"></script>
-                         </html>";
+                            <script src="' . $urlSimulatorJs . '"></script>
+                         </html>';
             header_remove();
-            header("content-type: text/html");
-            die($simulador);
+            header('content-type: text/html');
+            exit($simulador);
         }
     }
 }

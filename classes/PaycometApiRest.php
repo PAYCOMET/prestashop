@@ -1,36 +1,39 @@
 <?php
 /**
-* 2007-2015 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author     PAYCOMET <info@paycomet.com>
-*  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
-*  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*/
+ * 2007-2015 PrestaShop
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ *  @author     PAYCOMET <info@paycomet.com>
+ *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
+ *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaycometApiRest
 {
     private $apiKey;
     private $paycometHeader;
 
-    private $endpointUrl = "https://rest.paycomet.com";
+    private $endpointUrl = 'https://rest.paycomet.com';
 
-    public function __construct($apiKey, $paycometHeader = "")
+    public function __construct($apiKey, $paycometHeader = '')
     {
         $this->apiKey = $apiKey;
         $this->paycometHeader = $paycometHeader;
@@ -42,15 +45,15 @@ class PaycometApiRest
         $terminal = '',
         $productDescription = '',
         $payment = [],
-        $subscription = []
+        $subscription = [],
     ) {
         $params = [
-            "operationType"         => (int) $operationType,
-            "language"              => (string) $language,
-            "terminal"              => (int) $terminal,
-            "productDescription"    => (string) $productDescription,
-            "payment"               => (array) $payment,
-            "subscription"          => (array) $subscription
+            'operationType' => (int) $operationType,
+            'language' => (string) $language,
+            'terminal' => (int) $terminal,
+            'productDescription' => (string) $productDescription,
+            'payment' => (array) $payment,
+            'subscription' => (array) $subscription,
         ];
 
         return $this->executeRequest('/v1/form', $params);
@@ -62,15 +65,15 @@ class PaycometApiRest
         $order,
         $productDescription = '',
         $language = 'ES',
-        $notify = 1
+        $notify = 1,
     ) {
         $params = [
-            "terminal"              => (int) $terminal,
-            "jetToken"              => (string) $jetToken,
-            "order"                 => (string) $order,
-            "productDescription"    => (string) $productDescription,
-            "language"              => (string) $language,
-            "notify"                => (int) $notify
+            'terminal' => (int) $terminal,
+            'jetToken' => (string) $jetToken,
+            'order' => (string) $order,
+            'productDescription' => (string) $productDescription,
+            'language' => (string) $language,
+            'notify' => (int) $notify,
         ];
 
         return $this->executeRequest('/v1/cards', $params);
@@ -79,12 +82,12 @@ class PaycometApiRest
     public function infoUser(
         $idUser,
         $tokenUser,
-        $terminal
+        $terminal,
     ) {
         $params = [
-            'idUser'                => (int) $idUser,
-            'tokenUser'             => (string) $tokenUser,
-            'terminal'              => (int) $terminal,
+            'idUser' => (int) $idUser,
+            'tokenUser' => (string) $tokenUser,
+            'terminal' => (int) $terminal,
         ];
 
         return $this->executeRequest('/v1/cards/info', $params);
@@ -93,12 +96,12 @@ class PaycometApiRest
     public function removeUser(
         $terminal,
         $idUser,
-        $tokenUser
+        $tokenUser,
     ) {
         $params = [
-            'terminal'              => (int) $terminal,
-            'idUser'                => (int) $idUser,
-            'tokenUser'             => (string) $tokenUser,
+            'terminal' => (int) $terminal,
+            'idUser' => (int) $idUser,
+            'tokenUser' => (string) $tokenUser,
         ];
 
         return $this->executeRequest('/v1/cards/delete', $params);
@@ -124,36 +127,35 @@ class PaycometApiRest
         $trxType = '',
         $scaException = '',
         $merchantData = [],
-        $notifyDirectPayment = 1
+        $notifyDirectPayment = 1,
     ) {
         $params = [
-            "payment" => [
-                'terminal'              => (int) $terminal,
-                'order'                 => (string) $order,
-                'amount'                => (string) $amount,
-                'currency'              => (string) $currency,
-                'methodId'              => (string) $methodId,
-                'originalIp'            => (string) $originalIp,
-                'secure'                => (int) $secure,
-                'idUser'                => (int) $idUser,
-                'tokenUser'             => (string) $tokenUser,
-                'scoring'               => (string) $scoring,
-                'productDescription'    => (string) $productDescription,
-                'merchantDescription'   => (string) $merchantDescription,
-                'userInteraction'       => (int) $userInteraction,
-                'escrowTargets'         => (array) $escrowTargets,
-                'trxType'               => (string) $trxType,
-                'scaException'          => (string) $scaException,
-                'urlOk'                 => (string) $urlOk,
-                'urlKo'                 => (string) $urlKo,
-                'notifyDirectPayment'   => (int) $notifyDirectPayment,
-                'merchantData'          => (array) $merchantData
-            ]
+            'payment' => [
+                'terminal' => (int) $terminal,
+                'order' => (string) $order,
+                'amount' => (string) $amount,
+                'currency' => (string) $currency,
+                'methodId' => (string) $methodId,
+                'originalIp' => (string) $originalIp,
+                'secure' => (int) $secure,
+                'idUser' => (int) $idUser,
+                'tokenUser' => (string) $tokenUser,
+                'scoring' => (string) $scoring,
+                'productDescription' => (string) $productDescription,
+                'merchantDescription' => (string) $merchantDescription,
+                'userInteraction' => (int) $userInteraction,
+                'escrowTargets' => (array) $escrowTargets,
+                'trxType' => (string) $trxType,
+                'scaException' => (string) $scaException,
+                'urlOk' => (string) $urlOk,
+                'urlKo' => (string) $urlKo,
+                'notifyDirectPayment' => (int) $notifyDirectPayment,
+                'merchantData' => (array) $merchantData,
+            ],
         ];
 
         return $this->executeRequest('/v1/payments', $params);
     }
-
 
     public function createPreautorization(
         $terminal,
@@ -175,31 +177,31 @@ class PaycometApiRest
         $trxType = '',
         $scaException = '',
         $merchantData = [],
-        $deferred = 0
+        $deferred = 0,
     ) {
         $params = [
-            "payment" => [
-                'terminal'              => (int) $terminal,
-                'order'                 => (string) $order,
-                'amount'                => (string) $amount,
-                'currency'              => (string) $currency,
-                'methodId'              => (string) $methodId,
-                'originalIp'            => (string) $originalIp,
-                'secure'                => (int) $secure,
-                'idUser'                => (int) $idUser,
-                'tokenUser'             => (string) $tokenUser,
-                'scoring'               => (string) $scoring,
-                'productDescription'    => (string) $productDescription,
-                'merchantDescription'   => (string) $merchantDescription,
-                'userInteraction'       => (int) $userInteraction,
-                'escrowTargets'         => (array) $escrowTargets,
-                'trxType'               => (string) $trxType,
-                'scaException'          => (string) $scaException,
-                'urlOk'                 => (string) $urlOk,
-                'urlKo'                 => (string) $urlKo,
-                'merchantData'          => (array) $merchantData,
-                'deferred'              => (int) $deferred
-            ]
+            'payment' => [
+                'terminal' => (int) $terminal,
+                'order' => (string) $order,
+                'amount' => (string) $amount,
+                'currency' => (string) $currency,
+                'methodId' => (string) $methodId,
+                'originalIp' => (string) $originalIp,
+                'secure' => (int) $secure,
+                'idUser' => (int) $idUser,
+                'tokenUser' => (string) $tokenUser,
+                'scoring' => (string) $scoring,
+                'productDescription' => (string) $productDescription,
+                'merchantDescription' => (string) $merchantDescription,
+                'userInteraction' => (int) $userInteraction,
+                'escrowTargets' => (array) $escrowTargets,
+                'trxType' => (string) $trxType,
+                'scaException' => (string) $scaException,
+                'urlOk' => (string) $urlOk,
+                'urlKo' => (string) $urlKo,
+                'merchantData' => (array) $merchantData,
+                'deferred' => (int) $deferred,
+            ],
         ];
 
         return $this->executeRequest('/v1/payments/preauth', $params);
@@ -211,16 +213,16 @@ class PaycometApiRest
         $amount,
         $originalIp,
         $authCode,
-        $deferred = 0
+        $deferred = 0,
     ) {
         $params = [
-            "payment" => [
-                'terminal'      => (int) $terminal,
-                'amount'        => (string) $amount,
-                'originalIp'    => (string) $originalIp,
-                'authCode'      => (string) $authCode,
-                'deferred'      => (int) $deferred
-            ]
+            'payment' => [
+                'terminal' => (int) $terminal,
+                'amount' => (string) $amount,
+                'originalIp' => (string) $originalIp,
+                'authCode' => (string) $authCode,
+                'deferred' => (int) $deferred,
+            ],
         ];
 
         return $this->executeRequest('/v1/payments/' . $order . '/preauth/confirm', $params);
@@ -248,35 +250,35 @@ class PaycometApiRest
         $escrowTargets = [],
         $trxType = '',
         $scaException = '',
-        $merchantData = []
+        $merchantData = [],
     ) {
         $params = [
-            "subscription" => [
-                "startDate"             => (string) $startDate,
-                "endDate"               => (string) $endDate,
-                "periodicity"           => (string) $periodicity,
+            'subscription' => [
+                'startDate' => (string) $startDate,
+                'endDate' => (string) $endDate,
+                'periodicity' => (string) $periodicity,
             ],
-            "payment" => [
-                "terminal"              => (int) $terminal,
-                "methodId"              => (string) $methodId,
-                "order"                 => (string) $order,
-                "amount"                => (string) $amount,
-                "currency"              => (string) $currency,
-                "originalIp"            => (string) $originalIp,
-                "idUser"                => (int) $idUser,
-                "tokenUser"             => (string) $tokenUser,
-                "secure"                => (int) $secure,
-                "scoring"               => (string) $scoring,
-                "productDescription"    => (string) $productDescription,
-                "merchantDescriptor"    => (string) $merchantDescriptor,
-                "userInteraction"       => (int) $userInteraction,
-                "escrowTargets"         => (array) $escrowTargets,
-                "trxType"               => (string) $trxType,
-                "scaException"          => (string) $scaException,
-                "urlOk"                 => (string) $urlOk,
-                "urlKo"                 => (string) $urlKo,
-                "merchantData"          => (array) $merchantData
-            ]
+            'payment' => [
+                'terminal' => (int) $terminal,
+                'methodId' => (string) $methodId,
+                'order' => (string) $order,
+                'amount' => (string) $amount,
+                'currency' => (string) $currency,
+                'originalIp' => (string) $originalIp,
+                'idUser' => (int) $idUser,
+                'tokenUser' => (string) $tokenUser,
+                'secure' => (int) $secure,
+                'scoring' => (string) $scoring,
+                'productDescription' => (string) $productDescription,
+                'merchantDescriptor' => (string) $merchantDescriptor,
+                'userInteraction' => (int) $userInteraction,
+                'escrowTargets' => (array) $escrowTargets,
+                'trxType' => (string) $trxType,
+                'scaException' => (string) $scaException,
+                'urlOk' => (string) $urlOk,
+                'urlKo' => (string) $urlKo,
+                'merchantData' => (array) $merchantData,
+            ],
         ];
 
         return $this->executeRequest('/v1/subscription', $params);
@@ -286,14 +288,14 @@ class PaycometApiRest
         $terminal,
         $order,
         $idUser,
-        $tokenUser
+        $tokenUser,
     ) {
         $params = [
-            "payment" => [
-                'terminal'      => (int) $terminal,
-                'idUser'        => (int) $idUser,
-                'tokenUser'     => (string) $tokenUser
-            ]
+            'payment' => [
+                'terminal' => (int) $terminal,
+                'idUser' => (int) $idUser,
+                'tokenUser' => (string) $tokenUser,
+            ],
         ];
 
         return $this->executeRequest('/v1/subscription/' . $order . '/remove', $params);
@@ -306,32 +308,31 @@ class PaycometApiRest
         $currency,
         $authCode,
         $originalIp,
-        $notifyDirectPayment = 1
+        $notifyDirectPayment = 1,
     ) {
         $params = [
-            "payment" => [
-                'terminal'              => (int) $terminal,
-                'amount'                => (string) $amount,
-                'currency'              => (string) $currency,
-                'authCode'              => (string) $authCode,
-                'originalIp'            => (string) $originalIp,
-                'notifyDirectPayment'   => (int) $notifyDirectPayment
-            ]
+            'payment' => [
+                'terminal' => (int) $terminal,
+                'amount' => (string) $amount,
+                'currency' => (string) $currency,
+                'authCode' => (string) $authCode,
+                'originalIp' => (string) $originalIp,
+                'notifyDirectPayment' => (int) $notifyDirectPayment,
+            ],
         ];
 
         return $this->executeRequest('/v1/payments/' . $order . '/refund', $params);
     }
 
     public function getUserPaymentMethods(
-        $terminal
+        $terminal,
     ) {
         $params = [
-            'terminal'      => (int) $terminal
+            'terminal' => (int) $terminal,
         ];
 
         return $this->executeRequest('/v1/methods', $params);
     }
-
 
     private function executeRequest($endpoint, $params)
     {
@@ -341,25 +342,25 @@ class PaycometApiRest
 
         $url = $this->endpointUrl . $endpoint;
 
-        $arrHeaders = array(
+        $arrHeaders = [
             "PAYCOMET-API-TOKEN: $this->apiKey",
-            "Content-Type: application/json"
-        );
+            'Content-Type: application/json',
+        ];
 
-        if ($this->paycometHeader != "") {
-            $arrHeaders[] = "X-PAYCOMET-DATA: " . $this->paycometHeader;
+        if ($this->paycometHeader != '') {
+            $arrHeaders[] = 'X-PAYCOMET-DATA: ' . $this->paycometHeader;
         }
 
-        curl_setopt_array($curl, array(
-                CURLOPT_URL                 => $url,
-                CURLOPT_RETURNTRANSFER      => true,
-                CURLOPT_MAXREDIRS           => 3,
-                CURLOPT_TIMEOUT             => 120,
-                CURLOPT_HTTP_VERSION        => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST       => "POST",
-                CURLOPT_POSTFIELDS          => $jsonParams,
-                CURLOPT_HTTPHEADER          => $arrHeaders
-        ));
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_MAXREDIRS => 3,
+            CURLOPT_TIMEOUT => 120,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $jsonParams,
+            CURLOPT_HTTPHEADER => $arrHeaders,
+        ]);
 
         $response = curl_exec($curl);
 

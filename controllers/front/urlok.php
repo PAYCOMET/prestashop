@@ -22,60 +22,62 @@
  *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
  *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaytpvUrlokModuleFrontController extends ModuleFrontController
 {
     public $display_column_left = false;
 
     public $ssl = true;
+
     /**
      * @see FrontController::initContent()
      */
-
     public function initContent()
     {
-
         parent::initContent();
 
-        $id_cart = (int) (Tools::getValue('id_cart', 0));
+        $id_cart = (int) Tools::getValue('id_cart', 0);
         $id_order = Order::getOrderByCartId((int) $id_cart);
         $key = Tools::getValue('key');
 
         // Vienen los parametros por GET
         if ($id_cart > 0 && $id_cart > 0) {
             // Si no recibimos $key
-            if (!isset($key) || $key == "") {
+            if (!isset($key) || $key == '') {
                 $cart = new Cart($id_cart);
                 $key = $cart->secure_key;
             }
-            $values = array(
+            $values = [
                 'id_cart' => $id_cart,
                 'id_module' => (int) $this->module->id,
                 'id_order' => $id_order,
-                'key' => $key
-            );
+                'key' => $key,
+            ];
             Tools::redirect(Context::getContext()->link->getPageLink('order-confirmation', $this->ssl, null, $values));
-            // No vienen los parametros
+        // No vienen los parametros
         } else {
             $id_customer = (Context::getContext()->customer->id > 0) ? Context::getContext()->customer->id : 0;
 
             $result = PaytpvOrder::getOrderCustomer($id_customer);
             if (empty($result) === false) {
-                $id_order = $result["id_order"];
+                $id_order = $result['id_order'];
                 $fecha_order = strtotime($result['date']);
                 $fecha_actual = strtotime($result['fechaactual']);
 
                 // Si hay order y se ha realizado hace menos de un minuto
                 if ($id_order > 0 && $fecha_order > strtotime('-1 minute', $fecha_actual)) {
-                    $order = new Order((int) ($id_order));
+                    $order = new Order((int) $id_order);
                     $id_cart = $order->id_cart;
 
-                    $values = array(
+                    $values = [
                         'id_cart' => $id_cart,
                         'id_module' => (int) $this->module->id,
                         'id_order' => $id_order,
-                        'key' => Context::getContext()->customer->secure_key
-                    );
+                        'key' => Context::getContext()->customer->secure_key,
+                    ];
 
                     Tools::redirect(
                         Context::getContext()->link->getPageLink(
@@ -89,11 +91,11 @@ class PaytpvUrlokModuleFrontController extends ModuleFrontController
             }
             $this->context->smarty->assign('base_dir', __PS_BASE_URI__);
 
-            $this->context->smarty->assign(array(
+            $this->context->smarty->assign([
                 'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name
-                . '/',
-                'base_dir' =>  __PS_BASE_URI__
-            ));
+                    . '/',
+                'base_dir' => __PS_BASE_URI__,
+            ]);
 
             $this->setTemplate('module:paytpv/views/templates/front/payment_ok.tpl');
         }

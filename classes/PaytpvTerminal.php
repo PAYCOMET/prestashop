@@ -22,6 +22,9 @@
  *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
  *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaytpvTerminal extends ObjectModel
 {
@@ -33,11 +36,10 @@ class PaytpvTerminal extends ObjectModel
     public $currency_iso_code;
     public $dcc;
 
-
     public static function existTerminal()
     {
         $id_shop = Context::getContext()->shop->id;
-        $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where id_shop=' . (int)$id_shop . ' order by id';
+        $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where id_shop=' . (int) $id_shop . ' order by id';
         $result = Db::getInstance()->getRow($sql);
         if (empty($result) === true) {
             return false;
@@ -46,11 +48,10 @@ class PaytpvTerminal extends ObjectModel
         return true;
     }
 
-
     public static function removeTerminals()
     {
         $id_shop = Context::getContext()->shop->id;
-        Db::getInstance()->Execute('DELETE FROM ' . _DB_PREFIX_ . 'paytpv_terminal where id_shop=' . (int)$id_shop);
+        Db::getInstance()->Execute('DELETE FROM ' . _DB_PREFIX_ . 'paytpv_terminal where id_shop=' . (int) $id_shop);
     }
 
     public static function addTerminal(
@@ -59,26 +60,27 @@ class PaytpvTerminal extends ObjectModel
         $password,
         $jetid,
         $currency_iso_code,
-        $dcc
+        $dcc,
     ) {
-        $idterminal = ($idterminal=="")?"null":(int)$idterminal;
+        $idterminal = ($idterminal == '') ? 'null' : (int) $idterminal;
 
         $id_shop = Context::getContext()->shop->id;
         $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'paytpv_terminal (id,id_shop,idterminal,password,
-        jetid,currency_iso_code,dcc) VALUES(' . (int)$id .
-        ',' . (int)$id_shop . ',' . (int)$idterminal . ',"' . pSQL($password) .
-        '","' . pSQL($jetid) . '","' .
-        pSQL($currency_iso_code) . '","' .
-        pSQL($dcc) . '")';
+        jetid,currency_iso_code,dcc) VALUES(' . (int) $id .
+            ',' . (int) $id_shop . ',' . (int) $idterminal . ',"' . pSQL($password) .
+            '","' . pSQL($jetid) . '","' .
+            pSQL($currency_iso_code) . '","' .
+            pSQL($dcc) . '")';
         Db::getInstance()->Execute($sql);
     }
 
     public static function getTerminals()
     {
         $id_shop = Context::getContext()->shop->id;
-        return Db::getInstance()->executeS("SELECT idterminal, password, jetid, currency_iso_code, dcc
-         FROM " . _DB_PREFIX_ . "paytpv_terminal where id_shop=" .
-        (int)$id_shop);
+
+        return Db::getInstance()->executeS('SELECT idterminal, password, jetid, currency_iso_code, dcc
+         FROM ' . _DB_PREFIX_ . 'paytpv_terminal where id_shop=' .
+            (int) $id_shop);
     }
 
     public static function getTerminalCurrency($currency_iso_code, $id_shop = 0)
@@ -87,27 +89,29 @@ class PaytpvTerminal extends ObjectModel
             $id_shop = Context::getContext()->shop->id;
         }
         $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where currency_iso_code="' .
-        pSQL($currency_iso_code) . '" and id_shop=' . (int)$id_shop;
+            pSQL($currency_iso_code) . '" and id_shop=' . (int) $id_shop;
         $result = Db::getInstance()->getRow($sql);
+
         return $result;
     }
 
     public static function getFirstTerminal()
     {
         $id_shop = Context::getContext()->shop->id;
-        $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where id_shop=' . (int)$id_shop . ' order by id';
+        $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where id_shop=' . (int) $id_shop . ' order by id';
         $result = Db::getInstance()->getRow($sql);
+
         return $result;
     }
 
     public static function getTerminalById()
     {
         $id_shop = Context::getContext()->shop->id;
-        $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where id_shop=' . (int)$id_shop . ' order by id';
+        $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where id_shop=' . (int) $id_shop . ' order by id';
         $result = Db::getInstance()->getRow($sql);
+
         return $result;
     }
-
 
     public static function getTerminalByCurrency($currency_iso_code, $id_shop = 0)
     {
@@ -129,11 +133,11 @@ class PaytpvTerminal extends ObjectModel
                 $result2 = self::getFirstTerminal();
             }
         }
-        $arrDatos = array();
-        $arrDatos["idterminal"] = $result2["idterminal"];
-        $arrDatos["password"] = $result2["password"];
-        $arrDatos["jetid"] = $result2["jetid"];
-        $arrDatos["dcc"] = $result2["dcc"];
+        $arrDatos = [];
+        $arrDatos['idterminal'] = $result2['idterminal'];
+        $arrDatos['password'] = $result2['password'];
+        $arrDatos['jetid'] = $result2['jetid'];
+        $arrDatos['dcc'] = $result2['dcc'];
 
         return $arrDatos;
     }
@@ -141,16 +145,16 @@ class PaytpvTerminal extends ObjectModel
     public static function getTerminalByIdTerminal($idterminal)
     {
         $id_shop = Context::getContext()->shop->id;
-        $idterminal = ($idterminal>0) ? $idterminal:0;
-        $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where idterminal=' . (int)$idterminal . ' and
-        id_shop=' . (int)$id_shop;
+        $idterminal = ($idterminal > 0) ? $idterminal : 0;
+        $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where idterminal=' . (int) $idterminal . ' and
+        id_shop=' . (int) $id_shop;
         $result2 = Db::getInstance()->getRow($sql);
 
-        $arrDatos = array();
-        $arrDatos["idterminal"] = $result2["idterminal"];
-        $arrDatos["password"] = $result2["password"];
-        $arrDatos["jetid"] = $result2["jetid"];
-        $arrDatos["dcc"] = $result2["dcc"];
+        $arrDatos = [];
+        $arrDatos['idterminal'] = $result2['idterminal'];
+        $arrDatos['password'] = $result2['password'];
+        $arrDatos['jetid'] = $result2['jetid'];
+        $arrDatos['dcc'] = $result2['dcc'];
 
         return $arrDatos;
     }
