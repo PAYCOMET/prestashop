@@ -1,7 +1,6 @@
 <?php
-
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{paytpv}prestashop>paytpv_c5c9b750653eb8bcb8f69cf03bf9b052'] = 'www.paycomet.com';
 $_MODULE['<{paytpv}prestashop>paytpv_74c09d0e747f78bd9d74299d2e024c35'] = 'Questo modulo ti consente di accettare pagamenti con carta di credito tramite www.paycomet.com';
 $_MODULE['<{paytpv}prestashop>paytpv_1b576db1b05c56c03d193ac1927ff493'] = 'Mancano dati per la configurazione del modulo Paytpv.com';

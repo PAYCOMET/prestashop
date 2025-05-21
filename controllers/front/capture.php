@@ -22,8 +22,11 @@
  *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
  *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-include_once(_PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php');
+include_once _PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php';
 class PaytpvCaptureModuleFrontController extends ModuleFrontController
 {
     public $display_column_left = false;
@@ -34,28 +37,29 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
      */
     public function initContent()
     {
-
         parent::initContent();
 
         $this->context->smarty->assign(
-            array('this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' .
-            $this->module->name . '/')
+            ['this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' .
+                $this->module->name . '/']
         );
 
         $paytpv = $this->module;
 
         $datos_pedido = $paytpv->terminalCurrency($this->context->cart);
-        $importe = $datos_pedido["importe"];
-        $currency_iso_code = $datos_pedido["currency_iso_code"];
-        $idterminal = $datos_pedido["idterminal"];
-        $dcc = $datos_pedido["dcc"];
+        $importe = $datos_pedido['importe'];
+        $currency_iso_code = $datos_pedido['currency_iso_code'];
+        $idterminal = $datos_pedido['idterminal'];
+        $dcc = $datos_pedido['dcc'];
         $productDescription = '';
-        
-        if (isset($this->context->customer->email)) $productDescription = $this->context->customer->email;
+
+        if (isset($this->context->customer->email)) {
+            $productDescription = $this->context->customer->email;
+        }
 
         // BANKSTORE JET
 
-        $token = Tools::getIsset('paytpvToken') ? Tools::getValue('paytpvToken') : "";
+        $token = Tools::getIsset('paytpvToken') ? Tools::getValue('paytpvToken') : '';
         $savecard_jet = Tools::getIsset('paytpv_savecard') ? 1 : 0;
 
         $jetPayment = 0;
@@ -91,48 +95,50 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     $paytpv->l('Cannot operate with given credit card', 'capture')
                 );
                 $this->context->smarty->assign(
-                    array(
+                    [
                         'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' .
-                         $this->module->name . '/',
-                        'base_dir' =>  __PS_BASE_URI__
-                    )
+                            $this->module->name . '/',
+                        'base_dir' => __PS_BASE_URI__,
+                    ]
                 );
                 $this->setTemplate('module:paytpv/views/templates/front/payment_fail.tpl');
+
                 return;
             } else {
-                $data = array();
-                $data["IDUSER"] = $idUser;
-                $data["TOKEN_USER"] = $tokenUser;
+                $data = [];
+                $data['IDUSER'] = $idUser;
+                $data['TOKEN_USER'] = $tokenUser;
 
                 $jetPayment = 1;
             }
-            // TOKENIZED CARD
+        // TOKENIZED CARD
         } else {
             $data = PaytpvCustomer::getCardTokenCustomer(
                 Tools::getValue('TOKEN_USER'),
                 $this->context->cart->id_customer
             );
 
-            if (!isset($data["IDUSER"])) {
+            if (!isset($data['IDUSER'])) {
                 $this->context->smarty->assign(
                     'error_msg',
                     $paytpv->l('Cannot operate with given credit card', 'capture')
                 );
                 $this->context->smarty->assign(
-                    array(
-                    'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' .
-                     $this->module->name . '/',
-                    'base_dir' =>  __PS_BASE_URI__
-                    )
+                    [
+                        'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' .
+                            $this->module->name . '/',
+                        'base_dir' => __PS_BASE_URI__,
+                    ]
                 );
                 $this->setTemplate('module:paytpv/views/templates/front/payment_fail.tpl');
+
                 return;
             }
         }
 
-        $suscription = (Tools::getIsset("paytpv_suscripcion"))?1:0;
-        $periodicity = (Tools::getIsset("paytpv_periodicity"))?Tools::getValue("paytpv_periodicity"):0;
-        $cycles = (Tools::getIsset("paytpv_cycles"))?Tools::getValue("paytpv_cycles"):0;
+        $suscription = (Tools::getIsset('paytpv_suscripcion')) ? 1 : 0;
+        $periodicity = (Tools::getIsset('paytpv_periodicity')) ? Tools::getValue('paytpv_periodicity') : 0;
+        $cycles = (Tools::getIsset('paytpv_cycles')) ? Tools::getValue('paytpv_cycles') : 0;
 
         PaytpvOrderInfo::saveOrderInfo(
             (int) $this->context->customer->id,
@@ -141,39 +147,38 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
             $suscription,
             $periodicity,
             $cycles,
-            $data["IDUSER"]
+            $data['IDUSER']
         );
 
         // Si el cliente solo tiene un terminal seguro, el segundo pago va siempre por seguro.
         // Si tiene un terminal NO Seguro ó ambos, el segundo pago siempre lo mandamos por NO Seguro
 
         $score = $paytpv->transactionScore($this->context->cart);
-        $scoring = $score["score"];
+        $scoring = $score['score'];
 
-        $values = array(
+        $values = [
             'id_cart' => (int) $this->context->cart->id,
-            'key' => Context::getContext()->customer->secure_key
-        );
+            'key' => Context::getContext()->customer->secure_key,
+        ];
         $ssl = Configuration::get('PS_SSL_ENABLED');
 
-
         /* INICIO PAGO SEGURO */
-        $paytpv_order_ref = str_pad($this->context->cart->id, 8, "0", STR_PAD_LEFT);
+        $paytpv_order_ref = str_pad($this->context->cart->id, 8, '0', STR_PAD_LEFT);
 
         $URLOK = Context::getContext()->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
         $URLKO = Context::getContext()->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
 
-        $subscription_startdate = date("Ymd");
+        $subscription_startdate = date('Ymd');
         $susc_periodicity = $periodicity;
         $subs_cycles = $cycles;
 
         // Si es indefinido, ponemos como fecha tope la fecha + 5 años.
         if ($subs_cycles == 0) {
-            $subscription_enddate = date("Y") + 5 . date("m") . date("d");
+            $subscription_enddate = date('Y') + 5 . date('m') . date('d');
         } else {
             // Dias suscripcion
             $dias_subscription = $subs_cycles * $susc_periodicity;
-            $subscription_enddate = date('Ymd', strtotime("+" . $dias_subscription . " days"));
+            $subscription_enddate = date('Ymd', strtotime('+' . $dias_subscription . ' days'));
         }
 
         $salida = $URLKO; // Por defecto siempre redirigir a KO
@@ -186,8 +191,10 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
 
             $apiRest = new PaycometApiRest($paytpv->apikey, $paytpv->paycometHeader);
 
-            if ($jetPayment &&
-            (Tools::getIsset("paytpv_suscripcion") && Tools::getValue("paytpv_suscripcion")==1)) {
+            if (
+                $jetPayment
+                && (Tools::getIsset('paytpv_suscripcion') && Tools::getValue('paytpv_suscripcion') == 1)
+            ) {
                 $createSubscriptionResponse = $apiRest->createSubscription(
                     $subscription_startdate,
                     $subscription_enddate,
@@ -198,7 +205,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     $importe,
                     $currency_iso_code,
                     Tools::getRemoteAddr(),
-                    $data["IDUSER"],
+                    $data['IDUSER'],
                     $data['TOKEN_USER'],
                     $secure_pay,
                     $URLOK,
@@ -214,22 +221,25 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 );
 
                 // Hay challenge
-                if (isset($createSubscriptionResponse->challengeUrl) &&
-                    $createSubscriptionResponse->challengeUrl != ""
+                if (
+                    isset($createSubscriptionResponse->challengeUrl)
+                    && $createSubscriptionResponse->challengeUrl != ''
                 ) {
                     $salida = $createSubscriptionResponse->challengeUrl;
                 // Frictionless
-                } elseif (isset($createSubscriptionResponse->errorCode) &&
-                    $createSubscriptionResponse->errorCode == 0 &&
-                    isset($createSubscriptionResponse->authCode) &&
-                    $createSubscriptionResponse->authCode != "") {
+                } elseif (
+                    isset($createSubscriptionResponse->errorCode)
+                    && $createSubscriptionResponse->errorCode == 0
+                    && isset($createSubscriptionResponse->authCode)
+                    && $createSubscriptionResponse->authCode != ''
+                ) {
                     $salida = $URLOK;
-                // Error
+                    // Error
                 }
             } elseif ($dcc == 1) {
                 $OPERATION = 116;
                 try {
-                    $payment =  [
+                    $payment = [
                         'terminal' => (int) $idterminal,
                         'order' => (string) $paytpv_order_ref,
                         'methods' => [1],
@@ -239,10 +249,10 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                         'secure' => (int) $secure_pay,
                         'productDescription' => $productDescription,
                         'merchantData' => $merchantData,
-                        'idUser' => $data["IDUSER"],
+                        'idUser' => $data['IDUSER'],
                         'tokenUser' => $data['TOKEN_USER'],
                         'urlOk' => $URLOK,
-                        'urlKo' => $URLKO
+                        'urlKo' => $URLKO,
                     ];
 
                     if ($scoring != null) {
@@ -256,14 +266,15 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                         '',
                         $payment
                     );
-                    
+
                     // Hay challenge
-                    if (isset($formResponse->challengeUrl) &&
-                        $formResponse->challengeUrl != ""
+                    if (
+                        isset($formResponse->challengeUrl)
+                        && $formResponse->challengeUrl != ''
                     ) {
                         $salida = $formResponse->challengeUrl;
                     }
-                } catch (exception $e) {
+                } catch (Exception $e) {
                 }
             } else {
                 try {
@@ -275,7 +286,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                         $methodId,
                         Tools::getRemoteAddr(),
                         $secure_pay,
-                        $data["IDUSER"],
+                        $data['IDUSER'],
                         $data['TOKEN_USER'],
                         $URLOK,
                         $URLKO,
@@ -291,19 +302,22 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     );
 
                     // Hay challenge
-                    if (isset($executePurchaseResponse->challengeUrl) &&
-                        $executePurchaseResponse->challengeUrl != ""
+                    if (
+                        isset($executePurchaseResponse->challengeUrl)
+                        && $executePurchaseResponse->challengeUrl != ''
                     ) {
                         $salida = $executePurchaseResponse->challengeUrl;
                     // Frictionless
-                    } elseif (isset($executePurchaseResponse->errorCode) &&
-                        $executePurchaseResponse->errorCode == 0 &&
-                        isset($executePurchaseResponse->authCode) &&
-                        $executePurchaseResponse->authCode != "") {
+                    } elseif (
+                        isset($executePurchaseResponse->errorCode)
+                        && $executePurchaseResponse->errorCode == 0
+                        && isset($executePurchaseResponse->authCode)
+                        && $executePurchaseResponse->authCode != ''
+                    ) {
                         $salida = $URLOK;
-                    // Error
+                        // Error
                     }
-                } catch (exception $e) {
+                } catch (Exception $e) {
                 }
             }
         }

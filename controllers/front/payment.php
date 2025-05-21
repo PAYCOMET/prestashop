@@ -22,32 +22,31 @@
  *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
  *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaytpvPaymentModuleFrontController extends ModuleFrontController
 {
     public $ssl = true;
-    public $display_top  = false;
+    public $display_top = false;
 
     public function initContent()
     {
-
         $this->display_column_left = false;
         $this->display_column_right = false;
         $this->display_top = false;
         $this->display_menu = false;
 
-
         parent::initContent();
 
         $paytpv = $this->module;
 
+        $this->context->smarty->assign('msg_paytpv', '');
 
-        $this->context->smarty->assign('msg_paytpv', "");
-
-        $msg_paytpv = "";
+        $msg_paytpv = '';
 
         $this->context->smarty->assign('msg_paytpv', $msg_paytpv);
-
 
         // Valor de compra
         $id_currency = Context::getContext()->cart->id_currency;
@@ -56,10 +55,10 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
         $importe_tienda = Context::getContext()->cart->getOrderTotal(true, Cart::BOTH);
 
         $ssl = Configuration::get('PS_SSL_ENABLED');
-        $values = array(
+        $values = [
             'id_cart' => (int) Context::getContext()->cart->id,
-            'key' => Context::getContext()->customer->secure_key
-        );
+            'key' => Context::getContext()->customer->secure_key,
+        ];
 
         $active_suscriptions = (int) Configuration::get('PAYTPV_SUSCRIPTIONS');
 
@@ -69,7 +68,7 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
         foreach ($saved_card as $key => $val) {
             $values_aux = array_merge(
                 $values,
-                array("TOKEN_USER" => $val["TOKEN_USER"])
+                ['TOKEN_USER' => $val['TOKEN_USER']]
             );
             $saved_card[$key]['url'] = Context::getContext()->link->getModuleLink(
                 $this->module->name,
@@ -77,14 +76,13 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
                 $values_aux,
                 $ssl
             );
-            $index++;
+            ++$index;
         }
         $saved_card[$index]['url'] = 0;
 
         $cart = Context::getContext()->cart;
         $datos_pedido = $this->module->terminalCurrency($cart);
-        $jetid = $datos_pedido["jetid"];
-
+        $jetid = $datos_pedido['jetid'];
 
         $newpage_payment = (int) Configuration::get('PAYTPV_NEWPAGEPAYMENT');
         $paytpv_integration = (int) Configuration::get('PAYTPV_INTEGRATION');
@@ -107,8 +105,7 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
         $apmsUrls = $paytpv->getUserApmsForPayment();
         $this->context->smarty->assign('apmsUrls', $apmsUrls);
 
-
-        $language_data = explode("-", $this->context->language->language_code);
+        $language_data = explode('-', $this->context->language->language_code);
         $language = $language_data[0];
 
         $this->context->smarty->assign('jet_lang', $language);
@@ -118,7 +115,7 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
             Context::getContext()->link->getModuleLink(
                 $this->module->name,
                 'capture',
-                array(),
+                [],
                 $ssl
             )
         );
@@ -128,12 +125,12 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
             Context::getContext()->link->getModuleLink(
                 $this->module->name,
                 'actions',
-                array(),
+                [],
                 $ssl
             )
         );
 
-        $tmpl_vars = array();
+        $tmpl_vars = [];
         $tmpl_vars['capture_url'] = Context::getContext()->link->getModuleLink(
             $this->module->name,
             'capture',
@@ -146,11 +143,10 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
 
         $this->context->smarty->assign('base_dir', __PS_BASE_URI__);
 
-
         $tmpl_vars = array_merge(
-            array(
-                'this_path' => $this->module->getPath()
-            )
+            [
+                'this_path' => $this->module->getPath(),
+            ]
         );
         $this->context->smarty->assign($tmpl_vars);
 
@@ -169,11 +165,10 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
         $iframeURL = $this->module->paytpvIframeURL();
         if (filter_var($iframeURL, FILTER_VALIDATE_URL) === false) {
             $paytpv_error = $iframeURL;
-            $iframeURL = "";
+            $iframeURL = '';
             $this->context->smarty->assign('paytpv_error', $paytpv_error);
             $this->setTemplate('module:paytpv/views/templates/hook/payment_error.tpl');
         } else {
-
             // Si el pago es en PAYCOMET redireccionamos directamente
             if ($newpage_payment == 2) {
                 Tools::redirect($iframeURL);

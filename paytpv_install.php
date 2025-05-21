@@ -22,7 +22,6 @@
  *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
  *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -34,7 +33,6 @@ class PayTpvInstall
      */
     public function createTables()
     {
-
         if (!Db::getInstance()->Execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'paytpv_order_info` (
                 `id_customer` int(10) unsigned NOT NULL,
@@ -132,10 +130,9 @@ class PayTpvInstall
      */
     public function updateConfiguration()
     {
-
         // Eliminamos columnas antiguas si es que existen
         try {
-            Db::getInstance()->execute('ALTER TABLE `'._DB_PREFIX_.'paytpv_terminal` 
+            Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . 'paytpv_terminal` 
             DROP COLUMN `idterminal_ns`,
             DROP COLUMN `password_ns`,
             DROP COLUMN `jetid_ns`,
@@ -143,14 +140,15 @@ class PayTpvInstall
             DROP COLUMN `tdfirst`,
             DROP COLUMN `tdmin`
             ');
-        } catch (exception $e) {
+        } catch (Exception $e) {
         }
 
         // Eliminamos datos de configuracion
         try {
-            Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'paytpv_terminal`');
-        } catch (exception $e) {
+            Db::getInstance()->execute('DELETE FROM `' . _DB_PREFIX_ . 'paytpv_terminal`');
+        } catch (Exception $e) {
         }
+
         return true;
     }
 
