@@ -199,7 +199,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
 
             // Check if is a suscription payment
             $id_cart = (int) $ref;
-            $id_order = Order::getOrderByCartId((int) $id_cart);
+            $id_order = (int) Order::getIdByCartId((int) $id_cart);
 
             // if exits cart order is a suscription payment
             if ($id_order) {
@@ -223,7 +223,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             $_GET['id_shop'] = $cart->id_shop;
             Shop::initialize();
 
-            $id_order = Order::getOrderByCartId((int) $id_cart);
+            $id_order = (int) Order::getIdByCartId((int) $id_cart);
 
             $transaction = [
                 'transaction_id' => Tools::getValue('AuthCode'),
@@ -402,7 +402,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                         true,
                         $customer->secure_key
                     );
-                    $id_order = Order::getOrderByCartId((int) $new_cart['cart']->id);
+                    $id_order = (int) Order::getIdByCartId((int) $new_cart['cart']->id);
 
                     PaytpvOrder::addOrder(
                         $paytpv_iduser,
@@ -453,7 +453,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                     $customer->secure_key
                 );
 
-                $id_order = Order::getOrderByCartId((int) $id_cart);
+                $id_order = (int) Order::getIdByCartId((int) $id_cart);
                 $id_suscription = 0;
 
                 $defaultsavecard = 0;
@@ -600,7 +600,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
         } else {
             $ref = Tools::getValue('Order');
             $id_cart = (int) $ref;
-            $id_order = Order::getOrderByCartId((int) $id_cart);
+            $id_order = (int) Order::getIdByCartId((int) $id_cart);
             $order = new Order($id_order);
             // Para APMs. Si el estado esta en "Pendient de pago" lo pasamos a Pago Aceptado
             if ($order->getCurrentState() == Configuration::get('PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT')) {

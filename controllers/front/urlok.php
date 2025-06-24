@@ -40,7 +40,7 @@ class PaytpvUrlokModuleFrontController extends ModuleFrontController
         parent::initContent();
 
         $id_cart = (int) Tools::getValue('id_cart', 0);
-        $id_order = Order::getOrderByCartId((int) $id_cart);
+        $id_order = (int) Order::getIdByCartId((int) $id_cart);
         $key = Tools::getValue('key');
 
         // Vienen los parametros por GET
