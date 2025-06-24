@@ -49,7 +49,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '8.7.32';
+        $this->version = '8.7.33';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -3011,7 +3011,7 @@ class Paytpv extends PaymentModule
                 '/',
         ]);
 
-        $id_order = Order::getOrderByCartId((int) $params['cookie']->id_cart);
+        $id_order = (int) Order::getIdByCartId((int) $params['cookie']->id_cart);
         $order = new Order($id_order);
 
         $result_txt = '';
@@ -3052,7 +3052,7 @@ class Paytpv extends PaymentModule
                 '/',
         ]);
 
-        $id_order = Order::getOrderByCartId((int) $params['order']->id_cart);
+        $id_order = (int) Order::getIdByCartId((int) $params['order']->id_cart);
         $order = new Order($id_order);
 
         $result_txt = '';
@@ -3092,7 +3092,7 @@ class Paytpv extends PaymentModule
                 '/',
         ]);
 
-        $id_order = Order::getOrderByCartId((int) $params['order']->id_cart);
+        $id_order = (int) Order::getIdByCartId((int) $params['order']->id_cart);
         $order = new Order($id_order);
 
         $template = 'payment_return.tpl';
