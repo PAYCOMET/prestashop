@@ -44,12 +44,15 @@ class Paytpv extends PaymentModule
 
     private $postErrors = [];
 
+    CONST IFRAME_DEFAULT_HEIGHT = 440;
+    CONST IFRAME_MIN_HEIGHT = 250;
+
     public function __construct()
     {
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '8.7.33';
+        $this->version = '8.7.34';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -78,10 +81,10 @@ class Paytpv extends PaymentModule
         if (isset($config['PAYTPV_NEWPAGEPAYMENT'])) {
             $this->newpage_payment = $config['PAYTPV_NEWPAGEPAYMENT'];
         }
-        if (array_key_exists('PAYTPV_IFRAME_HEIGHT', $config) && $config['PAYTPV_IFRAME_HEIGHT'] >= 440) {
+        if (array_key_exists('PAYTPV_IFRAME_HEIGHT', $config) && $config['PAYTPV_IFRAME_HEIGHT'] >= self::IFRAME_MIN_HEIGHT) {
             $this->iframe_height = $config['PAYTPV_IFRAME_HEIGHT'];
         } else {
-            $this->iframe_height = '440'; // Valor por defecto
+            $this->iframe_height = self::IFRAME_DEFAULT_HEIGHT; // Valor por defecto
         }
         if (isset($config['PAYTPV_SUSCRIPTIONS'])) {
             $this->suscriptions = $config['PAYTPV_SUSCRIPTIONS'];
@@ -327,9 +330,9 @@ class Paytpv extends PaymentModule
             if (
                 Tools::getValue('newpage_payment') != 2
                 && (!filter_var(Tools::getValue('iframe_height'), FILTER_VALIDATE_INT)
-                    || Tools::getValue('iframe_height') < 440)
+                    || Tools::getValue('iframe_height') < self::IFRAME_MIN_HEIGHT)
             ) {
-                $this->postErrors[] = $this->l('The height of the iframe must be at least 440');
+                $this->postErrors[] = $this->l('The height of the iframe must be at least') . ' ' . self::IFRAME_MIN_HEIGHT;
             }
 
             // Check Terminal empty fields SECURE
@@ -1532,7 +1535,7 @@ class Paytpv extends PaymentModule
         $arrValues['apikey'] = trim($config['PAYTPV_APIKEY']);
         $arrValues['integration'] = $config['PAYTPV_INTEGRATION'];
         $arrValues['newpage_payment'] = $config['PAYTPV_NEWPAGEPAYMENT'];
-        $arrValues['iframe_height'] = ($config['PAYTPV_IFRAME_HEIGHT'] != '') ? $config['PAYTPV_IFRAME_HEIGHT'] : 440;
+        $arrValues['iframe_height'] = ($config['PAYTPV_IFRAME_HEIGHT'] != '') ? $config['PAYTPV_IFRAME_HEIGHT'] : self::IFRAME_DEFAULT_HEIGHT;
         $arrValues['suscriptions'] = $config['PAYTPV_SUSCRIPTIONS'];
         $arrValues['partial_refunds'] = $config['PAYTPV_PARTIAL_REFUNDS'];
 
@@ -1802,7 +1805,7 @@ class Paytpv extends PaymentModule
                         'col' => 1,
                         'type' => 'text',
                         'label' => $this->l('Iframe Height (px)'),
-                        'hint' => $this->l('Iframe height in pixels (Min 440)'),
+                        'hint' => $this->l('Iframe height in pixels') . ' ' . $this->l('Min') . ' '  . self::IFRAME_MIN_HEIGHT . " px",
                         'name' => 'iframe_height',
                         'id' => 'iframe_height',
                     ],

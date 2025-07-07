@@ -59,6 +59,11 @@ Todas las suscripciones mostrarán el estado actual:
 - FINALIZADA: Cuando se ha cumplido todo el periodo de la suscripción
 
 ## Release Notes
+
+> 8.7.34: 
+
+- Cambios en la alturma mínima del iframe
+
 > 8.7.33: 
 
 - Compatibilidad con Prestashop 9
