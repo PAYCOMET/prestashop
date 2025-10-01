@@ -129,7 +129,8 @@ class PaytpvApi
                         $b_mobile_test = false;
                         break;
                     default:
-                        exit('Error: bad $test_excludes parameter 2 used: ' . $test_excludes);
+                        echo 'Error: bad $test_excludes parameter 2 used: ' . $test_excludes;
+                        exit(0);
                         // break;
                 }
             }
@@ -860,9 +861,9 @@ class PaytpvApi
                 if (isset($a_full_assoc_data[$which_test])) {
                     return $a_full_assoc_data[$which_test];
                 } else {
-                    exit('You passed the browser detector an unsupported option for parameter 1: ' . $which_test);
+                    echo 'You passed the browser detector an unsupported option for parameter 1: ' . $which_test;
+                    exit(0);
                 }
-                break;
         }
     }
 

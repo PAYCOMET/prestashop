@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+    <name>paytpv</name>
+    <version>8.7.35</version>
+    <author>Paycomet</author>
+    <description>This module allows you to accept card payments via www.paycomet.com</description>
+    <confirmUninstall>¿Desea desinstalar PAYCOMET?</confirmUninstall>
+    <compatible_versions_min>8.0.0</compatible_versions_min>
+    <compatible_versions_max>9.0.0</compatible_versions_max>
+    <tab>payments_gateways</tab>
+    <need_instance>0</need_instance>
+    <is_configurable>1</is_configurable>
+    <limited_countries></limited_countries>
+    <limited_currencies></limited_currencies>
+</module>
+
+

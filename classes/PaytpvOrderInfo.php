@@ -44,7 +44,7 @@ class PaytpvOrderInfo extends ObjectModel
         $suscription,
         $peridicity,
         $cycles,
-        $paytpv_iduser = 0,
+        $paytpv_iduser = 0
     ) {
         // Eliminamos la orden si existe.
         $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'paytpv_order_info where id_customer = ' . (int) $id_customer . ' and
@@ -70,7 +70,7 @@ class PaytpvOrderInfo extends ObjectModel
         // Si no hay datos los almacenamos segun la configuración: Disable Offer Card != SI y
         // Remember Card (Unselected) != SI Por defecto se guarda la tarjeta si está por defecto seleccionado.
         if (empty($result) === true) {
-            self::saveOrderInfo($id_customer, $id_cart, $defaultsavecard, 0, 0, 0, 0, 0);
+            self::saveOrderInfo($id_customer, $id_cart, $defaultsavecard, 0, 0, 0, 0);
             $result = self::getOrderInfo($id_customer, $id_cart, $defaultsavecard);
         }
 

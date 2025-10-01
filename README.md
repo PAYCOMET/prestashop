@@ -60,6 +60,10 @@ Todas las suscripciones mostrarán el estado actual:
 
 ## Release Notes
 
+> 8.7.35: 
+
+- Mejoras de código
+
 > 8.7.34: 
 
 - Cambios en la alturma mínima del iframe

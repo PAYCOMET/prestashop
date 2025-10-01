@@ -44,7 +44,7 @@ class PaytpvUrlokModuleFrontController extends ModuleFrontController
         $key = Tools::getValue('key');
 
         // Vienen los parametros por GET
-        if ($id_cart > 0 && $id_cart > 0) {
+        if ($id_cart > 0) {
             // Si no recibimos $key
             if (!isset($key) || $key == '') {
                 $cart = new Cart($id_cart);
@@ -56,10 +56,10 @@ class PaytpvUrlokModuleFrontController extends ModuleFrontController
                 'id_order' => $id_order,
                 'key' => $key,
             ];
-            Tools::redirect(Context::getContext()->link->getPageLink('order-confirmation', $this->ssl, null, $values));
+            Tools::redirect($this->context->link->getPageLink('order-confirmation', $this->ssl, null, $values));
         // No vienen los parametros
         } else {
-            $id_customer = (Context::getContext()->customer->id > 0) ? Context::getContext()->customer->id : 0;
+            $id_customer = ($this->context->customer->id > 0) ? $this->context->customer->id : 0;
 
             $result = PaytpvOrder::getOrderCustomer($id_customer);
             if (empty($result) === false) {
@@ -76,11 +76,11 @@ class PaytpvUrlokModuleFrontController extends ModuleFrontController
                         'id_cart' => $id_cart,
                         'id_module' => (int) $this->module->id,
                         'id_order' => $id_order,
-                        'key' => Context::getContext()->customer->secure_key,
+                        'key' => $this->context->customer->secure_key,
                     ];
 
                     Tools::redirect(
-                        Context::getContext()->link->getPageLink(
+                        $this->context->link->getPageLink(
                             'order-confirmation',
                             $this->ssl,
                             null,
