@@ -42,7 +42,6 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                 '/',
         ]);
 
-        //$esURLOK = false;
         $pagoRegistrado = false;
         $result = 666;
         /** @var Paytpv $paytpv */
@@ -93,8 +92,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             $importe = number_format(Tools::getValue('Amount') / 100, 2, '.', '');
             $ref = Tools::getValue('Order');
             $result = Tools::getValue('Response') == 'OK' ? 0 : -1;
-            $sign = Tools::getValue('NotificationHash');
-            //$esURLOK = false;
+            $sign = Tools::getValue('NotificationHash');            
             $context = $this->context;
             $id_cart = (int) $ref;
             $cart = new Cart($id_cart);
@@ -121,7 +119,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
         } elseif (Tools::getValue('TransactionType') === '107') {
             $ref = Tools::getValue('Order');
             $sign = Tools::getValue('NotificationHash');
-            //$esURLOK = false;
+            
 
             $datos_op = explode('_', $ref);
             $id_customer = $datos_op[0];
@@ -176,8 +174,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
         // (create_subscription)
         } elseif (Tools::getValue('TransactionType') === '9') {
             $result = Tools::getValue('Response') == 'OK' ? 0 : -1;
-            $sign = Tools::getValue('NotificationHash');
-            //$esURLOK = false;
+            $sign = Tools::getValue('NotificationHash');            
 
             $ref = Tools::getValue('Order');
             // Look if is initial order or a subscription payment (orden[Iduser]Fecha)
@@ -585,28 +582,11 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                     $importe
                 );
             }
-
-            // if URLOK and registered payemnt go to order confirmation
-            /*
-            if ($esURLOK && $pagoRegistrado) {
-                $values = [
-                    'id_cart' => $id_cart,
-                    'id_module' => (int) $paytpv->id,
-                    'id_order' => $id_order,
-                    'key' => Tools::getValue('key'),
-                ];
-                Tools::redirect(
-                    $context->link->getPageLink(
-                        'order-confirmation',
-                        $this->ssl,
-                        null,
-                        $values
-                    )
-                );
-
-                return;
+            
+            if ($pagoRegistrado) {
+                echo 'Pago registrado';
+                exit(0);
             }
-            */
         } else {
             $ref = Tools::getValue('Order');
             $id_cart = (int) $ref;
