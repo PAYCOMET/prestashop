@@ -38,7 +38,7 @@ class PaytpvTerminal extends ObjectModel
 
     public static function existTerminal()
     {
-        $id_shop = Context::getContext()->shop->id;
+        $id_shop = Shop::getContextShopID();
         $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where id_shop=' . (int) $id_shop . ' order by id';
         $result = Db::getInstance()->getRow($sql);
         if (empty($result) === true) {
@@ -50,7 +50,7 @@ class PaytpvTerminal extends ObjectModel
 
     public static function removeTerminals()
     {
-        $id_shop = Context::getContext()->shop->id;
+        $id_shop = Shop::getContextShopID();
         Db::getInstance()->Execute('DELETE FROM ' . _DB_PREFIX_ . 'paytpv_terminal where id_shop=' . (int) $id_shop);
     }
 
@@ -64,7 +64,7 @@ class PaytpvTerminal extends ObjectModel
     ) {
         $idterminal = ($idterminal == '') ? 'null' : (int) $idterminal;
 
-        $id_shop = Context::getContext()->shop->id;
+        $id_shop = Shop::getContextShopID();
         $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'paytpv_terminal (id,id_shop,idterminal,password,
         jetid,currency_iso_code,dcc) VALUES(' . (int) $id .
             ',' . (int) $id_shop . ',' . (int) $idterminal . ',"' . pSQL($password) .
@@ -76,7 +76,7 @@ class PaytpvTerminal extends ObjectModel
 
     public static function getTerminals()
     {
-        $id_shop = Context::getContext()->shop->id;
+        $id_shop = Shop::getContextShopID();
 
         return Db::getInstance()->executeS('SELECT idterminal, password, jetid, currency_iso_code, dcc
          FROM ' . _DB_PREFIX_ . 'paytpv_terminal where id_shop=' .
@@ -86,7 +86,7 @@ class PaytpvTerminal extends ObjectModel
     public static function getTerminalCurrency($currency_iso_code, $id_shop = 0)
     {
         if ($id_shop == 0) {
-            $id_shop = Context::getContext()->shop->id;
+            $id_shop = Shop::getContextShopID();
         }
         $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where currency_iso_code="' .
             pSQL($currency_iso_code) . '" and id_shop=' . (int) $id_shop;
@@ -97,7 +97,7 @@ class PaytpvTerminal extends ObjectModel
 
     public static function getFirstTerminal()
     {
-        $id_shop = Context::getContext()->shop->id;
+        $id_shop = Shop::getContextShopID();
         $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where id_shop=' . (int) $id_shop . ' order by id';
         $result = Db::getInstance()->getRow($sql);
 
@@ -106,7 +106,7 @@ class PaytpvTerminal extends ObjectModel
 
     public static function getTerminalById()
     {
-        $id_shop = Context::getContext()->shop->id;
+        $id_shop = Shop::getContextShopID();
         $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where id_shop=' . (int) $id_shop . ' order by id';
         $result = Db::getInstance()->getRow($sql);
 
@@ -116,7 +116,7 @@ class PaytpvTerminal extends ObjectModel
     public static function getTerminalByCurrency($currency_iso_code, $id_shop = 0)
     {
         if ($id_shop == 0) {
-            $id_shop = Context::getContext()->shop->id;
+            $id_shop = Shop::getContextShopID();
         }
         $result2 = self::getTerminalCurrency($currency_iso_code, $id_shop);
 
@@ -144,7 +144,7 @@ class PaytpvTerminal extends ObjectModel
 
     public static function getTerminalByIdTerminal($idterminal)
     {
-        $id_shop = Context::getContext()->shop->id;
+        $id_shop = Shop::getContextShopID();
         $idterminal = ($idterminal > 0) ? $idterminal : 0;
         $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_terminal where idterminal=' . (int) $idterminal . ' and
         id_shop=' . (int) $id_shop;

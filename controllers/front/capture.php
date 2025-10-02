@@ -44,6 +44,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 $this->module->name . '/']
         );
 
+        /** @var Paytpv $paytpv */
         $paytpv = $this->module;
 
         $datos_pedido = $paytpv->terminalCurrency($this->context->cart);
@@ -53,11 +54,14 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
         $dcc = $datos_pedido['dcc'];
         $productDescription = '';
 
-        if (isset($this->context->customer->email)) {
+        if ($this->context->customer->email) {
             $productDescription = $this->context->customer->email;
         }
 
         // BANKSTORE JET
+
+        $idUser = '';
+        $tokenUser = '';
 
         $token = Tools::getIsset('paytpvToken') ? Tools::getValue('paytpvToken') : '';
         $savecard_jet = Tools::getIsset('paytpv_savecard') ? 1 : 0;
@@ -79,11 +83,11 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                     $notify
                 );
 
-                $addUserResponseErrorCode = $addUserResponse->errorCode;
+                $addUserResponseErrorCode = isset($addUserResponse->errorCode) ? $addUserResponse->errorCode : 0;
 
-                if ($addUserResponse->errorCode == 0) {
-                    $idUser = $addUserResponse->idUser;
-                    $tokenUser = $addUserResponse->tokenUser;
+                if (isset($addUserResponse->errorCode) && $addUserResponse->errorCode == 0) {
+                    $idUser = isset($addUserResponse->idUser) ? $addUserResponse->idUser : '';
+                    $tokenUser = isset($addUserResponse->tokenUser) ? $addUserResponse->tokenUser : '';
                 }
             } else {
                 $addUserResponseErrorCode = 1004;
@@ -158,15 +162,15 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
 
         $values = [
             'id_cart' => (int) $this->context->cart->id,
-            'key' => Context::getContext()->customer->secure_key,
+            'key' => $this->context->customer->secure_key,
         ];
         $ssl = Configuration::get('PS_SSL_ENABLED');
 
         /* INICIO PAGO SEGURO */
-        $paytpv_order_ref = str_pad($this->context->cart->id, 8, '0', STR_PAD_LEFT);
+        $paytpv_order_ref = str_pad((string) $this->context->cart->id, 8, '0', STR_PAD_LEFT);
 
-        $URLOK = Context::getContext()->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
-        $URLKO = Context::getContext()->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
+        $URLOK = $this->context->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
+        $URLKO = $this->context->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
 
         $subscription_startdate = date('Ymd');
         $susc_periodicity = $periodicity;
