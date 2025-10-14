@@ -42,7 +42,6 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                 '/',
         ]);
 
-        //$esURLOK = false;
         $pagoRegistrado = false;
         $result = 666;
         /** @var Paytpv $paytpv */
@@ -94,7 +93,6 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
             $ref = Tools::getValue('Order');
             $result = Tools::getValue('Response') == 'OK' ? 0 : -1;
             $sign = Tools::getValue('NotificationHash');
-            //$esURLOK = false;
             $context = $this->context;
             $id_cart = (int) $ref;
             $cart = new Cart($id_cart);
@@ -121,7 +119,6 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
         } elseif (Tools::getValue('TransactionType') === '107') {
             $ref = Tools::getValue('Order');
             $sign = Tools::getValue('NotificationHash');
-            //$esURLOK = false;
 
             $datos_op = explode('_', $ref);
             $id_customer = $datos_op[0];
@@ -177,7 +174,6 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
         } elseif (Tools::getValue('TransactionType') === '9') {
             $result = Tools::getValue('Response') == 'OK' ? 0 : -1;
             $sign = Tools::getValue('NotificationHash');
-            //$esURLOK = false;
 
             $ref = Tools::getValue('Order');
             // Look if is initial order or a subscription payment (orden[Iduser]Fecha)
@@ -585,28 +581,6 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                     $importe
                 );
             }
-
-            // if URLOK and registered payemnt go to order confirmation
-            /*
-            if ($esURLOK && $pagoRegistrado) {
-                $values = [
-                    'id_cart' => $id_cart,
-                    'id_module' => (int) $paytpv->id,
-                    'id_order' => $id_order,
-                    'key' => Tools::getValue('key'),
-                ];
-                Tools::redirect(
-                    $context->link->getPageLink(
-                        'order-confirmation',
-                        $this->ssl,
-                        null,
-                        $values
-                    )
-                );
-
-                return;
-            }
-            */
         } else {
             $ref = Tools::getValue('Order');
             $id_cart = (int) $ref;

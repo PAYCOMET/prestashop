@@ -67,3 +67,7 @@ ol#terminales_disponibles {
     padding-bottom: 2px;
     margin-bottom: 10px;
 }
+
+label:has(input.text-danger) {
+  color: red !important;
+}

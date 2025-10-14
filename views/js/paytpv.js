@@ -171,6 +171,8 @@ function saveOrderInfoJQ(paytpv_suscripcion){
         break;
     }
 
+    check_suscription();
+
     $.ajax({
         url: addParam($("#paytpv_module").val(),'process=saveOrderInfo'),
         type: "POST",
