@@ -581,6 +581,11 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                     $importe
                 );
             }
+            
+            if ($pagoRegistrado) {
+                echo 'Pago registrado';
+                exit(0);
+            }
         } else {
             $ref = Tools::getValue('Order');
             $id_cart = (int) $ref;
