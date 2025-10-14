@@ -581,7 +581,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                     $importe
                 );
             }
-            
+
             if ($pagoRegistrado) {
                 echo 'Pago registrado';
                 exit(0);
