@@ -1,4 +1,4 @@
-/*
+{*
 * 2007-2015 PrestaShop
 *
 * NOTICE OF LICENSE
@@ -20,54 +20,8 @@
 *  @author     PAYCOMET <info@paycomet.com>
 *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*/
+*}
 
-ul.paytpv{
-    padding-left: 20px;
-}
+<form id="payment-form" method="POST" action="{$paytpv_newpage_action|escape:'htmlall':'UTF-8'}"></form>
 
-.paytpv li{
-    list-style-type:square;
-    padding-top: 5px;
-}
 
-.important{
-    font-size: 14px;
-    color: #FF0000;
-    font-weight: bold;
-}
-
-label {font-size: 12px;}
-fieldset{font-size:13px}
-legend{background:#EBEDF4;border:1px solid #CCCED7;font-weight:700;margin:0;padding:.2em .5em;text-align:left}
-
-fieldset img {
-	vertical-align: middle!important;
-}
-
-.error{color:red;font-weight: bold;background-color: rgb(235, 237, 244);font-size:110%;}
-
-.min3d{
-	padding-top:5px;
-}
-
-ol#terminales_disponibles {
-	list-style: inherit;
-	list-style-type: decimal;
-	margin: 10px;
-	padding-left: 10px;
-}
-
-.inline{
-	display:inline;
-}
-
-.scoring_calculation{
-	border-bottom: 2px solid #aaa;
-    padding-bottom: 2px;
-    margin-bottom: 10px;
-}
-
-label:has(input.text-danger) {
-  color: red !important;
-}

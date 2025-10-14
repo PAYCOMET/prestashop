@@ -93,7 +93,6 @@ class PaytpvOrder extends ObjectModel
      *
      * @param int $id_customer codigo cliente
      * @param int $id_address_delivery direccion de envio
-     * @param int $interval intervalo
      *
      * @return string $intervalType tipo de intervalo (DAY,MONTH)
      **/

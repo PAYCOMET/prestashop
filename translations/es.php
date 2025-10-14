@@ -1,7 +1,6 @@
 <?php
-
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{paytpv}prestashop>paytpv_ee108c5440ba8b7fd3860e1eb295ee02'] = 'Paycomet';
 $_MODULE['<{paytpv}prestashop>paytpv_bee90c2b2d226c68aafefd82886f3ed8'] = 'Este módulo le permite aceptar pagos con tarjeta vía www.paycomet.com';
 $_MODULE['<{paytpv}prestashop>paytpv_5471a02ce2faedcaf0b632f3920ca463'] = 'Faltan datos al configurar el módulo PAYCOMET';
@@ -15,6 +14,7 @@ $_MODULE['<{paytpv}prestashop>paytpv_b551667abbf9f0f73181ee285cf0eb06'] = 'Contr
 $_MODULE['<{paytpv}prestashop>paytpv_b1b976c2a07141604f0cfdf13d201393'] = 'JET ID no válido';
 $_MODULE['<{paytpv}prestashop>paytpv_2cc93fbfb804f22a74c96238ad0cdf86'] = 'Terminales duplicados';
 $_MODULE['<{paytpv}prestashop>paytpv_ada904b28b70b6a8b7d32f259599650c'] = 'Moneda duplicada. Indique una moneda diferente para cada terminal';
+$_MODULE['<{paytpv}prestashop>paytpv_a5962762132922295e3fcdedd7b8b484'] = 'Método no disponible, por favor desactiva: ';
 $_MODULE['<{paytpv}prestashop>paytpv_7a2ccf251ecb20b2b84ce0e3c3f72a29'] = 'Seguro';
 $_MODULE['<{paytpv}prestashop>paytpv_2f281b92c4d63bbdbc397d8fb615f5c8'] = 'Compruebe que el Código de Cliente, Terminal y Contraseña son correctos';
 $_MODULE['<{paytpv}prestashop>paytpv_32ca39955b45db985739bdefab65a943'] = 'La URL de Notificación no está definida en la configuración del producto en su cuenta de PAYCOMET.';
@@ -72,6 +72,7 @@ $_MODULE['<{paytpv}prestashop>paytpv_790d59ef178acbc75d233bf4211763c6'] = 'País
 $_MODULE['<{paytpv}prestashop>paytpv_66691890649003088bd100690772d1ae'] = 'Cambio de IP';
 $_MODULE['<{paytpv}prestashop>paytpv_6b38032e497abe6814bf8095745394eb'] = 'Navegador No identificado';
 $_MODULE['<{paytpv}prestashop>paytpv_5e64e5973f0eb58814fefbf192cdce73'] = 'Sistema Operativo No identificado';
+$_MODULE['<{paytpv}prestashop>paytpv_1c6367723efa58cd9a06b7347fabfc64'] = ' (NO DISPONIBLE)';
 $_MODULE['<{paytpv}prestashop>paytpv_6a408e5941b4ed7630edd7c211aed267'] = 'Pagar con tarjeta';
 $_MODULE['<{paytpv}prestashop>paytpv_1691bd9101cc8895aa1aaa7e6833ea91'] = 'Pagar con ';
 $_MODULE['<{paytpv}prestashop>paytpv_d8ce19c9d478d37cac656199193e2b5a'] = 'Compra ahora y paga después';

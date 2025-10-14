@@ -33,13 +33,20 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
 
     public function initContent()
     {
-        $this->display_column_left = false;
-        $this->display_column_right = false;
+        if (property_exists($this, 'display_column_left')) {
+            $this->display_column_left = false;
+        }
+        if (property_exists($this, 'display_column_right')) {
+            $this->display_column_right = false;
+        }
         $this->display_top = false;
-        $this->display_menu = false;
+        if (property_exists($this, 'display_menu')) {
+            $this->display_menu = false;
+        }
 
         parent::initContent();
 
+        /** @var Paytpv $paytpv */
         $paytpv = $this->module;
 
         $this->context->smarty->assign('msg_paytpv', '');
@@ -49,15 +56,15 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
         $this->context->smarty->assign('msg_paytpv', $msg_paytpv);
 
         // Valor de compra
-        $id_currency = Context::getContext()->cart->id_currency;
+        $id_currency = $this->context->cart->id_currency;
 
         $currency = new Currency((int) $id_currency);
-        $importe_tienda = Context::getContext()->cart->getOrderTotal(true, Cart::BOTH);
+        $importe_tienda = $this->context->cart->getOrderTotal(true, Cart::BOTH);
 
         $ssl = Configuration::get('PS_SSL_ENABLED');
         $values = [
-            'id_cart' => (int) Context::getContext()->cart->id,
-            'key' => Context::getContext()->customer->secure_key,
+            'id_cart' => (int) $this->context->cart->id,
+            'key' => $this->context->customer->secure_key,
         ];
 
         $active_suscriptions = (int) Configuration::get('PAYTPV_SUSCRIPTIONS');
@@ -70,8 +77,8 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
                 $values,
                 ['TOKEN_USER' => $val['TOKEN_USER']]
             );
-            $saved_card[$key]['url'] = Context::getContext()->link->getModuleLink(
-                $this->module->name,
+            $saved_card[$key]['url'] = $this->context->link->getModuleLink(
+                $paytpv->name,
                 'capture',
                 $values_aux,
                 $ssl
@@ -80,8 +87,8 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
         }
         $saved_card[$index]['url'] = 0;
 
-        $cart = Context::getContext()->cart;
-        $datos_pedido = $this->module->terminalCurrency($cart);
+        $cart = $this->context->cart;
+        $datos_pedido = $paytpv->terminalCurrency($cart);
         $jetid = $datos_pedido['jetid'];
 
         $newpage_payment = (int) Configuration::get('PAYTPV_NEWPAGEPAYMENT');
@@ -112,8 +119,8 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
 
         $this->context->smarty->assign(
             'paytpv_jetid_url',
-            Context::getContext()->link->getModuleLink(
-                $this->module->name,
+            $this->context->link->getModuleLink(
+                $paytpv->name,
                 'capture',
                 [],
                 $ssl
@@ -122,8 +129,8 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
 
         $this->context->smarty->assign(
             'paytpv_module',
-            Context::getContext()->link->getModuleLink(
-                $this->module->name,
+            $this->context->link->getModuleLink(
+                $paytpv->name,
                 'actions',
                 [],
                 $ssl
@@ -131,21 +138,21 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
         );
 
         $tmpl_vars = [];
-        $tmpl_vars['capture_url'] = Context::getContext()->link->getModuleLink(
-            $this->module->name,
+        $tmpl_vars['capture_url'] = $this->context->link->getModuleLink(
+            $paytpv->name,
             'capture',
             $values,
             $ssl
         );
         $this->context->smarty->assign('active_suscriptions', $active_suscriptions);
         $this->context->smarty->assign('saved_card', $saved_card);
-        $this->context->smarty->assign('id_cart', Context::getContext()->cart->id);
+        $this->context->smarty->assign('id_cart', $this->context->cart->id);
 
         $this->context->smarty->assign('base_dir', __PS_BASE_URI__);
 
         $tmpl_vars = array_merge(
             [
-                'this_path' => $this->module->getPath(),
+                'this_path' => $paytpv->getPath(),
             ]
         );
         $this->context->smarty->assign($tmpl_vars);
@@ -162,7 +169,7 @@ class PaytpvPaymentModuleFrontController extends ModuleFrontController
 
         $this->context->smarty->assign('disableoffersavecard', $disableoffersavecard);
 
-        $iframeURL = $this->module->paytpvIframeURL();
+        $iframeURL = $paytpv->paytpvIframeURL();
         if (filter_var($iframeURL, FILTER_VALIDATE_URL) === false) {
             $paytpv_error = $iframeURL;
             $iframeURL = '';

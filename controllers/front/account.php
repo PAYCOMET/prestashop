@@ -55,11 +55,12 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
 
         $this->context->controller->addJqueryPlugin('fancybox');
 
-        if (!Context::getContext()->customer->isLogged()) {
+        if (!$this->context->customer->isLogged()) {
             Tools::redirect('index.php?controller=authentication&redirect=module&module=paytpv&action=account');
         }
 
-        if (Context::getContext()->customer->id) {
+        if ($this->context->customer->id) {
+            /** @var Paytpv $paytpv */
             $paytpv = $this->module;
 
             $arrTerminal = PaytpvTerminal::getTerminalByCurrency($this->context->currency->iso_code);
@@ -70,6 +71,8 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
             $token = Tools::getIsset('paytpvToken') ? Tools::getValue('paytpvToken') : '';
 
             if ($token && Tools::strlen($token) == 64) {
+                $idUser = '';
+                $tokenUser = '';
                 include_once _PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php';
 
                 if ($paytpv->apikey != '') {
@@ -83,11 +86,11 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                         'ES',
                         $notify
                     );
-                    $addUserResponseErrorCode = $addUserResponse->errorCode;
+                    $addUserResponseErrorCode = isset($addUserResponse->errorCode) ? $addUserResponse->errorCode : 0;
 
-                    if ($addUserResponse->errorCode == 0) {
-                        $idUser = $addUserResponse->idUser;
-                        $tokenUser = $addUserResponse->tokenUser;
+                    if (isset($addUserResponse->errorCode) && $addUserResponse->errorCode == 0) {
+                        $idUser = isset($addUserResponse->idUser) ? $addUserResponse->idUser : '';
+                        $tokenUser = isset($addUserResponse->tokenUser) ? $addUserResponse->tokenUser : '';
                     }
                 } else {
                     $addUserResponseErrorCode = 1004;
@@ -105,10 +108,10 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                             $idterminal
                         );
 
-                        if ($infoUserResponse->errorCode == 0) {
-                            $result['DS_MERCHANT_PAN'] = $infoUserResponse->pan;
-                            $result['DS_CARD_BRAND'] = $infoUserResponse->cardBrand;
-                            $result['DS_MERCHANT_EXPIRYDATE'] = $infoUserResponse->expiryDate;
+                        if (isset($infoUserResponse->errorCode) && $infoUserResponse->errorCode == 0) {
+                            $result['DS_MERCHANT_PAN'] = isset($infoUserResponse->pan) ? $infoUserResponse->pan : '';
+                            $result['DS_CARD_BRAND'] = isset($infoUserResponse->cardBrand) ? $infoUserResponse->cardBrand : '';
+                            $result['DS_MERCHANT_EXPIRYDATE'] = isset($infoUserResponse->expiryDate) ? $infoUserResponse->expiryDate : '';
 
                             $paytpv->saveCard(
                                 (int) $this->context->customer->id,
@@ -130,12 +133,12 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
 
             $suscriptions = PaytpvSuscription::getSuscriptionCustomer($language, (int) $this->context->customer->id);
 
-            $order = Context::getContext()->customer->id . '_' . Context::getContext()->shop->id;
+            $order = $this->context->customer->id . '_' . $this->context->shop->id;
             $operation = 107;
             $ssl = Configuration::get('PS_SSL_ENABLED');
             $paytpv_integration = (int) Configuration::get('PAYTPV_INTEGRATION');
 
-            $URLOK = $URLKO = Context::getContext()->link->getModuleLink($paytpv->name, 'account', [], $ssl);
+            $URLOK = $URLKO = $this->context->link->getModuleLink($paytpv->name, 'account', [], $ssl);
 
             if ($paytpv->apikey != '') {
                 try {
@@ -154,8 +157,8 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                         []
                     );
                     $url_paytpv = '';
-                    if ($formResponse->errorCode == 0) {
-                        $url_paytpv = $formResponse->challengeUrl;
+                    if (isset($formResponse->errorCode) && $formResponse->errorCode == 0) {
+                        $url_paytpv = isset($formResponse->challengeUrl) ? (string) $formResponse->challengeUrl : '';
                     }
                 } catch (Exception $e) {
                     $url_paytpv = '';
@@ -188,17 +191,17 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                                 $result['DS_CARD_BRAND'] = $infoUserResponse->cardBrand;
                                 $result['DS_MERCHANT_EXPIRYDATE'] = $infoUserResponse->expiryDate;
 
-                                PaytpvCustomer::UpdateCustomerExpiryDate(Context::getContext()->customer->id, $saved_card[$key]['IDUSER'], $result['DS_MERCHANT_EXPIRYDATE']);
+                                PaytpvCustomer::UpdateCustomerExpiryDate($this->context->customer->id, $saved_card[$key]['IDUSER'], $result['DS_MERCHANT_EXPIRYDATE']);
 
-                                $saved_card[$key] = PaytpvCustomer::getCardsCustomer(Context::getContext()->customer->id)[$key];
+                                $saved_card[$key] = PaytpvCustomer::getCardsCustomer($this->context->customer->id)[$key];
                             } elseif ($infoUserResponse->errorCode == 1001) {
-                                PaytpvCustomer::UpdateCustomerExpiryDate(Context::getContext()->customer->id, $saved_card[$key]['IDUSER'], '1900/01');
+                                PaytpvCustomer::UpdateCustomerExpiryDate($this->context->customer->id, $saved_card[$key]['IDUSER'], '1900/01');
                             }
                         } catch (Exception $e) {
                         }
                     }
                 }
-                if (date('Ym') < str_replace('/', '', $saved_card[$key]['EXPIRY_DATE'])) {
+                if (date('Ym') < (string) str_replace('/', '', (string) $saved_card[$key]['EXPIRY_DATE'])) {
                     $saved_cards['valid'][] = $saved_card[$key];
                 } else {
                     $saved_cards['invalid'][] = $saved_card[$key];
@@ -213,7 +216,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
 
             $this->context->smarty->assign(
                 'url_removecard',
-                Context::getContext()->link->getModuleLink(
+                $this->context->link->getModuleLink(
                     'paytpv',
                     'actions',
                     ['process' => 'removeCard'],
@@ -222,7 +225,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
             );
             $this->context->smarty->assign(
                 'url_savedesc',
-                Context::getContext()->link->getModuleLink(
+                $this->context->link->getModuleLink(
                     'paytpv',
                     'actions',
                     ['process' => 'saveDescriptionCard'],
@@ -231,7 +234,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
             );
             $this->context->smarty->assign(
                 'url_cancelsuscription',
-                Context::getContext()->link->getModuleLink(
+                $this->context->link->getModuleLink(
                     'paytpv',
                     'actions',
                     ['process' => 'cancelSuscription'],
@@ -251,7 +254,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
 
             $this->context->smarty->assign(
                 'paytpv_jetid_url',
-                Context::getContext()->link->getModuleLink(
+                $this->context->link->getModuleLink(
                     'paytpv',
                     'account',
                     [],
@@ -263,7 +266,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
 
             // Bankstore JET
             if ($paytpv_integration == 1) {
-                $this->context->smarty->assign('this_path', $this->module->getPath());
+                $this->context->smarty->assign('this_path', Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/');
             }
 
             $this->context->smarty->assign('status_canceled', $paytpv->l('CANCELLED'));

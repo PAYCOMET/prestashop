@@ -30,6 +30,7 @@ class PaytpvSimuladorModuleFrontController extends ModuleFrontController
 {
     public function initContent()
     {
+        /** @var Paytpv $paytpv */
         $paytpv = $this->module;
 
         $urlSimulatorJs = $paytpv->getICSimulatorUrl();
@@ -41,16 +42,17 @@ class PaytpvSimuladorModuleFrontController extends ModuleFrontController
 
         if (isset($importe_financiar)) {
             $importe_financiar = str_replace(',', '.', $importe_financiar);
-            $simulador = '<html>
-                            <body>
-                             <div class="ic-configuration" style="display:none;">' . $hashToken . '</div>
-                                <div class="ic-simulator" amount="' . $importe_financiar . '"></div>
-                            </body>
-                            <script src="' . $urlSimulatorJs . '"></script>
-                         </html>';
+            $html = '<html>' .
+                    '<body>' .
+                    '<div class="ic-configuration" style="display:none;">' . $hashToken . '</div>' .
+                    '<div class="ic-simulator" amount="' . $importe_financiar . '"></div>' .
+                    '<script src="' . $urlSimulatorJs . '"></script>' .
+                    '</body>' .
+                    '</html>';
             header_remove();
             header('content-type: text/html');
-            exit($simulador);
+            echo $html;
+            exit(0);
         }
     }
 }

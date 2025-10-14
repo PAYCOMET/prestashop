@@ -46,6 +46,7 @@ class PaytpvApmModuleFrontController extends ModuleFrontController
         $id_cart = (int) Tools::getValue('id_cart');
         $url = (string) Tools::getValue('url');
         $methodId = (string) Tools::getValue('methodId');
+        /** @var Paytpv $paytpv */
         $paytpv = $this->module;
 
         $cart = new Cart($id_cart);
@@ -53,15 +54,15 @@ class PaytpvApmModuleFrontController extends ModuleFrontController
         $importe = $datos_pedido['importe'];
         $currency_iso_code = $datos_pedido['currency_iso_code'];
         $idterminal = $datos_pedido['idterminal'];
-        $paytpv_order_ref = str_pad($cart->id, 8, '0', STR_PAD_LEFT);
+        $paytpv_order_ref = str_pad((string) $cart->id, 8, '0', STR_PAD_LEFT);
         $merchantData = $paytpv->getMerchantData($cart, $methodId);
         $ssl = Configuration::get('PS_SSL_ENABLED');
         $values = [
             'id_cart' => $cart->id,
-            'key' => Context::getContext()->customer->secure_key,
+            'key' => $this->context->customer->secure_key,
         ];
-        $URLOK = Context::getContext()->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
-        $URLKO = Context::getContext()->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
+        $URLOK = $this->context->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
+        $URLKO = $this->context->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
 
         $apiRest = new PaycometApiRest($paytpv->apikey, $paytpv->paycometHeader);
 
@@ -69,11 +70,7 @@ class PaytpvApmModuleFrontController extends ModuleFrontController
 
         $userInteraction = 1;
         $secure_pay = 1;
-        $productDescription = '';
-
-        if (isset(Context::getContext()->customer->email)) {
-            $productDescription = Context::getContext()->customer->email;
-        }
+        $productDescription = isset($this->context->customer->email) ? $this->context->customer->email : '';
 
         $score = $paytpv->transactionScore($cart);
         $scoring = $score['score'];
@@ -116,12 +113,12 @@ class PaytpvApmModuleFrontController extends ModuleFrontController
                 $message = '';
 
                 if ($methodId == 16) {
-                    $message = json_encode($executePurchaseResponse->methodData) . '|';
+                    $message = isset($executePurchaseResponse->methodData) ? json_encode($executePurchaseResponse->methodData) . '|' : '';
                 }
 
                 $paytpv->validateOrder(
                     $id_cart,
-                    Configuration::get('PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT'),
+                    (int) Configuration::get('PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT'),
                     0,
                     $displayName,
                     $message
