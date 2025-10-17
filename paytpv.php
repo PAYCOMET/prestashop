@@ -2316,7 +2316,7 @@ class Paytpv extends PaymentModule
             $apms = [];
 
             // Si no hay error en la consulta a los metodos
-            if (!isset($paymentMethods->errorCode)) {
+            if (isset($paymentMethods) && !isset($paymentMethods->errorCode)) {
                 foreach ($paymentMethods as $apm) {
                     $apms[] = [
                         'id' => preg_replace('/\s+/', '_', Tools::strtolower($apm->name)),
@@ -2348,8 +2348,9 @@ class Paytpv extends PaymentModule
                     }
                 }
                 if ($disabled) {
-                    $name = $this->getAPMName($activeApm) . $this->l(' (NOT AVAILABLE)');
-                    $id = preg_replace('/\s+/', '_', Tools::strtolower($name));
+                    $apmname = $this->getAPMName($activeApm);
+                    $name = $apmname . $this->l(' (NOT AVAILABLE)');
+                    $id = preg_replace('/\s+/', '_', Tools::strtolower($apmname));
                     $apmConfig = Configuration::get('PAYTPV_APM_' . $id);
 
                     if ($apmConfig != null) {
