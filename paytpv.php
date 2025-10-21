@@ -122,7 +122,7 @@ class Paytpv extends PaymentModule
         $this->is_eu_compatible = 1;
         $this->ps_versions_compliancy = [
             'min' => '8.0.0',
-            'max' => '9.0.0',
+            'max' => '9.0.1',
         ];
         $this->controllers = ['payment', 'validation'];
 
