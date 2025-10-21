@@ -53,8 +53,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
         if (Tools::getValue('process') == 'suscribe') {
             $this->processSuscribe();
         }
-
-        exit;
+        exit(0);
     }
 
     /**
@@ -62,12 +61,15 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
      */
     public function processRemoveCard()
     {
+        /** @var Paytpv $paytpv */
         $paytpv = $this->module;
 
         if ($paytpv->removeCard(Tools::getValue('paytpv_iduser'))) {
-            exit('0');
+            echo '0';
+            exit(0);
         }
-        exit('1');
+        echo '1';
+        exit(0);
     }
 
     /**
@@ -80,9 +82,11 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
             Tools::getValue('paytpv_iduser'),
             Tools::getValue('card_desc')
         )) {
-            exit('0');
+            echo '0';
+            exit(0);
         }
-        exit('1');
+        echo '1';
+        exit(0);
     }
 
     /**
@@ -90,6 +94,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
      */
     public function processCancelSuscription()
     {
+        /** @var Paytpv $paytpv */
         $paytpv = $this->module;
         $res = $paytpv->cancelSuscription(Tools::getValue('id_suscription'));
         echo json_encode($res);
@@ -100,6 +105,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
      */
     public function processAddCard()
     {
+        /** @var Paytpv $paytpv */
         $paytpv = $this->module;
 
         $id_cart = Tools::getValue('id_cart');
@@ -114,8 +120,8 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
         // Valor de compra
         $id_currency = (int) Configuration::get('PS_CURRENCY_DEFAULT');
 
-        if (!is_object(Context::getContext()->currency)) {
-            Context::getContext()->currency = new Currency($id_currency);
+        if (!is_object($this->context->currency)) {
+            $this->context->currency = new Currency($id_currency);
         }
 
         $datos_pedido = $paytpv->terminalCurrency($cart);
@@ -126,15 +132,15 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
 
         $values = [
             'id_cart' => $cart->id,
-            'key' => Context::getContext()->customer->secure_key,
+            'key' => $this->context->customer->secure_key,
         ];
 
         $ssl = Configuration::get('PS_SSL_ENABLED');
 
-        $URLOK = Context::getContext()->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
-        $URLKO = Context::getContext()->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
+        $URLOK = $this->context->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
+        $URLKO = $this->context->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
 
-        $paytpv_order_ref = str_pad($cart->id, 8, '0', STR_PAD_LEFT);
+        $paytpv_order_ref = str_pad((string) $cart->id, 8, '0', STR_PAD_LEFT);
 
         $language = $paytpv->getPaycometLang($this->context->language->language_code);
 
@@ -158,11 +164,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
 
                 $userInteraction = '1';
                 $merchantData = $paytpv->getMerchantData($cart);
-                $productDescription = '';
-
-                if (isset($this->context->customer->email)) {
-                    $productDescription = $this->context->customer->email;
-                }
+                $productDescription = isset($this->context->customer->email) ? $this->context->customer->email : '';
 
                 $score = $paytpv->transactionScore($cart);
                 $scoring = $score['score'];
@@ -197,8 +199,8 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                     );
 
                     $url_paytpv = '';
-                    if ($formResponse->errorCode == 0) {
-                        $url_paytpv = $formResponse->challengeUrl;
+                    if (isset($formResponse->errorCode) && $formResponse->errorCode == 0) {
+                        $url_paytpv = isset($formResponse->challengeUrl) ? $formResponse->challengeUrl : '';
                     }
                 } catch (Exception $e) {
                     $url_paytpv = '';
@@ -250,6 +252,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
      */
     public function processSuscribe()
     {
+        /** @var Paytpv $paytpv */
         $paytpv = $this->module;
 
         $id_cart = Tools::getValue('id_cart');
@@ -264,8 +267,8 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
         // Valor de compra
         $id_currency = (int) Configuration::get('PS_CURRENCY_DEFAULT');
 
-        if (!is_object(Context::getContext()->currency)) {
-            Context::getContext()->currency = new Currency($id_currency);
+        if (!is_object($this->context->currency)) {
+            $this->context->currency = new Currency($id_currency);
         }
 
         $datos_pedido = $paytpv->terminalCurrency($cart);
@@ -275,15 +278,15 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
 
         $values = [
             'id_cart' => $cart->id,
-            'key' => Context::getContext()->customer->secure_key,
+            'key' => $this->context->customer->secure_key,
         ];
 
         $ssl = Configuration::get('PS_SSL_ENABLED');
 
-        $URLOK = Context::getContext()->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
-        $URLKO = Context::getContext()->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
+        $URLOK = $this->context->link->getModuleLink($paytpv->name, 'urlok', $values, $ssl);
+        $URLKO = $this->context->link->getModuleLink($paytpv->name, 'urlko', $values, $ssl);
 
-        $paytpv_order_ref = str_pad($cart->id, 8, '0', STR_PAD_LEFT);
+        $paytpv_order_ref = str_pad((string) $cart->id, 8, '0', STR_PAD_LEFT);
 
         $secure_pay = true;
 
@@ -321,11 +324,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                 include_once _PS_MODULE_DIR_ . '/paytpv/classes/PaycometApiRest.php';
 
                 $merchantData = $paytpv->getMerchantData($cart);
-                $productDescription = '';
-
-                if (isset($this->context->customer->email)) {
-                    $productDescription = $this->context->customer->email;
-                }
+                $productDescription = isset($this->context->customer->email) ? $this->context->customer->email : '';
 
                 $userInteraction = '1';
 
@@ -364,8 +363,8 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                     );
 
                     $url_paytpv = '';
-                    if ($formResponse->errorCode == 0) {
-                        $url_paytpv = $formResponse->challengeUrl;
+                    if (isset($formResponse->errorCode) && $formResponse->errorCode == 0) {
+                        $url_paytpv = isset($formResponse->challengeUrl) ? $formResponse->challengeUrl : '';
                     }
                 } catch (Exception $e) {
                     $url_paytpv = '';
