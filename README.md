@@ -59,6 +59,9 @@ Todas las suscripciones mostrarán el estado actual:
 - FINALIZADA: Cuando se ha cumplido todo el periodo de la suscripción
 
 ## Release Notes
+> 8.7.36: 
+
+- Mejoras de código
 
 > 8.7.35: 
 

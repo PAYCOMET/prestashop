@@ -116,7 +116,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '8.7.35';
+        $this->version = '8.7.36';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -3176,13 +3176,15 @@ class Paytpv extends PaymentModule
             $methodData = json_decode(explode('|', $message, 2)[0]);
         }
 
-        if (strstr(Tools::strtolower($order->payment), 'multibanco') && isset($methodData->entityNumber) && isset($methodData->referenceNumber)) {
+        // Se desactiva por cambios en el proveedor
+        /*if (strstr(Tools::strtolower($order->payment), 'multibanco') && isset($methodData->entityNumber) && isset($methodData->referenceNumber)) {
             // Multibanco
             $mbentity = $methodData->entityNumber;
             $mbreference = $methodData->referenceNumber;
         } else {
             $display = 'none';
-        }
+        }*/
+        $display = 'none';
 
         $this->context->smarty->assign('display', $display);
         $this->context->smarty->assign('mbentity', $mbentity);
@@ -3217,13 +3219,15 @@ class Paytpv extends PaymentModule
             $methodData = json_decode(explode('|', $message, 2)[0]);
         }
 
-        if (strstr(Tools::strtolower($order->payment), 'multibanco') && isset($methodData->entityNumber) && isset($methodData->referenceNumber)) {
+        // Se desactiva por cambios en el proveedor
+        /*if (strstr(Tools::strtolower($order->payment), 'multibanco') && isset($methodData->entityNumber) && isset($methodData->referenceNumber)) {
             // Multibanco
             $mbentity = $methodData->entityNumber;
             $mbreference = $methodData->referenceNumber;
         } else {
             $display = 'none';
-        }
+        }*/
+        $display = 'none';
 
         $this->context->smarty->assign('display', $display);
         $this->context->smarty->assign('mbentity', $mbentity);
@@ -3257,12 +3261,14 @@ class Paytpv extends PaymentModule
             $methodData = json_decode(explode('|', $message, 2)[0]);
         }
 
-        if (strstr(Tools::strtolower($order->payment), 'multibanco') && isset($methodData->entityNumber) && isset($methodData->referenceNumber)) {
+        // Se desactiva por cambios en el proveedor
+        /*if (strstr(Tools::strtolower($order->payment), 'multibanco') && isset($methodData->entityNumber) && isset($methodData->referenceNumber)) {
             $result_txt = $this->l('Your order will be sent as soon as we receive your payment.');
             $this->context->smarty->assign('mbentity', $methodData->entityNumber);
             $this->context->smarty->assign('mbreference', $methodData->referenceNumber);
             $template = 'payment_return_multibanco.tpl';
-        } elseif (strstr(Tools::strtolower($order->payment), 'mb way')) {
+        } elseif*/
+        if (strstr(Tools::strtolower($order->payment), 'mb way')) {
             $result_txt = $this->l('You must confirm the purchase on MB WAY, through the notice or in the activity area');
             $template = 'payment_return_mbway.tpl';
         } else {
