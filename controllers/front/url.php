@@ -396,6 +396,15 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                         $displayName .= ' [' . Tools::getValue('MethodName') . ']';
                     }
 
+                    $rules = $cart->getCartRules();
+                    $new_cart_rules = new Cart($new_cart['cart']->id);
+
+                    foreach ($rules as $rule) {
+                        $new_cart_rules->addCartRule($rule['id_cart_rule'], true);
+                    }
+                
+                    $new_cart_rules->update();
+
                     $pagoRegistrado = $paytpv->validateOrder(
                         $new_cart['cart']->id,
                         _PS_OS_PAYMENT_,
