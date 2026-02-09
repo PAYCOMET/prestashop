@@ -116,7 +116,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '8.7.35';
+        $this->version = '8.7.36';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -356,8 +356,6 @@ class Paytpv extends PaymentModule
             || !$this->registerHook('actionFrontControllerSetMedia')
             || !$this->registerHook('displayHeader')
             || !$this->registerHook('displayOrderConfirmation')
-            || !$this->registerHook('displayOrderDetail')
-            || !$this->registerHook('actionEmailAddAfterContent')
             || !$this->registerHook('actionOrderSlipAdd')
         ) {
             return false;
@@ -3148,92 +3146,6 @@ class Paytpv extends PaymentModule
     {
     }
 
-    public function hookActionEmailAddAfterContent($params)
-    {
-        if (!$this->active) {
-            return;
-        }
-
-        if ($params['template'] !== 'order_conf') {
-            return;
-        }
-
-        $this->context->smarty->assign([
-            'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name .
-                '/',
-        ]);
-
-        $id_order = (int) Order::getIdByCartId((int) $params['cookie']->id_cart);
-        $order = new Order($id_order);
-
-        $result_txt = '';
-        $mbentity = ''; // Entidad
-        $mbreference = ''; // Referencia
-        $display = 'inline';
-
-        if (isset(Message::getMessagesByOrderId($order->id, true)[0]['message'])) {
-            $message = Message::getMessagesByOrderId($order->id, true)[0]['message'];
-            $methodData = json_decode(explode('|', $message, 2)[0]);
-        }
-
-        if (strstr(Tools::strtolower($order->payment), 'multibanco') && isset($methodData->entityNumber) && isset($methodData->referenceNumber)) {
-            // Multibanco
-            $mbentity = $methodData->entityNumber;
-            $mbreference = $methodData->referenceNumber;
-        } else {
-            $display = 'none';
-        }
-
-        $this->context->smarty->assign('display', $display);
-        $this->context->smarty->assign('mbentity', $mbentity);
-        $this->context->smarty->assign('mbreference', $mbreference);
-        $this->context->smarty->assign('result_txt', $result_txt);
-        $this->context->smarty->assign('base_dir', __PS_BASE_URI__);
-
-        // $params['template_html'] .= $this->display(__FILE__, 'order_detail.tpl');
-        $params['template_html'] = str_replace('{multibanco}', $this->display(__FILE__, 'order_detail.tpl'), $params['template_html']);
-    }
-
-    public function hookDisplayOrderDetail($params)
-    {
-        if (!$this->active) {
-            return;
-        }
-        $this->context->smarty->assign([
-            'this_path' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name .
-                '/',
-        ]);
-
-        $id_order = (int) Order::getIdByCartId((int) $params['order']->id_cart);
-        $order = new Order($id_order);
-
-        $result_txt = '';
-        $mbentity = ''; // Entidad
-        $mbreference = ''; // Referencia
-        $display = '';
-
-        if (isset(Message::getMessagesByOrderId($order->id, true)[0]['message'])) {
-            $message = Message::getMessagesByOrderId($order->id, true)[0]['message'];
-            $methodData = json_decode(explode('|', $message, 2)[0]);
-        }
-
-        if (strstr(Tools::strtolower($order->payment), 'multibanco') && isset($methodData->entityNumber) && isset($methodData->referenceNumber)) {
-            // Multibanco
-            $mbentity = $methodData->entityNumber;
-            $mbreference = $methodData->referenceNumber;
-        } else {
-            $display = 'none';
-        }
-
-        $this->context->smarty->assign('display', $display);
-        $this->context->smarty->assign('mbentity', $mbentity);
-        $this->context->smarty->assign('mbreference', $mbreference);
-        $this->context->smarty->assign('result_txt', $result_txt);
-        $this->context->smarty->assign('base_dir', __PS_BASE_URI__);
-
-        return $this->display(__FILE__, 'order_detail.tpl');
-    }
-
     public function hookDisplayPaymentReturn($params)
     {
         if (!$this->active) {
@@ -3252,17 +3164,7 @@ class Paytpv extends PaymentModule
         $display = '';
         $mbway = '';
 
-        if (isset(Message::getMessagesByOrderId($order->id, true)[0]['message'])) {
-            $message = Message::getMessagesByOrderId($order->id, true)[0]['message'];
-            $methodData = json_decode(explode('|', $message, 2)[0]);
-        }
-
-        if (strstr(Tools::strtolower($order->payment), 'multibanco') && isset($methodData->entityNumber) && isset($methodData->referenceNumber)) {
-            $result_txt = $this->l('Your order will be sent as soon as we receive your payment.');
-            $this->context->smarty->assign('mbentity', $methodData->entityNumber);
-            $this->context->smarty->assign('mbreference', $methodData->referenceNumber);
-            $template = 'payment_return_multibanco.tpl';
-        } elseif (strstr(Tools::strtolower($order->payment), 'mb way')) {
+        if (strstr(Tools::strtolower($order->payment), 'mb way')) {
             $result_txt = $this->l('You must confirm the purchase on MB WAY, through the notice or in the activity area');
             $template = 'payment_return_mbway.tpl';
         } else {

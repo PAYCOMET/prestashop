@@ -211,9 +211,6 @@ $_MODULE['<{paytpv}prestashop>order_suscription_info_a6122a65eaa676f700ae68d3930
 $_MODULE['<{paytpv}prestashop>order_suscription_info_ec53a8c4f07baed5d8825072c89799be'] = 'Estado';
 $_MODULE['<{paytpv}prestashop>payment_return_mbway_88526efe38fd18179a127024aba8c1d7'] = 'Su pedido en %s se ha completado.';
 $_MODULE['<{paytpv}prestashop>payment_error_hook_902b0d55fddef6f8d651fe1035b7d4bd'] = 'Error';
-$_MODULE['<{paytpv}prestashop>order_detail_3cb701aea20df40357ca7d755af1cfb3'] = 'Información de pago de';
-$_MODULE['<{paytpv}prestashop>order_detail_1a434befae3f49ae09347ded52032f6f'] = 'Entidad';
-$_MODULE['<{paytpv}prestashop>order_detail_63d5049791d9d79d86e9a108b0a999ca'] = 'Referencia';
 $_MODULE['<{paytpv}prestashop>inc_payment_cards_1d565b9e5303987bb1b1938d5d458bca'] = 'Tarjeta';
 $_MODULE['<{paytpv}prestashop>inc_payment_cards_4e33781eb7a2f09e8e615bdc7ff25a37'] = 'NUEVA TARJETA';
 $_MODULE['<{paytpv}prestashop>payment_bsiframe_a876fbe73a6d039cb8c8566f6aa716d5'] = 'Importe Total';

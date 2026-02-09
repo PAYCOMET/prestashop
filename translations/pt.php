@@ -81,9 +81,6 @@ $_MODULE['<{paytpv}prestashop>paytpv-account_3032bcfd5e671852750a0304cd2b024a'] 
 $_MODULE['<{paytpv}prestashop>paytpv-account_44749712dbec183e983dcd78a7736c41'] = 'Data';
 $_MODULE['<{paytpv}prestashop>paytpv-account_c4408d335012a56ff58937d78050efad'] = 'Aceitar';
 $_MODULE['<{paytpv}prestashop>my-account_4e997b9d3b7152f2afeacd96ab1ef1cb'] = 'Meus cartões';
-$_MODULE['<{paytpv}prestashop>order_detail_3cb701aea20df40357ca7d755af1cfb3'] = 'Informação de pagamento de';
-$_MODULE['<{paytpv}prestashop>order_detail_1a434befae3f49ae09347ded52032f6f'] = 'Entidade';
-$_MODULE['<{paytpv}prestashop>order_detail_63d5049791d9d79d86e9a108b0a999ca'] = 'Referência';
 $_MODULE['<{paytpv}prestashop>order_suscription_customer_info_ffcf70e892b8ac3facbac0f88602396b'] = 'Cada';
 $_MODULE['<{paytpv}prestashop>order_suscription_customer_info_44fdec47036f482b68b748f9d786801b'] = 'dias';
 $_MODULE['<{paytpv}prestashop>order_suscription_customer_info_32cf6da134a8b268cf4ab6b79a9a5ad9'] = 'Repetir';
