@@ -402,7 +402,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                     foreach ($rules as $rule) {
                         $new_cart_rules->addCartRule($rule['id_cart_rule'], true);
                     }
-                
+
                     $new_cart_rules->update();
 
                     $pagoRegistrado = $paytpv->validateOrder(
