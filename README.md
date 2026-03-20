@@ -61,7 +61,7 @@ Todas las suscripciones mostrarán el estado actual:
 ## Release Notes
 > 8.7.38: 
 
-- Cambio de logo IDEAL | Wero
+- Cambio de logo iDEAL | Wero
 
 > 8.7.37: 
 
