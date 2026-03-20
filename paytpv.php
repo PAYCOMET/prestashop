@@ -2907,7 +2907,7 @@ class Paytpv extends PaymentModule
             1 => 'Tarjeta',
             10 => 'Paypal',
             11 => 'Bizum',
-            12 => 'iDEAL',
+            12 => 'iDEAL | Wero',
             13 => 'Klarna Paynow',
             14 => 'Giropay',
             15 => 'MyBank',
