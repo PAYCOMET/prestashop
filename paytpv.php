@@ -116,7 +116,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '8.7.37';
+        $this->version = '8.7.38';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -535,7 +535,7 @@ class Paytpv extends PaymentModule
             );
             Configuration::updateValue('PAYTPV_APM_bizum', Tools::getValue('apms_bizum'));
             Configuration::updateValue('PAYTPV_APM_klarna_paynow', Tools::getValue('apms_klarna_paynow'));
-            Configuration::updateValue('PAYTPV_APM_ideal', Tools::getValue('apms_ideal'));
+            Configuration::updateValue('PAYTPV_APM_ideal', Tools::getValue('apms_ideal_|_wero'));
             Configuration::updateValue('PAYTPV_APM_giropay', Tools::getValue('apms_giropay'));
             Configuration::updateValue('PAYTPV_APM_mybank', Tools::getValue('apms_mybank'));
             Configuration::updateValue('PAYTPV_APM_multibanco_sibs', Tools::getValue('apms_multibanco_sibs'));
@@ -1634,7 +1634,7 @@ class Paytpv extends PaymentModule
         $arrValues['apms_tarjeta'] = ((string) $config['PAYTPV_APM_tarjeta'] == '0') ? 0 : 1;
         $arrValues['apms_bizum'] = $config['PAYTPV_APM_bizum'];
         $arrValues['apms_klarna_paynow'] = $config['PAYTPV_APM_klarna_paynow'];
-        $arrValues['apms_ideal'] = $config['PAYTPV_APM_ideal'];
+        $arrValues['apms_ideal_|_wero'] = $config['PAYTPV_APM_ideal'];
         $arrValues['apms_giropay'] = $config['PAYTPV_APM_giropay'];
         $arrValues['apms_mybank'] = $config['PAYTPV_APM_mybank'];
         $arrValues['apms_multibanco_sibs'] = $config['PAYTPV_APM_multibanco_sibs'];
@@ -2907,7 +2907,7 @@ class Paytpv extends PaymentModule
             1 => 'Tarjeta',
             10 => 'Paypal',
             11 => 'Bizum',
-            12 => 'iDEAL',
+            12 => 'iDEAL | Wero',
             13 => 'Klarna Paynow',
             14 => 'Giropay',
             15 => 'MyBank',
