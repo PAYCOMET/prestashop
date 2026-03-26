@@ -194,7 +194,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                         $OPERATION,
                         $language,
                         $idterminal,
-                        '',
+                        null,
                         $payment
                     );
 
@@ -357,7 +357,7 @@ class PaytpvActionsModuleFrontController extends ModuleFrontController
                         $OPERATION,
                         $language,
                         $idterminal,
-                        '',
+                        null,
                         $payment,
                         $subscription
                     );

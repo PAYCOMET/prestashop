@@ -138,6 +138,8 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
             $ssl = Configuration::get('PS_SSL_ENABLED');
             $paytpv_integration = (int) Configuration::get('PAYTPV_INTEGRATION');
 
+            $productDescription = isset($this->context->customer->email) ? $this->context->customer->email : '';
+
             $URLOK = $URLKO = $this->context->link->getModuleLink($paytpv->name, 'account', [], $ssl);
 
             if ($paytpv->apikey != '') {
@@ -147,7 +149,7 @@ class PaytpvAccountModuleFrontController extends ModuleFrontController
                         $operation,
                         $language,
                         $idterminal,
-                        '',
+                        $productDescription,
                         [
                             'terminal' => (int) $idterminal,
                             'order' => (string) $order,
