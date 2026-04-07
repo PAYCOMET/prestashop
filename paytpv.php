@@ -116,7 +116,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '8.7.38';
+        $this->version = '8.7.39';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -531,33 +531,33 @@ class Paytpv extends PaymentModule
             // APMs
             Configuration::updateValue(
                 'PAYTPV_APM_tarjeta',
-                Tools::getIsset('apms_tarjeta') ? Tools::getValue('apms_tarjeta') : 0
+                Tools::getIsset('apms_1') ? Tools::getValue('apms_1') : 0
             );
-            Configuration::updateValue('PAYTPV_APM_bizum', Tools::getValue('apms_bizum'));
-            Configuration::updateValue('PAYTPV_APM_klarna_paynow', Tools::getValue('apms_klarna_paynow'));
-            Configuration::updateValue('PAYTPV_APM_ideal', Tools::getValue('apms_ideal_|_wero'));
-            Configuration::updateValue('PAYTPV_APM_giropay', Tools::getValue('apms_giropay'));
-            Configuration::updateValue('PAYTPV_APM_mybank', Tools::getValue('apms_mybank'));
-            Configuration::updateValue('PAYTPV_APM_multibanco_sibs', Tools::getValue('apms_multibanco_sibs'));
-            Configuration::updateValue('PAYTPV_APM_trustly', Tools::getValue('apms_trustly'));
-            Configuration::updateValue('PAYTPV_APM_przelewy24', Tools::getValue('apms_przelewy24'));
-            Configuration::updateValue('PAYTPV_APM_bancontact', Tools::getValue('apms_bancontact'));
-            Configuration::updateValue('PAYTPV_APM_eps', Tools::getValue('apms_eps'));
-            Configuration::updateValue('PAYTPV_APM_tele2', Tools::getValue('apms_tele2'));
-            Configuration::updateValue('PAYTPV_APM_paysera', Tools::getValue('apms_paysera'));
-            Configuration::updateValue('PAYTPV_APM_postfinance', Tools::getValue('apms_postfinance'));
-            Configuration::updateValue('PAYTPV_APM_qiwi_wallet', Tools::getValue('apms_qiwi_wallet'));
-            Configuration::updateValue('PAYTPV_APM_yandex_money', Tools::getValue('apms_yandex_money'));
-            Configuration::updateValue('PAYTPV_APM_mts', Tools::getValue('apms_mts'));
-            Configuration::updateValue('PAYTPV_APM_beeline', Tools::getValue('apms_beeline'));
-            Configuration::updateValue('PAYTPV_APM_paysafecard', Tools::getValue('apms_paysafecard'));
-            Configuration::updateValue('PAYTPV_APM_skrill', Tools::getValue('apms_skrill'));
-            Configuration::updateValue('PAYTPV_APM_webmoney', Tools::getValue('apms_webmoney'));
-            Configuration::updateValue('PAYTPV_APM_instant_credit', Tools::getValue('apms_instant_credit'));
-            Configuration::updateValue('PAYTPV_APM_klarna_payments', Tools::getValue('apms_klarna_payments_(pay_later_y_slice_it)'));
-            Configuration::updateValue('PAYTPV_APM_paypal', Tools::getValue('apms_paypal'));
-            Configuration::updateValue('PAYTPV_APM_waylet', Tools::getValue('apms_waylet'));
-            Configuration::updateValue('PAYTPV_APM_mb_way', Tools::getValue('apms_mb_way'));
+            Configuration::updateValue('PAYTPV_APM_bizum', Tools::getValue('apms_11'));
+            Configuration::updateValue('PAYTPV_APM_klarna_paynow', Tools::getValue('apms_13'));
+            Configuration::updateValue('PAYTPV_APM_ideal', Tools::getValue('apms_12'));
+            Configuration::updateValue('PAYTPV_APM_giropay', Tools::getValue('apms_14'));
+            Configuration::updateValue('PAYTPV_APM_mybank', Tools::getValue('apms_15'));
+            Configuration::updateValue('PAYTPV_APM_multibanco_sibs', Tools::getValue('apms_16'));
+            Configuration::updateValue('PAYTPV_APM_trustly', Tools::getValue('apms_17'));
+            Configuration::updateValue('PAYTPV_APM_przelewy24', Tools::getValue('apms_18'));
+            Configuration::updateValue('PAYTPV_APM_bancontact', Tools::getValue('apms_19'));
+            Configuration::updateValue('PAYTPV_APM_eps', Tools::getValue('apms_20'));
+            Configuration::updateValue('PAYTPV_APM_tele2', Tools::getValue('apms_21'));
+            Configuration::updateValue('PAYTPV_APM_paysera', Tools::getValue('apms_22'));
+            Configuration::updateValue('PAYTPV_APM_postfinance', Tools::getValue('apms_23'));
+            Configuration::updateValue('PAYTPV_APM_qiwi_wallet', Tools::getValue('apms_24'));
+            Configuration::updateValue('PAYTPV_APM_yandex_money', Tools::getValue('apms_25'));
+            Configuration::updateValue('PAYTPV_APM_mts', Tools::getValue('apms_26'));
+            Configuration::updateValue('PAYTPV_APM_beeline', Tools::getValue('apms_27'));
+            Configuration::updateValue('PAYTPV_APM_paysafecard', Tools::getValue('apms_28'));
+            Configuration::updateValue('PAYTPV_APM_skrill', Tools::getValue('apms_29'));
+            Configuration::updateValue('PAYTPV_APM_webmoney', Tools::getValue('apms_30'));
+            Configuration::updateValue('PAYTPV_APM_instant_credit', Tools::getValue('apms_33'));
+            Configuration::updateValue('PAYTPV_APM_klarna_payments', Tools::getValue('apms_34'));
+            Configuration::updateValue('PAYTPV_APM_paypal', Tools::getValue('apms_10'));
+            Configuration::updateValue('PAYTPV_APM_waylet', Tools::getValue('apms_41'));
+            Configuration::updateValue('PAYTPV_APM_mb_way', Tools::getValue('apms_38'));
 
             // Instan Credit
             Configuration::updateValue(
@@ -1631,32 +1631,32 @@ class Paytpv extends PaymentModule
 
         // APMs
         // Tarjeta activa siempre que no la haya deshabilitado el cliente
-        $arrValues['apms_tarjeta'] = ((string) $config['PAYTPV_APM_tarjeta'] == '0') ? 0 : 1;
-        $arrValues['apms_bizum'] = $config['PAYTPV_APM_bizum'];
-        $arrValues['apms_klarna_paynow'] = $config['PAYTPV_APM_klarna_paynow'];
-        $arrValues['apms_ideal_|_wero'] = $config['PAYTPV_APM_ideal'];
-        $arrValues['apms_giropay'] = $config['PAYTPV_APM_giropay'];
-        $arrValues['apms_mybank'] = $config['PAYTPV_APM_mybank'];
-        $arrValues['apms_multibanco_sibs'] = $config['PAYTPV_APM_multibanco_sibs'];
-        $arrValues['apms_trustly'] = $config['PAYTPV_APM_trustly'];
-        $arrValues['apms_przelewy24'] = $config['PAYTPV_APM_przelewy24'];
-        $arrValues['apms_bancontact'] = $config['PAYTPV_APM_bancontact'];
-        $arrValues['apms_eps'] = $config['PAYTPV_APM_eps'];
-        $arrValues['apms_tele2'] = $config['PAYTPV_APM_tele2'];
-        $arrValues['apms_paysera'] = $config['PAYTPV_APM_paysera'];
-        $arrValues['apms_postfinance'] = $config['PAYTPV_APM_postfinance'];
-        $arrValues['apms_qiwi_wallet'] = $config['PAYTPV_APM_qiwi_wallet'];
-        $arrValues['apms_yandex_money'] = $config['PAYTPV_APM_yandex_money'];
-        $arrValues['apms_mts'] = $config['PAYTPV_APM_mts'];
-        $arrValues['apms_beeline'] = $config['PAYTPV_APM_beeline'];
-        $arrValues['apms_paysafecard'] = $config['PAYTPV_APM_paysafecard'];
-        $arrValues['apms_skrill'] = $config['PAYTPV_APM_skrill'];
-        $arrValues['apms_webmoney'] = $config['PAYTPV_APM_webmoney'];
-        $arrValues['apms_instant_credit'] = $config['PAYTPV_APM_instant_credit'];
-        $arrValues['apms_klarna_payments_(pay_later_y_slice_it)'] = $config['PAYTPV_APM_klarna_payments'];
-        $arrValues['apms_paypal'] = $config['PAYTPV_APM_paypal'];
-        $arrValues['apms_waylet'] = $config['PAYTPV_APM_waylet'];
-        $arrValues['apms_mb_way'] = $config['PAYTPV_APM_mb_way'];
+        $arrValues['apms_1'] = ((string) $config['PAYTPV_APM_tarjeta'] == '0') ? 0 : 1;
+        $arrValues['apms_11'] = $config['PAYTPV_APM_bizum'];
+        $arrValues['apms_13'] = $config['PAYTPV_APM_klarna_paynow'];
+        $arrValues['apms_12'] = $config['PAYTPV_APM_ideal'];
+        $arrValues['apms_14'] = $config['PAYTPV_APM_giropay'];
+        $arrValues['apms_15'] = $config['PAYTPV_APM_mybank'];
+        $arrValues['apms_16'] = $config['PAYTPV_APM_multibanco_sibs'];
+        $arrValues['apms_17'] = $config['PAYTPV_APM_trustly'];
+        $arrValues['apms_18'] = $config['PAYTPV_APM_przelewy24'];
+        $arrValues['apms_19'] = $config['PAYTPV_APM_bancontact'];
+        $arrValues['apms_20'] = $config['PAYTPV_APM_eps'];
+        $arrValues['apms_21'] = $config['PAYTPV_APM_tele2'];
+        $arrValues['apms_22'] = $config['PAYTPV_APM_paysera'];
+        $arrValues['apms_23'] = $config['PAYTPV_APM_postfinance'];
+        $arrValues['apms_24'] = $config['PAYTPV_APM_qiwi_wallet'];
+        $arrValues['apms_25'] = $config['PAYTPV_APM_yandex_money'];
+        $arrValues['apms_26'] = $config['PAYTPV_APM_mts'];
+        $arrValues['apms_27'] = $config['PAYTPV_APM_beeline'];
+        $arrValues['apms_28'] = $config['PAYTPV_APM_paysafecard'];
+        $arrValues['apms_29'] = $config['PAYTPV_APM_skrill'];
+        $arrValues['apms_30'] = $config['PAYTPV_APM_webmoney'];
+        $arrValues['apms_33'] = $config['PAYTPV_APM_instant_credit'];
+        $arrValues['apms_34'] = $config['PAYTPV_APM_klarna_payments'];
+        $arrValues['apms_10'] = $config['PAYTPV_APM_paypal'];
+        $arrValues['apms_41'] = $config['PAYTPV_APM_waylet'];
+        $arrValues['apms_38'] = $config['PAYTPV_APM_mb_way'];
 
         // Instant Credit
         $arrValues['apms_instant_credit_simuladorCoutas'] = $config['PAYTPV_APM_instant_credit_simuladorCoutas'];
@@ -2317,7 +2317,7 @@ class Paytpv extends PaymentModule
             if (isset($paymentMethods) && !isset($paymentMethods->errorCode)) {
                 foreach ($paymentMethods as $apm) {
                     $apms[] = [
-                        'id' => preg_replace('/\s+/', '_', Tools::strtolower($apm->name)),
+                        'id' => preg_replace('/\s+/', '_', Tools::strtolower($apm->id)),
                         'name' => $apm->name,
                         'val' => $apm->id,
                         'logo_square' => $apm->logo_square,
@@ -3032,7 +3032,7 @@ class Paytpv extends PaymentModule
                     $OPERATION,
                     $language,
                     $idterminal,
-                    '',
+                    null,
                     $payment
                 );
 

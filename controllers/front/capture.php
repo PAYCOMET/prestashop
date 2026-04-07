@@ -267,7 +267,7 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                         $OPERATION,
                         'ES',
                         $idterminal,
-                        '',
+                        null,
                         $payment
                     );
 
