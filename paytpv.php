@@ -3620,7 +3620,7 @@ class Paytpv extends PaymentModule
         $currency_iso_code,
         $authcode,
         $amount,
-        $type,
+        $type
     ) {
         $arrTerminal = PaytpvTerminal::getTerminalByCurrency($currency_iso_code, $order->id_shop);
 
