@@ -116,13 +116,13 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '8.7.39';
+        $this->version = '8.7.40';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
         $this->ps_versions_compliancy = [
             'min' => '8.0.0',
-            'max' => '9.0.3',
+            'max' => '9.1.1',
         ];
         $this->controllers = ['payment', 'validation'];
 
@@ -3299,7 +3299,7 @@ class Paytpv extends PaymentModule
         $paytpv_tokenuser,
         $paytpv_cc,
         $paytpv_brand,
-        $paytpv_expirydate,
+        $paytpv_expirydate
     ) {
         $paytpv_cc = '************' . Tools::substr($paytpv_cc, -4);
 
@@ -3620,7 +3620,7 @@ class Paytpv extends PaymentModule
         $currency_iso_code,
         $authcode,
         $amount,
-        $type,
+        $type
     ) {
         $arrTerminal = PaytpvTerminal::getTerminalByCurrency($currency_iso_code, $order->id_shop);
 
