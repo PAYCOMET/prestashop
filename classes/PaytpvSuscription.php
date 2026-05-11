@@ -46,7 +46,7 @@ class PaytpvSuscription extends ObjectModel
         $paytpv_tokenuser,
         $periodicity,
         $cycles,
-        $importe,
+        $importe
     ) {
         // Datos usuario
         $sql = 'select * from ' . _DB_PREFIX_ . 'paytpv_suscription where id_customer = ' . (int) $id_customer . ' AND
