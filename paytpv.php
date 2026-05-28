@@ -116,7 +116,7 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '8.7.40';
+        $this->version = '8.7.41';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
@@ -4032,7 +4032,7 @@ class Paytpv extends PaymentModule
     public function isPaymentProcesed($authCode)
     {
         $sql = 'SELECT COUNT(*) as np  FROM `' . _DB_PREFIX_ . 'order_payment`
-            WHERE transaction_id = '  . pSQL($authCode) . ' and date_add > DATE_ADD(SYSDATE(),INTERVAL - 1 hour)';
+            WHERE transaction_id = ' . pSQL($authCode) . ' and date_add > DATE_ADD(SYSDATE(),INTERVAL - 1 hour)';
         $n = Db::getInstance()->getValue($sql);
 
         return $n > 0;
@@ -4040,7 +4040,7 @@ class Paytpv extends PaymentModule
 
     public function getLock($lockName)
     {
-        $sql = "SELECT GET_LOCK('$lockName', 10)";
+        $sql = 'SELECT GET_LOCK(' . pSQL($lockName) . ', 10)';
         $n = Db::getInstance()->getValue($sql);
 
         return $n;
@@ -4048,7 +4048,7 @@ class Paytpv extends PaymentModule
 
     public function releaseLock($lockName)
     {
-        $sql = "SELECT RELEASE_LOCK('$lockName')";
+        $sql = 'SELECT RELEASE_LOCK(' . pSQL($lockName) . ')';
         $n = Db::getInstance()->getValue($sql);
 
         return $n;

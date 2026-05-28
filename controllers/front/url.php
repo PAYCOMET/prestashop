@@ -450,7 +450,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                 }
             // NO ORDER
             } else {
-                $lockName = "payment_". $id_cart;
+                $lockName = 'payment_' . $id_cart;
                 $lock = $paytpv->getLock($lockName);
 
                 if (!$lock) {
@@ -480,7 +480,6 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                 } finally {
                     $paytpv->releaseLock($lockName);
                 }
-                
 
                 $id_order = (int) Order::getIdByCartId((int) $id_cart);
                 $id_suscription = 0;
