@@ -4040,7 +4040,7 @@ class Paytpv extends PaymentModule
 
     public function getLock($lockName)
     {
-        $sql = 'SELECT GET_LOCK(' . pSQL($lockName) . ', 10)';
+        $sql = 'SELECT GET_LOCK("' . pSQL($lockName) . '", 10)';
         $n = Db::getInstance()->getValue($sql);
 
         return $n;
@@ -4048,7 +4048,7 @@ class Paytpv extends PaymentModule
 
     public function releaseLock($lockName)
     {
-        $sql = 'SELECT RELEASE_LOCK(' . pSQL($lockName) . ')';
+        $sql = 'SELECT RELEASE_LOCK("' . pSQL($lockName) . '")';
         $n = Db::getInstance()->getValue($sql);
 
         return $n;
