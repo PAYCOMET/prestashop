@@ -44,7 +44,7 @@ class PaytpvOrderInfo extends ObjectModel
         $suscription,
         $peridicity,
         $cycles,
-        $paytpv_iduser = 0,
+        $paytpv_iduser = 0
     ) {
         // Eliminamos la orden si existe.
         $sql = 'DELETE FROM ' . _DB_PREFIX_ . 'paytpv_order_info where id_customer = ' . (int) $id_customer . ' and

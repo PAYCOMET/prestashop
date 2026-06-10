@@ -115,7 +115,7 @@ class PaytpvOrder extends ObjectModel
         $id_suscription,
         $id_customer,
         $id_order,
-        $price,
+        $price
     ) {
         $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'paytpv_order (`paytpv_iduser`,`paytpv_tokenuser`,`id_suscription`,
         `id_customer`, `id_order`,`price`,`date`) VALUES(' . (int) $paytpv_iduser . ',"' . pSQL($paytpv_tokenuser) .

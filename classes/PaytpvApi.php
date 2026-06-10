@@ -1109,7 +1109,7 @@ class PaytpvApi
         $pv_browser_user_agent,
         $pv_search_string,
         $pv_b_break_last = '',
-        $pv_extra_search = '',
+        $pv_extra_search = ''
     ) {
         // 12 is the longest that will be required, handles release dates: 20020323; 0.8.0+
         $substring_length = 15;
