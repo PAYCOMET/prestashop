@@ -45,7 +45,7 @@ class PaycometApiRest
         $terminal = '',
         $productDescription = '',
         $payment = [],
-        $subscription = []
+        $subscription = [],
     ) {
         $params = [
             'operationType' => (int) $operationType,
@@ -65,7 +65,7 @@ class PaycometApiRest
         $order,
         $productDescription = '',
         $language = 'ES',
-        $notify = 1
+        $notify = 1,
     ) {
         $params = [
             'terminal' => (int) $terminal,
@@ -82,7 +82,7 @@ class PaycometApiRest
     public function infoUser(
         $idUser,
         $tokenUser,
-        $terminal
+        $terminal,
     ) {
         $params = [
             'idUser' => (int) $idUser,
@@ -96,7 +96,7 @@ class PaycometApiRest
     public function removeUser(
         $terminal,
         $idUser,
-        $tokenUser
+        $tokenUser,
     ) {
         $params = [
             'terminal' => (int) $terminal,
@@ -127,7 +127,7 @@ class PaycometApiRest
         $trxType = '',
         $scaException = '',
         $merchantData = [],
-        $notifyDirectPayment = 1
+        $notifyDirectPayment = 1,
     ) {
         $params = [
             'payment' => [
@@ -177,7 +177,7 @@ class PaycometApiRest
         $trxType = '',
         $scaException = '',
         $merchantData = [],
-        $deferred = 0
+        $deferred = 0,
     ) {
         $params = [
             'payment' => [
@@ -213,7 +213,7 @@ class PaycometApiRest
         $amount,
         $originalIp,
         $authCode,
-        $deferred = 0
+        $deferred = 0,
     ) {
         $params = [
             'payment' => [
@@ -250,7 +250,7 @@ class PaycometApiRest
         $escrowTargets = [],
         $trxType = '',
         $scaException = '',
-        $merchantData = []
+        $merchantData = [],
     ) {
         $params = [
             'subscription' => [
@@ -288,7 +288,7 @@ class PaycometApiRest
         $terminal,
         $order,
         $idUser,
-        $tokenUser
+        $tokenUser,
     ) {
         $params = [
             'payment' => [
@@ -308,7 +308,7 @@ class PaycometApiRest
         $currency,
         $authCode,
         $originalIp,
-        $notifyDirectPayment = 1
+        $notifyDirectPayment = 1,
     ) {
         $params = [
             'payment' => [
@@ -325,7 +325,7 @@ class PaycometApiRest
     }
 
     public function getUserPaymentMethods(
-        $terminal
+        $terminal,
     ) {
         $params = [
             'terminal' => (int) $terminal,

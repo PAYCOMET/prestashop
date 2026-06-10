@@ -60,7 +60,7 @@ class PaytpvTerminal extends ObjectModel
         $password,
         $jetid,
         $currency_iso_code,
-        $dcc
+        $dcc,
     ) {
         $idterminal = ($idterminal == '') ? 'null' : (int) $idterminal;
 
