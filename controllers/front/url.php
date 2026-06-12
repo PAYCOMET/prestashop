@@ -165,10 +165,9 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                 );
                 echo 'Usuario Registrado';
                 exit(0);
-            } else {
-                echo 'Error 1004';
-                exit(0);
             }
+            echo 'Error 1004';
+            exit(0);
 
         // (create_subscription)
         } elseif (Tools::getValue('TransactionType') === '9') {
@@ -619,7 +618,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                 $order->addOrderPayment((string) $importe, null, Tools::getValue('AuthCode'));
                 $history = new OrderHistory();
                 $history->id_order = (int) $order->id;
-                $history->changeIdOrderState(8, (int) $order->id, true);
+                $history->changeIdOrderState(_PS_OS_ERROR_, (int) $order->id, true);
                 echo 'Pago fallido';
                 exit(0);
             }

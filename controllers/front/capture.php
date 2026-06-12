@@ -108,13 +108,11 @@ class PaytpvCaptureModuleFrontController extends ModuleFrontController
                 $this->setTemplate('module:paytpv/views/templates/front/payment_fail.tpl');
 
                 return;
-            } else {
-                $data = [];
-                $data['IDUSER'] = $idUser;
-                $data['TOKEN_USER'] = $tokenUser;
-
-                $jetPayment = 1;
             }
+            $data = [];
+            $data['IDUSER'] = $idUser;
+            $data['TOKEN_USER'] = $tokenUser;
+            $jetPayment = 1;
         // TOKENIZED CARD
         } else {
             $data = PaytpvCustomer::getCardTokenCustomer(
