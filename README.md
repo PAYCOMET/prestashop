@@ -59,6 +59,10 @@ Todas las suscripciones mostrarán el estado actual:
 - FINALIZADA: Cuando se ha cumplido todo el periodo de la suscripción
 
 ## Release Notes
+> 8.7.43: 
+
+- Compatibilidad con Prestashop 9.1.4
+
 > 8.7.42: 
 
 - Fix error al notificar pago fallido con estados personalizados

@@ -116,13 +116,13 @@ class Paytpv extends PaymentModule
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '8.7.42';
+        $this->version = '8.7.43';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
         $this->ps_versions_compliancy = [
             'min' => '8.0.0',
-            'max' => '9.1.3',
+            'max' => '9.1.4',
         ];
         $this->controllers = ['payment', 'validation'];
 
