@@ -165,10 +165,9 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                 );
                 echo 'Usuario Registrado';
                 exit(0);
-            } else {
-                echo 'Error 1004';
-                exit(0);
             }
+            echo 'Error 1004';
+            exit(0);
 
         // (create_subscription)
         } elseif (Tools::getValue('TransactionType') === '9') {
@@ -450,22 +449,36 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                 }
             // NO ORDER
             } else {
-                $displayName = $paytpv->displayName;
-                if (Tools::getIsset('MethodName')) {
-                    $displayName .= ' [' . Tools::getValue('MethodName') . ']';
+                $lockName = 'payment_' . $id_cart;
+                $lock = $paytpv->getLock($lockName);
+
+                if (!$lock) {
+                    echo 'No se pudo obtener el lock';
+                    exit(0);
                 }
 
-                $pagoRegistrado = $paytpv->validateOrder(
-                    $id_cart,
-                    _PS_OS_PAYMENT_,
-                    $importe,
-                    $displayName,
-                    null,
-                    $transaction,
-                    null,
-                    false,
-                    $customer->secure_key
-                );
+                try {
+                    $displayName = $paytpv->displayName;
+                    if (Tools::getIsset('MethodName')) {
+                        $displayName .= ' [' . Tools::getValue('MethodName') . ']';
+                    }
+                    $pagoRegistrado = $paytpv->validateOrder(
+                        $id_cart,
+                        _PS_OS_PAYMENT_,
+                        $importe,
+                        $displayName,
+                        null,
+                        $transaction,
+                        null,
+                        false,
+                        $customer->secure_key
+                    );
+                } catch (Exception $e) {
+                    echo 'Notif Duplicada';
+                    exit(0);
+                } finally {
+                    $paytpv->releaseLock($lockName);
+                }
 
                 $id_order = (int) Order::getIdByCartId((int) $id_cart);
                 $id_suscription = 0;
@@ -605,7 +618,7 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                 $order->addOrderPayment((string) $importe, null, Tools::getValue('AuthCode'));
                 $history = new OrderHistory();
                 $history->id_order = (int) $order->id;
-                $history->changeIdOrderState(8, (int) $order->id, true);
+                $history->changeIdOrderState(_PS_OS_ERROR_, (int) $order->id, true);
                 echo 'Pago fallido';
                 exit(0);
             }

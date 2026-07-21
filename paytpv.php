@@ -3199,10 +3199,10 @@ class Paytpv extends PaymentModule
                 );
 
                 $url_paytpv = '';
-                if ($formResponse->errorCode == 0) {
-                    $url_paytpv = $formResponse->challengeUrl;
+                if (isset($formResponse->errorCode) && $formResponse->errorCode == 0) {
+                    $url_paytpv = $formResponse->challengeUrl ?? '';
                 } else {
-                    $url_paytpv = $formResponse->errorCode;
+                    $url_paytpv = $formResponse->errorCode ?? '';
                 }
             } catch (Exception $e) {
                 $url_paytpv = $e->getCode();
@@ -3291,7 +3291,7 @@ class Paytpv extends PaymentModule
                 if ($formResponseApplePay->errorCode == 0) {
                     $url_paytpv_apple_pay = $formResponseApplePay->data;
                 } else {
-                    $url_paytpv_apple_pay = $formResponse->errorCode;
+                    $url_paytpv_apple_pay = $formResponseApplePay->errorCode;
                 }
             } catch (Exception $e) {
                 $url_paytpv_apple_pay = $e->getCode();
@@ -3583,25 +3583,21 @@ class Paytpv extends PaymentModule
 
         if (empty($result) === true) {
             return false;
-        } else {
-            $paytpv_iduser = $result['paytpv_iduser'];
-            $paytpv_tokenuser = $result['paytpv_tokenuser'];
-
-            if ($this->apikey != '') {
-                $apiRest = new PaycometApiRest($this->apikey, $this->paycometHeader);
-                $result = $apiRest->removeUser(
-                    $idterminal,
-                    $paytpv_iduser,
-                    $paytpv_tokenuser
-                );
-            } else {
-                return false;
-            }
-
-            PaytpvCustomer::removeCustomerIduser((int) $this->context->customer->id, $paytpv_iduser);
-
-            return true;
         }
+        $paytpv_iduser = $result['paytpv_iduser'];
+        $paytpv_tokenuser = $result['paytpv_tokenuser'];
+        if ($this->apikey != '') {
+            $apiRest = new PaycometApiRest($this->apikey, $this->paycometHeader);
+            $result = $apiRest->removeUser(
+                $idterminal,
+                $paytpv_iduser,
+                $paytpv_tokenuser
+            );
+        } else {
+            return false;
+        }
+        PaytpvCustomer::removeCustomerIduser((int) $this->context->customer->id, $paytpv_iduser);
+        return true;
     }
 
     public function removeSuscription($id_suscription)
@@ -3620,33 +3616,28 @@ class Paytpv extends PaymentModule
 
         if (empty($result) === true) {
             return false;
-        } else {
-            $paytpv_iduser = $result['paytpv_iduser'];
-            $paytpv_tokenuser = $result['paytpv_tokenuser'];
-            $order = new Order((int) $result['id_order']);
-            $order_ref = str_pad((string) $order->id_cart, 8, '0', STR_PAD_LEFT);
-
-            if ($this->apikey != '') {
-                $apiRest = new PaycometApiRest($this->apikey, $this->paycometHeader);
-                $removeSubscriptionResponse = $apiRest->removeSubscription(
-                    $idterminal,
-                    $order_ref,
-                    $paytpv_iduser,
-                    $paytpv_tokenuser
-                );
-                $result['DS_RESPONSE'] = ($removeSubscriptionResponse->errorCode > 0) ? 0 : 1;
-            } else {
-                $result['DS_RESPONSE'] = 0; // Error
-            }
-
-            if ((int) $result['DS_RESPONSE'] == 1) {
-                PaytpvSuscription::removeSuscription((int) $this->context->customer->id, $id_suscription);
-
-                return true;
-            }
-
-            return false;
         }
+        $paytpv_iduser = $result['paytpv_iduser'];
+        $paytpv_tokenuser = $result['paytpv_tokenuser'];
+        $order = new Order((int) $result['id_order']);
+        $order_ref = str_pad((string) $order->id_cart, 8, '0', STR_PAD_LEFT);
+        if ($this->apikey != '') {
+            $apiRest = new PaycometApiRest($this->apikey, $this->paycometHeader);
+            $removeSubscriptionResponse = $apiRest->removeSubscription(
+                $idterminal,
+                $order_ref,
+                $paytpv_iduser,
+                $paytpv_tokenuser
+            );
+            $result['DS_RESPONSE'] = ($removeSubscriptionResponse->errorCode > 0) ? 0 : 1;
+        } else {
+            $result['DS_RESPONSE'] = 0; // Error
+        }
+        if ((int) $result['DS_RESPONSE'] == 1) {
+            PaytpvSuscription::removeSuscription((int) $this->context->customer->id, $id_suscription);
+            return true;
+        }
+        return false;
     }
 
     public function cancelSuscription($id_suscription)
@@ -3663,43 +3654,39 @@ class Paytpv extends PaymentModule
         $result = PaytpvSuscription::getSuscriptionId((int) $this->context->customer->id, $id_suscription);
         if (empty($result) === true) {
             return false;
-        } else {
-            $paytpv_iduser = $result['paytpv_iduser'];
-            $paytpv_tokenuser = $result['paytpv_tokenuser'];
-            $order = new Order((int) $result['id_order']);
-            $order_ref = str_pad((string) $order->id_cart, 8, '0', STR_PAD_LEFT);
-
-            if ($this->apikey != '') {
-                $apiRest = new PaycometApiRest($this->apikey, $this->paycometHeader);
-                try {
-                    $removeSubscriptionResponse = $apiRest->removeSubscription(
-                        $idterminal,
-                        $order_ref,
-                        $paytpv_iduser,
-                        $paytpv_tokenuser
-                    );
-                    if (!isset($removeSubscriptionResponse) || ($removeSubscriptionResponse->errorCode > 0 && $removeSubscriptionResponse->errorCode != 1001)) {
-                        $result['DS_RESPONSE'] = 0;
-                    } else {
-                        $result['DS_RESPONSE'] = 1;
-                    }
-                } catch (Exception $e) {
-                    $result['DS_RESPONSE'] = 0;
-                }
-            } else {
-                $result['DS_RESPONSE'] = 0; // Error
-            }
-            $response = [];
-
-            if ((int) $result['DS_RESPONSE'] == 1) {
-                PaytpvSuscription::cancelSuscription((int) $this->context->customer->id, $id_suscription);
-                $response['error'] = 0;
-            } else {
-                $response['error'] = 1;
-            }
-
-            return $response;
         }
+        $paytpv_iduser = $result['paytpv_iduser'];
+        $paytpv_tokenuser = $result['paytpv_tokenuser'];
+        $order = new Order((int) $result['id_order']);
+        $order_ref = str_pad((string) $order->id_cart, 8, '0', STR_PAD_LEFT);
+        if ($this->apikey != '') {
+            $apiRest = new PaycometApiRest($this->apikey, $this->paycometHeader);
+            try {
+                $removeSubscriptionResponse = $apiRest->removeSubscription(
+                    $idterminal,
+                    $order_ref,
+                    $paytpv_iduser,
+                    $paytpv_tokenuser
+                );
+                if (!isset($removeSubscriptionResponse) || ($removeSubscriptionResponse->errorCode > 0 && $removeSubscriptionResponse->errorCode != 1001)) {
+                    $result['DS_RESPONSE'] = 0;
+                } else {
+                    $result['DS_RESPONSE'] = 1;
+                }
+            } catch (Exception $e) {
+                $result['DS_RESPONSE'] = 0;
+            }
+        } else {
+            $result['DS_RESPONSE'] = 0; // Error
+        }
+        $response = [];
+        if ((int) $result['DS_RESPONSE'] == 1) {
+            PaytpvSuscription::cancelSuscription((int) $this->context->customer->id, $id_suscription);
+            $response['error'] = 0;
+        } else {
+            $response['error'] = 1;
+        }
+        return $response;
     }
 
     public function validPassword($id_customer, $passwd)
@@ -4289,9 +4276,25 @@ class Paytpv extends PaymentModule
     public function isPaymentProcesed($authCode)
     {
         $sql = 'SELECT COUNT(*) as np  FROM `' . _DB_PREFIX_ . 'order_payment`
-            WHERE transaction_id = ' . $authCode . ' and date_add > DATE_ADD(SYSDATE(),INTERVAL - 1 hour)';
+            WHERE transaction_id = ' . pSQL($authCode) . ' and date_add > DATE_ADD(SYSDATE(),INTERVAL - 1 hour)';
         $n = Db::getInstance()->getValue($sql);
 
         return $n > 0;
+    }
+
+    public function getLock($lockName)
+    {
+        $sql = 'SELECT GET_LOCK("' . pSQL($lockName) . '", 10)';
+        $n = Db::getInstance()->getValue($sql);
+
+        return $n;
+    }
+
+    public function releaseLock($lockName)
+    {
+        $sql = 'SELECT RELEASE_LOCK("' . pSQL($lockName) . '")';
+        $n = Db::getInstance()->getValue($sql);
+
+        return $n;
     }
 }

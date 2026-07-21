@@ -850,20 +850,14 @@ class PaytpvApi
             case 'header_data':
                 // check for xhtml support, note that this test can only run if headers have
                 // NOT already been sent.
-                if (!headers_sent()) {
-                    if (stristr($_SERVER['HTTP_ACCEPT'], 'application/xhtml+xml')) {
-                    } else {
-                    }
-                }
                 break;
             default:
                 // check to see if the data is available, otherwise it's user typo of unsupported option
                 if (isset($a_full_assoc_data[$which_test])) {
                     return $a_full_assoc_data[$which_test];
-                } else {
-                    echo 'You passed the browser detector an unsupported option for parameter 1: ' . $which_test;
-                    exit(0);
                 }
+                echo 'You passed the browser detector an unsupported option for parameter 1: ' . $which_test;
+                exit(0);
         }
     }
 
