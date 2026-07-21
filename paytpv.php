@@ -3288,10 +3288,8 @@ class Paytpv extends PaymentModule
 
                 $url_paytpv_apple_pay = $formResponseApplePay->data;
 
-                if ($formResponseApplePay->errorCode == 0) {
+                if ($formResponseApplePay->error == 0) {
                     $url_paytpv_apple_pay = $formResponseApplePay->data;
-                } else {
-                    $url_paytpv_apple_pay = $formResponseApplePay->errorCode;
                 }
             } catch (Exception $e) {
                 $url_paytpv_apple_pay = $e->getCode();
