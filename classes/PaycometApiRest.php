@@ -157,6 +157,23 @@ class PaycometApiRest
         return $this->executeRequest('/v1/payments', $params);
     }
 
+    public function executePurchaseApplePay(
+        $operationType,
+        $language = 'ES',
+        $terminal = '',
+        $productDescription = '',
+        $payment = []
+    ) {
+        $params = [
+            'operationType' => (int) $operationType,
+            'language' => (string) $language,
+            'terminal' => (int) $terminal,
+            'productDescription' => (string) $productDescription,
+            'payment' => (array) $payment,
+        ];
+        return $this->executeRequest('/v1/payments/applepaybutton', $params);
+    }
+
     public function createPreautorization(
         $terminal,
         $order,

@@ -161,12 +161,27 @@ function checkScoring()
     }
 }
 
+function applePayAvailability() {
+    jQuery.getScript("https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js");
+
+    try {
+        if (ApplePaySession.canMakePayments()) {
+            console.log("Apple Pay disponible");
+        }
+    } catch (error) {
+        var style = document.createElement('style');
+        style.textContent = '.panel:has([name="apms_apple_pay_standalone_button"]) {display: none;}';
+        document.head.appendChild(style);
+    }
+}
+
 $(document).ready(function()
 {
     checkAllTerminales();
     checkaddTerminal();
     checkScoring();
     changeNewPage();
+    applePayAvailability();
 
     jQuery("input[name$='scoring']").on('change', function()
     {
