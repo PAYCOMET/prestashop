@@ -62,6 +62,9 @@ Todas las suscripciones mostrarán el estado actual:
 > 8.7.44: 
 
 - Se añade Apple Pay
+- Compatibilidad con Prestashop 9.2.0
+- Fix pedidos duplicados
+- Mejoras de código
 
 > 8.7.43: 
 

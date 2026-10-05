@@ -21,20 +21,55 @@
 *  @copyright  2019 PAYTPV ON LINE ENTIDAD DE PAGO S.L
 *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 */
-
-function applePayAvailability() {
+async function applePayAvailability() {
     jQuery.getScript("https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js");
-
-    ApplePaySession.canMakePaymentsWithActiveCard().then((resp) => {
-        console.log(resp);
-
-        if (ApplePaySession.canMakePayments()) {
+    try {
+        const response = await ApplePaySession.canMakePaymentsWithActiveCard();
+        if (response) {
             console.log("Apple Pay disponible");
+            return;
         }
-    }).catch((e) => {
-        var style = document.createElement('style');
-        style.textContent = '.payment - option: has(#paytpv_apple_pay) {display: none;}';
-        document.head.appendChild(style);
-    })
+    } catch (error) {}
+    
+    document.querySelector('#paytpv_apple_pay')?.closest('.payment-option')?.style.setProperty('display', 'none');
 }
+
+function checkConditions2() {
+    var cond_paytpv = true;
+    $('#conditions-to-approve input[type="checkbox"]').each(function (_, checkbox) {
+        if (!checkbox.checked) {
+            cond_paytpv = false;
+        }
+    });
+    if ($("#card").val() == "0") {
+        if (cond_paytpv) {
+            $("#paytpv_checkconditions_apple_pay").hide();
+            $("#paytpv_applepay_button").show();
+        } else {
+            $("#paytpv_checkconditions_apple_pay").removeClass("hidden").show();
+            $("#paytpv_applepay_button").hide();
+        }
+    } else {
+        if (cond_paytpv) {
+            $("#paytpv_checkconditions_apple_pay").hide();
+            $("#paytpv_applepay_button").show();
+        } else {
+            $("#paytpv_checkconditions_apple_pay").removeClass("hidden").show();
+            $("#paytpv_applepay_button").hide();
+        }
+    }
+
+    return cond_paytpv;
+}
+
 applePayAvailability()
+checkConditions2()
+
+$(document).ready(function () {
+    
+    // Conditions
+    $("body").on("change", '#conditions-to-approve input[type="checkbox"]', function (event) {
+        checkConditions2();
+    });
+
+});

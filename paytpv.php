@@ -131,7 +131,7 @@ class Paytpv extends PaymentModule
         $this->is_eu_compatible = 1;
         $this->ps_versions_compliancy = [
             'min' => '8.0.0',
-            'max' => '9.1.4',
+            'max' => '9.2.0',
         ];
         $this->controllers = ['payment', 'validation'];
 
@@ -2658,15 +2658,15 @@ class Paytpv extends PaymentModule
                 $iframeURL = $this->context->link->getModuleLink($this->name, 'payment');
             } else {
                 $iframeURL = $this->paytpvIframeURL();
-
-                if($applepay_standalone_button) {
-                    $paytpv_apple_pay = $this->paytpvApplePayButton();
-                }
             }
             if (filter_var($iframeURL, FILTER_VALIDATE_URL) === false) {
                 $paytpv_error = $iframeURL;
                 $iframeURL = '';
             }
+        }
+
+        if ($newpage_payment != 2 && $applepay_standalone_button) {
+            $paytpv_apple_pay = $this->paytpvApplePayButton();
         }
 
         return [
@@ -2721,13 +2721,17 @@ class Paytpv extends PaymentModule
         $newpage_payment = (int) Configuration::get('PAYTPV_NEWPAGEPAYMENT');
         // Pago en nueva página
         if ($newpage_payment == 1) {
+            
             $urltpv = $this->context->link->getModuleLink($this->name, 'payment');
             $urltpv = htmlspecialchars($urltpv);
 
-            $this->context->smarty->assign([
-                'this_path' => $this->_path,
-                'paytpv_newpage_action' => $urltpv,
-            ]);
+            $arrTemplateVarInfos = $this->getTemplateVarInfos();
+            $arrTemplateVarInfos['this_path'] = $this->_path;
+            $arrTemplateVarInfos['paytpv_newpage_action'] = $urltpv;
+
+            $this->context->smarty->assign(
+                $arrTemplateVarInfos
+            );
 
             $newOption->setModuleName($this->name)
                 ->setCallToActionText($this->trans($this->l('Pay with card'), [], 'Modules.Paytpv.Shop'))
@@ -2788,6 +2792,7 @@ class Paytpv extends PaymentModule
                         // JetIframe
                     case 1:
                         $newOption->setModuleName($this->name);
+
                         $newOption->setCallToActionText(
                             $this->trans($this->l('Pay with card'), [], 'Modules.Paytpv.Shop')
                         );
@@ -2838,6 +2843,7 @@ class Paytpv extends PaymentModule
                     );
                     break;
                 case 1: // Apple Pay
+                    $apmOption->setBinary(true);
                     $apmOption->setCallToActionText(
                         $this->trans(
                             $this->l('Apple Pay'),
@@ -3276,6 +3282,7 @@ class Paytpv extends PaymentModule
                     'width' => (int) Configuration::get('PAYTPV_APM_APPLE_PAY_WIDTH'),
                     'height' => (int) Configuration::get('PAYTPV_APM_APPLE_PAY_HEIGHT'),
                     'color' => (string) Configuration::get('PAYTPV_APM_APPLE_PAY_COLOR'),
+                    'domain' => (string) Tools::getShopDomain(),
                 ];
 
                 $formResponseApplePay = $apiRest->executePurchaseApplePay(
@@ -4274,7 +4281,7 @@ class Paytpv extends PaymentModule
     public function isPaymentProcesed($authCode)
     {
         $sql = 'SELECT COUNT(*) as np  FROM `' . _DB_PREFIX_ . 'order_payment`
-            WHERE transaction_id = ' . pSQL($authCode) . ' and date_add > DATE_ADD(SYSDATE(),INTERVAL - 1 hour)';
+            WHERE transaction_id = "' . pSQL($authCode) . '" and date_add > DATE_ADD(SYSDATE(),INTERVAL - 1 hour)';
         $n = Db::getInstance()->getValue($sql);
 
         return $n > 0;

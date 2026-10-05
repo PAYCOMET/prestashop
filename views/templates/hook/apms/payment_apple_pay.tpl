@@ -25,8 +25,14 @@
 <style>
     
 </style>
-<div id="paytpv_apple_pay">
-{$paytpv_apple_pay nofilter}
+
+<div class="paytpv" id="paytpv_apple_pay">
+    <div id="paytpv_applepay_button">
+        {$paytpv_apple_pay nofilter}
+    </div>
+    <div id="paytpv_checkconditions_apple_pay" style="display:none">
+        <strong>{l s='You must accept the license terms to continue' mod='paytpv'}</strong>
+    </div>
 </div>
 
 
