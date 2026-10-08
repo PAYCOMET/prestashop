@@ -24,13 +24,12 @@
 async function applePayAvailability() {
     jQuery.getScript("https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js");
     try {
-        const response = await ApplePaySession.canMakePaymentsWithActiveCard();
+        const response = await ApplePaySession.canMakePayments();
         if (response) {
             console.log("Apple Pay disponible");
             return;
         }
     } catch (error) {}
-    
     document.querySelector('#paytpv_apple_pay')?.closest('.payment-option')?.style.setProperty('display', 'none');
 }
 
