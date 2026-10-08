@@ -161,12 +161,29 @@ function checkScoring()
     }
 }
 
+async function applePayAvailability() {
+    try {
+        const response = await fetch('/.well-known/apple-developer-merchantid-domain-association');
+        if (response.ok) {
+            console.log("Apple Pay disponible");
+            return;
+        }
+    } catch (error) {}
+    
+    var style = document.createElement('style');
+    style.textContent = '.panel:has([name="apms_apple_pay_standalone_button"]) {display: none;}';
+    document.head.appendChild(style);
+}
+
 $(document).ready(function()
 {
     checkAllTerminales();
     checkaddTerminal();
     checkScoring();
     changeNewPage();
+    if (!document.getElementById('apms_apple_pay_standalone_button_on').checked) {
+        applePayAvailability();
+    }
 
     jQuery("input[name$='scoring']").on('change', function()
     {

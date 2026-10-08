@@ -102,6 +102,10 @@ class Paytpv extends PaymentModule
     public $paytpv_apm_instant_credit_hashToken;
     public $paytpv_apm_instant_credit_minFin;
     public $paytpv_apm_instant_credit_maxFin;
+    public $apms_apple_pay_standalone_button;
+    public $apms_apple_pay_button_width;
+    public $apms_apple_pay_button_height;
+    public $apms_apple_pay_color;
     public $page;
     public $error;
     public $currency_array;
@@ -111,18 +115,23 @@ class Paytpv extends PaymentModule
     public const IFRAME_DEFAULT_HEIGHT = 440;
     public const IFRAME_MIN_HEIGHT = 250;
 
+    public const APPLE_PAY_DEFAULT_WIDTH = 15;
+    public const APPLE_PAY_DEFAULT_HEIGHT = 100;
+    public const APPLE_PAY_MIN_WIDTH = 15;
+    public const APPLE_PAY_MIN_HEIGHT = 100;
+
     public function __construct()
     {
         $this->name = 'paytpv';
         $this->tab = 'payments_gateways';
         $this->author = 'Paycomet';
-        $this->version = '8.7.43';
+        $this->version = '8.7.44';
         $this->module_key = 'deef285812f52026197223a4c07221c4';
 
         $this->is_eu_compatible = 1;
         $this->ps_versions_compliancy = [
             'min' => '8.0.0',
-            'max' => '9.1.4',
+            'max' => '9.2.0',
         ];
         $this->controllers = ['payment', 'validation'];
 
@@ -310,6 +319,26 @@ class Paytpv extends PaymentModule
             $this->paytpv_apm_instant_credit_maxFin = 0;
         }
         // Fin Instant Credit ------------------------------------------------------------
+
+        
+        // Apple Pay ---------------------------------------------
+        if (array_key_exists('PAYTPV_APM_apple_pay_standalone_button', $config)) {
+            $this->apms_apple_pay_standalone_button = $config['PAYTPV_APM_apple_pay_standalone_button'];
+        }
+        if (array_key_exists('PAYTPV_APM_APPLE_PAY_WIDTH', $config) && $config['PAYTPV_APM_APPLE_PAY_WIDTH'] >= self::APPLE_PAY_DEFAULT_WIDTH) {
+            $this->apms_apple_pay_button_width = $config['PAYTPV_APM_APPLE_PAY_WIDTH'];
+        } else {
+            $this->apms_apple_pay_button_width = self::APPLE_PAY_DEFAULT_WIDTH; // Valor por defecto
+        }
+        if (array_key_exists('PAYTPV_APM_APPLE_PAY_HEIGHT', $config) && $config['PAYTPV_APM_APPLE_PAY_HEIGHT'] >= self::APPLE_PAY_DEFAULT_HEIGHT) {
+            $this->apms_apple_pay_button_height = $config['PAYTPV_APM_APPLE_PAY_HEIGHT'];
+        } else {
+            $this->apms_apple_pay_button_height = self::APPLE_PAY_DEFAULT_HEIGHT; // Valor por defecto
+        }
+        if (array_key_exists('PAYTPV_APM_APPLE_PAY_COLOR', $config)) {
+            $this->apms_apple_pay_color = $config['PAYTPV_APM_APPLE_PAY_COLOR'];
+        }
+        // Fin Apple Pay ------------------------------------------------------------
 
         parent::__construct();
         $this->page = basename(__FILE__, '.php');
@@ -579,6 +608,24 @@ class Paytpv extends PaymentModule
             Configuration::updateValue(
                 'PAYTPV_APM_instant_credit_maxFin',
                 Tools::getValue('apms_instant_credit_maxFin')
+            );
+
+            // Apple Pay
+            Configuration::updateValue(
+                'PAYTPV_APM_apple_pay_standalone_button',
+                Tools::getValue('apms_apple_pay_standalone_button')
+            );
+            Configuration::updateValue(
+                'PAYTPV_APM_APPLE_PAY_WIDTH',
+                Tools::getValue('apms_apple_pay_button_width')
+            );
+            Configuration::updateValue(
+                'PAYTPV_APM_APPLE_PAY_HEIGHT',
+                Tools::getValue('apms_apple_pay_button_height')
+            );
+            Configuration::updateValue(
+                'PAYTPV_APM_APPLE_PAY_COLOR',
+                Tools::getValue('apms_apple_pay_color')
             );
 
             // Datos Scoring
@@ -1673,6 +1720,12 @@ class Paytpv extends PaymentModule
         $arrValues['so_scoring_score'] = $config['PAYTPV_SO_SCORING_SCORE'];
         $arrValues['disableoffersavecard'] = $config['PAYTPV_DISABLEOFFERSAVECARD'];
 
+        // Apple Pay
+        $arrValues['apms_apple_pay_standalone_button'] = $config['PAYTPV_APM_apple_pay_standalone_button'];
+        $arrValues['apms_apple_pay_button_width'] = ($config['PAYTPV_APM_APPLE_PAY_WIDTH'] != '') ? $config['PAYTPV_APM_APPLE_PAY_WIDTH'] : self::APPLE_PAY_DEFAULT_WIDTH;
+        $arrValues['apms_apple_pay_button_height'] = ($config['PAYTPV_APM_APPLE_PAY_HEIGHT'] != '') ? $config['PAYTPV_APM_APPLE_PAY_HEIGHT'] : self::APPLE_PAY_DEFAULT_HEIGHT;
+        $arrValues['apms_apple_pay_color'] = $config['PAYTPV_APM_APPLE_PAY_COLOR'];
+        
         foreach ($this->terminales_paytpv as $key => $term) {
             $arrValues['term[' . $key . ']'] = trim($term['idterminal']);
             $arrValues['pass[' . $key . ']'] = trim($term['password']);
@@ -2068,6 +2121,80 @@ class Paytpv extends PaymentModule
             $arrFields[] = $instantCredit_form;
         }
 
+        // Apple Pay
+        if (in_array(1, $arrMethods)) {
+            $applePay_form = [
+                'form' => [
+                    'legend' => [
+                        'title' => $this->l('Apple Pay'),
+                        'icon' => 'icon-cogs',
+                    ],
+                    'input' => [
+                        [
+                            'type' => 'switch',
+                            'label' => $this->l('Standalone button'),
+                            'name' => 'apms_apple_pay_standalone_button',
+                            'is_bool' => true,
+                            'hint' => $this->l('Standalone button'),
+                            'values' => [
+                                [
+                                    'id' => 'active_on',
+                                    'value' => true,
+                                    'label' => 'Activado',
+                                ],
+                                [
+                                    'id' => 'active_off',
+                                    'value' => false,
+                                    'label' => 'Desactivado',
+                                ],
+                            ],
+                        ],
+                        [
+                            'col' => 1,
+                            'type' => 'text',
+                            'label' => $this->l('Button Width (%)'),
+                            'hint' => $this->l('Button Width in percentage') . ' ' . $this->l('Min') . ' ' . self::APPLE_PAY_MIN_WIDTH . '%',
+                            'name' => 'apms_apple_pay_button_width',
+                            'id' => 'apms_apple_pay_button_width',
+                        ],
+                        [
+                            'col' => 1,
+                            'type' => 'text',
+                            'label' => $this->l('Button Height (%)'),
+                            'hint' => $this->l('Button height in percentage') . ' ' . $this->l('Min') . ' ' . self::APPLE_PAY_MIN_HEIGHT . '%',
+                            'name' => 'apms_apple_pay_button_height',
+                            'id' => 'apms_apple_pay_button_height',
+                        ],
+                        [
+                            'type' => 'select',
+                            'label' => $this->l('Style'),
+                            'name' => 'apms_apple_pay_color',
+                            'options' => [
+                                'query' => [
+                                    [
+                                        'id' => "white",
+                                        'name' => $this->l('White'),
+                                    ],
+                                    [
+                                        'id' => "white-outline",
+                                        'name' => $this->l('White outline'),
+                                    ],
+                                    [
+                                        'id' => "black",
+                                        'name' => $this->l('Black'),
+                                    ],
+                                ],
+                                'id' => 'id',
+                                'name' => 'name',
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+
+            $arrFields[] = $applePay_form;
+        }
+
         // Array Score
 
         $arrScore = [];
@@ -2412,6 +2539,10 @@ class Paytpv extends PaymentModule
             'paytpv-fancybox',
             'modules/paytpv/views/js/jquery.fancybox.pack.js'
         );
+        $this->context->controller->registerJavascript(
+            'apple_pay',
+            'modules/paytpv/views/js/apple_pay.js'
+        );
     }
 
     public function hookActionFrontControllerSetMedia($params)
@@ -2469,6 +2600,8 @@ class Paytpv extends PaymentModule
 
         $disableoffersavecard = Configuration::get('PAYTPV_DISABLEOFFERSAVECARD');
 
+        $applepay_standalone_button = (int) Configuration::get('PAYTPV_APM_apple_pay_standalone_button');
+
         $language = $this->getPaycometLang($this->context->language->language_code);
 
         $saved_card = PaytpvCustomer::getCardsCustomer((int) $this->context->customer->id);
@@ -2519,6 +2652,7 @@ class Paytpv extends PaymentModule
 
         $paytpv_error = 0;
         $iframeURL = '';
+        $paytpv_apple_pay = '';
         if ($paytpv_integration != 1) {
             if ($newpage_payment == 2) {
                 $iframeURL = $this->context->link->getModuleLink($this->name, 'payment');
@@ -2531,6 +2665,10 @@ class Paytpv extends PaymentModule
             }
         }
 
+        if ($newpage_payment != 2 && $applepay_standalone_button) {
+            $paytpv_apple_pay = $this->paytpvApplePayButton();
+        }
+
         return [
             'msg_paytpv' => '',
             'active_suscriptions' => $active_suscriptions,
@@ -2538,6 +2676,7 @@ class Paytpv extends PaymentModule
             'saved_card' => $saved_card,
             'id_cart' => $cart->id,
             'paytpv_iframe' => $iframeURL,
+            'paytpv_apple_pay' => $paytpv_apple_pay,
             'paytpv_error' => $paytpv_error,
             'paytpv_integration' => $paytpv_integration,
             'account' => 0,
@@ -2582,13 +2721,17 @@ class Paytpv extends PaymentModule
         $newpage_payment = (int) Configuration::get('PAYTPV_NEWPAGEPAYMENT');
         // Pago en nueva página
         if ($newpage_payment == 1) {
+            
             $urltpv = $this->context->link->getModuleLink($this->name, 'payment');
             $urltpv = htmlspecialchars($urltpv);
 
-            $this->context->smarty->assign([
-                'this_path' => $this->_path,
-                'paytpv_newpage_action' => $urltpv,
-            ]);
+            $arrTemplateVarInfos = $this->getTemplateVarInfos();
+            $arrTemplateVarInfos['this_path'] = $this->_path;
+            $arrTemplateVarInfos['paytpv_newpage_action'] = $urltpv;
+
+            $this->context->smarty->assign(
+                $arrTemplateVarInfos
+            );
 
             $newOption->setModuleName($this->name)
                 ->setCallToActionText($this->trans($this->l('Pay with card'), [], 'Modules.Paytpv.Shop'))
@@ -2649,6 +2792,7 @@ class Paytpv extends PaymentModule
                         // JetIframe
                     case 1:
                         $newOption->setModuleName($this->name);
+
                         $newOption->setCallToActionText(
                             $this->trans($this->l('Pay with card'), [], 'Modules.Paytpv.Shop')
                         );
@@ -2661,8 +2805,12 @@ class Paytpv extends PaymentModule
 
         $alternativePaymentMethods = $this->getUserApmsForPayment();
         foreach ($alternativePaymentMethods as $methodId => $apm) {
-            if ($methodId == 1) {
+            if ($methodId == 1 && Configuration::get('PAYTPV_APM_apple_pay_standalone_button') != "1") {
                 continue; // El pago con tarjeta va aparte
+            }
+
+            if ($methodId == 1) {
+                $apm['img_name'] = "applepay";
             }
 
             $apmOption = new PaymentOption();
@@ -2692,6 +2840,22 @@ class Paytpv extends PaymentModule
                     );
                     $apmOption->setAdditionalInformation(
                         $this->fetch('module:paytpv/views/templates/hook/apms/payment_instantcredit.tpl')
+                    );
+                    break;
+                case 1: // Apple Pay
+                    $apmOption->setBinary(true);
+                    $apmOption->setCallToActionText(
+                        $this->trans(
+                            $this->l('Apple Pay'),
+                            [],
+                            'Modules.MyModule.Shop'
+                        )
+                    );
+                    $this->context->smarty->assign(
+                        $apm['templateVars']
+                    );
+                    $apmOption->setAdditionalInformation(
+                        $this->fetch('module:paytpv/views/templates/hook/apms/payment_apple_pay.tpl')
                     );
                     break;
                 default:
@@ -3024,6 +3188,10 @@ class Paytpv extends PaymentModule
                     'urlKo' => $URLKO,
                 ];
 
+                if (Configuration::get('PAYTPV_APM_apple_pay_standalone_button') == "1" && Configuration::get('PAYTPV_NEWPAGEPAYMENT') != 2) {
+                    $payment['excludedXpays'] = ["all"];
+                }
+
                 if ($scoring != null) {
                     $payment['scoring'] = (int) $scoring;
                 }
@@ -3050,6 +3218,94 @@ class Paytpv extends PaymentModule
         }
 
         return $url_paytpv;
+    }
+
+    public function paytpvApplePayButton()
+    {
+        $cart = $this->context->cart;
+
+        // if not exist Cart -> Redirect to home
+        if (!isset($cart->id)) {
+            Tools::redirect('index');
+        }
+
+        $datos_pedido = $this->terminalCurrency($cart);
+        $importe = $datos_pedido['importe'];
+        $dcc = $datos_pedido['dcc'];
+        $currency_iso_code = $datos_pedido['currency_iso_code'];
+        $idterminal = $datos_pedido['idterminal'];
+
+        $secure_pay = true;
+
+        $values = [
+            'id_cart' => $cart->id,
+            'key' => $this->context->customer->secure_key,
+        ];
+
+        $ssl = Configuration::get('PS_SSL_ENABLED');
+
+        $URLOK = $this->context->link->getModuleLink($this->name, 'urlok', $values, $ssl);
+        $URLKO = $this->context->link->getModuleLink($this->name, 'urlko', $values, $ssl);
+
+        $paytpv_order_ref = str_pad((string) $cart->id, 8, '0', STR_PAD_LEFT);
+
+        $language = $this->getPaycometLang($this->context->language->language_code);
+        $productDescription = '';
+
+        if ($this->context->customer->email) {
+            $productDescription = $this->context->customer->email;
+        }
+
+        $score = $this->transactionScore($cart);
+        $scoring = $score['score'];
+
+        $OPERATION = ($dcc == 1) ? 116 : 1;
+        if ($this->apikey != '') {
+            $userInteraction = 1;
+            $merchantData = $this->getMerchantData($cart);
+
+            try {
+                $apiRest = new PaycometApiRest($this->apikey, $this->paycometHeader);
+
+                $payment = [
+                    'terminal' => (int) $idterminal,
+                    'order' => (string) $paytpv_order_ref,
+                    'amount' => (string) $importe,
+                    'methods' => [1],
+                    'currency' => (string) $currency_iso_code,
+                    'userInteraction' => (int) $userInteraction,
+                    'secure' => (int) $secure_pay,
+                    'productDescription' => $productDescription,
+                    'merchantData' => $merchantData,
+                    'urlOk' => $URLOK,
+                    'urlKo' => $URLKO,
+                    'width' => (int) Configuration::get('PAYTPV_APM_APPLE_PAY_WIDTH'),
+                    'height' => (int) Configuration::get('PAYTPV_APM_APPLE_PAY_HEIGHT'),
+                    'color' => (string) Configuration::get('PAYTPV_APM_APPLE_PAY_COLOR'),
+                    'domain' => (string) Tools::getShopDomain(),
+                ];
+
+                $formResponseApplePay = $apiRest->executePurchaseApplePay(
+                    $OPERATION,
+                    $language,
+                    $idterminal,
+                    null,
+                    $payment
+                );
+
+                $url_paytpv_apple_pay = $formResponseApplePay->data;
+
+                if ($formResponseApplePay->error == 0) {
+                    $url_paytpv_apple_pay = $formResponseApplePay->data;
+                }
+            } catch (Exception $e) {
+                $url_paytpv_apple_pay = $e->getCode();
+            }
+        } else {
+            $url_paytpv_apple_pay = '1004'; // Acceso no permitido
+        }
+
+        return $url_paytpv_apple_pay;
     }
 
     /**
@@ -3287,8 +3543,14 @@ class Paytpv extends PaymentModule
             'PAYTPV_APM_instant_credit_minFin',
             'PAYTPV_APM_instant_credit_maxFin',
         ];
-
-        $arrConfig = array_merge($arrPaycomet, $arrApms, $arrInstantCredit);
+        $arrApplePay = [
+            'PAYTPV_APM_apple_pay_standalone_button',
+            'PAYTPV_APM_APPLE_PAY_WIDTH',
+            'PAYTPV_APM_APPLE_PAY_HEIGHT',
+            'PAYTPV_APM_APPLE_PAY_COLOR',
+        ];
+        
+        $arrConfig = array_merge($arrPaycomet, $arrApms, $arrInstantCredit, $arrApplePay);
 
         return Configuration::getMultiple($arrConfig);
     }
@@ -4019,7 +4281,7 @@ class Paytpv extends PaymentModule
     public function isPaymentProcesed($authCode)
     {
         $sql = 'SELECT COUNT(*) as np  FROM `' . _DB_PREFIX_ . 'order_payment`
-            WHERE transaction_id = ' . pSQL($authCode) . ' and date_add > DATE_ADD(SYSDATE(),INTERVAL - 1 hour)';
+            WHERE transaction_id = "' . pSQL($authCode) . '" and date_add > DATE_ADD(SYSDATE(),INTERVAL - 1 hour)';
         $n = Db::getInstance()->getValue($sql);
 
         return $n > 0;

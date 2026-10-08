@@ -59,6 +59,13 @@ Todas las suscripciones mostrarán el estado actual:
 - FINALIZADA: Cuando se ha cumplido todo el periodo de la suscripción
 
 ## Release Notes
+> 8.7.44: 
+
+- Se añade Apple Pay
+- Compatibilidad con Prestashop 9.2.0
+- Fix pedidos duplicados
+- Mejoras de código
+
 > 8.7.43: 
 
 - Compatibilidad con Prestashop 9.1.4
