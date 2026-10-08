@@ -427,7 +427,8 @@ class PaytpvUrlModuleFrontController extends ModuleFrontController
                     );
                 }
                 // Para APMs. Si el estado esta en "Pendient de pago" lo pasamos a Pago Aceptado
-                if ($order->getCurrentState() == Configuration::get('PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT')) {
+                $waitingLocalPaymentState = (int) Configuration::get('PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT');
+                if ($waitingLocalPaymentState > 0 && (int) $order->getCurrentState() === $waitingLocalPaymentState && !$paytpv->isPaymentProcesed(Tools::getValue('AuthCode'))) {
                     $order->addOrderPayment((string) $importe, null, Tools::getValue('AuthCode'));
 
                     $history = new OrderHistory();
